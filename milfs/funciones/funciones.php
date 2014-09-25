@@ -146,15 +146,7 @@ return;
 				
 
 					";
-	/*if (mysql_num_rows($sql)!='0'){
-	mysql_data_seek($sql, 0);
-	$resultado .="";
-	while( $row = mysql_fetch_array( $sql ) ) {
 
-															}
-											
-											}
-											*/
 	$respuesta->addAssign($div,"innerHTML",$resultado);
 
 }
@@ -202,7 +194,7 @@ $respuesta = new xajaxResponse('utf-8');
 		if(mysql_affected_rows($link) != 0){
 
 														}
-//$respuesta->addAssign($div,"innerHTML","$sql $edit");
+
 									return $respuesta;					
 }
 $xajax->registerFunction("actualizar_campo");
@@ -307,7 +299,7 @@ $respuesta->addAssign($div,"innerHTML",$resultado);
 return $respuesta;
 
 }
-//is_numeric($valor)
+
 $xajax->registerFunction("editar_campo");
 
 
@@ -377,7 +369,7 @@ return $resultado;
 }
 
 function subir_imagen($respuesta){
-	//if ( !isset ( $_SESSION['id'] ) ) {	return;}
+
 ///vinculado con la funcion de javascript resultadoUpload(estado, file)  que esta en librerias/scripts.js
 
 $javascript="includes/upload.php";
@@ -436,7 +428,7 @@ $link=Conectarse();
 mysql_query("SET NAMES 'utf8'");
 $consulta = "SELECT * FROM form_id WHERE id_empresa = '$_SESSION[id_empresa]' ORDER BY nombre ";
 $sql=mysql_query($consulta,$link);
-///$Documento=mysql_result($grupo,0,"documento_numero");
+
 
 if (mysql_num_rows($sql)!='0'){
 	mysql_data_seek($sql, 0);
@@ -446,13 +438,13 @@ $fila=0;
 while( $row = mysql_fetch_array( $sql ) ) {
 	$fila = $fila +1;
 	if ($fila %2 == 0){$bg='LightCyan';}else{ $bg='FFFFFF';}
-	//$producto = remplacetas('farmacia_cum','id',$row[id_producto],'fabricante_importador') ;
+
 $resultado .= "<option value='$row[id]'> $row[nombre]</option>";
 															}
 															
 	$resultado .="</select><br>";
 										}else {$resultado = "";}
-				//	print  $resultado;
+
 					return $resultado;
 		}else{
 		$respuesta = new xajaxResponse('utf-8');
@@ -478,7 +470,7 @@ function formulario_importar($filename,$accion,$perfil){
 
 		$formulario .= "<div id=importador_select name=importador_select></div>
 		<div id=importador_archivo name=importador_archivo></div> ";
-	//print 	$formulario;		
+
 return $formulario; 
 		}
 	
@@ -486,7 +478,7 @@ return $formulario;
 $respuesta = new xajaxResponse('utf-8');
 	$link=Conectarse(); 
 	mysql_query("SET NAMES 'utf8'");
-	//	$perfil_nombre = remplacetas_promiscuo('galenux_oncomedic.consulta_tipo','id_consulta_tipo',$perfil,'consulta_tipo_nombre') ;
+
  $resultado .= "Importando formulario <b>$perfil_nombre</b> ($perfil)
   <table class='table table-bordered table-striped'>";
 	$nombre = "tmp/$filename";
@@ -506,7 +498,7 @@ for ($c=0; $c < $numero; $c++) {   }
 foreach($data as $row) {
 $control=md5($perfil.$fila.time()); 
 $ip =  obtener_ip();
-//$control =$fila;
+
       $valores = explode( '|', $row );
       $resultado .= "<tr>";
       $numero_columna = 0;
@@ -559,22 +551,17 @@ if($accion ==="grabar"){
 
 	}else{$muestra_consulta ="";}
       $resultado .= "<td><!-- $grabar --> $error $muestra_consulta </td></tr>";
-//$l++ ;
 
 }
 
     } else{
-  //  	foreach($data as $row) {
+
       $titulos = explode( '|', $data[0] );
       $resultado .= "<tr>";
       $posicion = 0;
       foreach($titulos as $titulo){
       	$campo[$posicion] = $titulo;
-      	//if($titulo === "perfil" ){$perfil = $titulo;}else{$perfil="";}
-      //	if($titulo === "control" ){$campo_control = $posicion;}else{}
-//$verificado formulario_verificar_campo($perfil,$id_campo){
-   	  //$verificar_campo =   	formulario_verificar_campo($perfil,$titulo);
-  			//$verificar_campo = "(".$verificar_campo[2].")";
+
   			if($titulo == "usuario" or $titulo == "turno" or $titulo == "110" or $titulo == "perfil"){$verificar_campo ="";}else{
   			$verificar_campo =   	formulario_verificar_campo($perfil,$titulo);
   			if($verificar_campo == NULL){$verificar_campo ="<i class='fa fa-frown-o'></i>"; $class='danger';}
@@ -585,8 +572,7 @@ $resultado .= "<th class='$class' >$titulo $verificar_campo</th>"; // Muestra to
 $posicion ++;
 }
       $resultado .= "</tr>";
-//}
-   // $resultado .= "<b>$data[0]</b>";
+
     }
 $fila++;
       } 
@@ -597,7 +583,7 @@ $respuesta->addAssign($div,"innerHTML",$resultado);
 
 return $respuesta;
 } 
-//is_numeric($valor)
+
 $xajax->registerFunction("formulario_importar");
 
 
@@ -657,8 +643,6 @@ function matriz_formulario($formulario,$div,$registros,$pagina,$formato){
 
 $control = md5(rand(1,99999999).microtime());
 $respuesta = new xajaxResponse('utf-8');
-//$respuesta->addAssign($div,"innerHTML",$resultado);
-
 
 
 $fecha_inicio = $formulario["inicio"];
@@ -673,7 +657,7 @@ if($busqueda !=''){$busca ="AND contenido LIKE '$busqueda'";}Else{$busca ='';}
 
 $link=Conectarse(); 
 mysql_query("SET NAMES 'utf8'");
-//UNIX_TIMESTAMP()
+
 $consulta = "	SELECT  *,from_unixtime(timestamp) AS fecha , form_datos.id AS form_datos_id
 					FROM form_datos, form_campos 
 					WHERE form_datos.id_campo = form_campos.id AND form_datos.id_empresa = '$_SESSION[id_empresa]'
@@ -682,14 +666,9 @@ $consulta = "	SELECT  *,from_unixtime(timestamp) AS fecha , form_datos.id AS for
 					$campo  
 					AND timestamp BETWEEN UNIX_TIMESTAMP('$fecha_inicio') 
 					AND UNIX_TIMESTAMP('$fin 23:59:59') $orden";
-					//ORDER BY formularios_datos.id DESC 
-//$respuesta->addAssign($div,"innerHTML",$consulta);
-//return $respuesta;
 
-//$respuesta->addAlert("$consulta");return $respuesta;
 $sql=mysql_query($consulta,$link);
-///$Documento=mysql_result($grupo,0,"documento_numero");
-//$resultado .= "<h1>$Valor , $formulario</h1>";
+
 if (mysql_num_rows($sql)!='0'){
 	if($formato=='csv'){ 
 	$nombre_archivo ="tmp/Formulario_".mktime()."_".$_SESSION['id'].".csv";
@@ -702,27 +681,15 @@ fputs ($archivo_reporte,$encabezado);
 fputs ($archivo_reporte,$tabla);
 while( $row = mysql_fetch_array( $sql ) ) {
 		$formulario_nombre = remplacetas('form_id','id',$row[form_id],'nombre') ;
-
-	
-	//$producto = remplacetas('farmacia_cum','id',$row[id_producto],'fabricante_importador') ;
-//$linea = "$row[id];$row[id_turno];$row[fecha];$row[timestamp];$identificacion_usuario;$EPS;$row[id_especialista];$formulario_nombre;$row[campo_nombre];'$row[contenido]'\n";
-//$linea = array('$row[id]','$row[id_turno]','$row[fecha]','$row[timestamp]','$identificacion_usuario','$EPS','$row[id_especialista]','$formulario_nombre','$row[campo_nombre]','$row[contenido]');
 $linea = array("$row[form_datos_id]","$row[fecha]","$row[timestamp]","$formulario_nombre[0]","$row[campo_nombre]","$row[contenido]","$row[control]");
 
 fputcsv ($archivo_reporte,$linea,';');
 															}
 rewind($archivo_reporte);
-/*/$output = stream_get_contents( $archivo_reporte );
-fclose($archivo_reporte);
-header('Content-Type: text/csv; charset=utf-8');
-header('Content-Disposition: attachment; filename=contact-'. time() .'.csv' );
-header('Content-Length: '. strlen($output) );
-return $output;
-	*/
-//$resultado .= "$consulta";
+
 $respuesta->addAssign($div,"innerHTML",$resultado);
 return $respuesta;
-//$respuesta->addAlert("$consulta $total_registros");return $respuesta;	
+
 	}
 		}	else{
 			$respuesta ="<div class='alert alert-warning'><i class='fa fa-exclamation-triangle'></i> No hay resultados</div>";
@@ -730,7 +697,7 @@ return $respuesta;
 		return $respuesta;
 		}
 		
-		////fin de si hay resultados			
+
 if ($pagina =='') {
    $inicio = 0;
    $pagina = 1;
@@ -792,13 +759,13 @@ while( $row = mysql_fetch_array( $sql ) ) {
 		$formulario_nombre = remplacetas('form_id','id',$row[form_id],'nombre') ;
 	$fila = $fila +1;
 	if ($fila %2 == 0){$bg='LightCyan';}else{ $bg='FFFFFF';}
-	//$producto = remplacetas('farmacia_cum','id',$row[id_producto],'fabricante_importador') href ='?id=$row[form_id]&c=$row[control]'  ;
+
 $resultado .= "<tr><td>$row[form_datos_id]</td><td>$row[fecha]</td><td>$row[timestamp]</td><td nowrap><a target='form' href='?id=$row[form_id]&c=$row[control]'><i class='fa fa-share-square-o'></i></a><a onclick=\"xajax_formulario_modal('$row[form_id]','','$row[control]'); \" class='btn btn-link btn-success'>$formulario_nombre[0]</a> <a target='form' href='?id=$row[form_id]&c=$row[control]&t=edit'><i class='fa fa-pencil'></i></a> </td><td>$row[campo_nombre]</td><td>$row[contenido]</td></tr>";
 															}
 															
 	$resultado .="</table>";
 										}else{$resultado = "No hay resultados para mostrar ";}
-//$resultado .= "$consulta";
+
 $respuesta->addAssign($div,"innerHTML",$resultado);
 
 return $respuesta;
@@ -840,8 +807,7 @@ $resultado .= "		<option value='$row[id_campo]' title='$row[campo_descripcion]'>
 $resultado .= "	</select >";										}
 else{$resultado = '';}
 
-	
-	//$resultado = $consulta;
+
 $respuesta->addAssign($div,"innerHTML",$resultado);
 return $respuesta;
 	
@@ -856,8 +822,7 @@ $resultado .= "<a href='#'  onclick=\"xajax_formulario_consultar('$div'); \"><i 
 					print  $resultado;
 					return;
 		}
-	//xajax_llamar_ajax(this.value)
-//$pacientes = usuarios_oncolinux('','','formulario');
+
 	$formulario = select('form_id','id','nombre','xajax_formulario_campos_select((this.value),\'div_campos\')',"id_empresa = '$_SESSION[id_empresa]'");
 	$fecha = time (); 
 $ahora  = date ( "Y-m-d" , $fecha ); 
@@ -912,7 +877,7 @@ function formulario_campos_procesar($form){
 $respuesta = new xajaxResponse('utf-8');
 
 
-//$campo_nombre = mysql_seguridad($form["campo_nombre"]);
+
 $campo_nombre = $form["campo_nombre"];
 if($campo_nombre =='') {
 $respuesta->addAlert("El Nombre del campo no puede estar vacío");
@@ -933,7 +898,7 @@ $editar = $form["editar"];
 $id_campo_editar = $form["id_campo_editar"];
 $link=Conectarse(); 
 mysql_query("SET NAMES 'utf8'");
-	//$campo_nombre=mysql_real_escape_string($campo_nombre);
+
 if ($editar == 'editar'){
 mysql_query("
 						UPDATE `form_campos` 
@@ -994,9 +959,7 @@ $campos_formulario .= "<div  name='id_campos_consulta_".$row['id_consulta_campo'
 else{
 $campos_formulario .= "<div   name='id_campos_consulta_".$row['id_consulta_campo']."' id='id_campos_consulta_".$row['id_consulta_campo']."'><form name='Xcampo_editar".$row['id_consulta_campo']."' id='Xcampo_editar".$row['id_consulta_campo']."'><input name='id_campo_editar' id='id_campo_editar' value='".$row['id_consulta_campo']."' type='hidden' ><input type='hidden' name='Xarea' id='Xarea' value='".$row['campo_area']."' ><input name='id_campo_editar' id='id_campo_editar' value='".$row['id_consulta_campo']."' type='hidden'></form>".$row['orden']."<input type='button' style='width: 200;text-align: left;'  value='".$row['campo_nombre']."' OnClick=\"xajax_crear_campos_consulta(xajax.getFormValues('Xcampo_editar".$row['id_consulta_campo']."'));\" title='".$row['campo_descripcion']."'><br> <input name='".$row['campo_nombre']."' id='".$row['campo_nombre']."' type='".$row['tipo_campo_accion']."' size='72'></div><br><br>";
 																	  }																		}
-//$campos_formulario .= "$consulta_campos_valores";
-//$respuesta->addAlert("$consulta_campos_valores");
-//return $respuesta;
+
 $respuesta->addAssign("formulario_campos_$misma_area","innerHTML",$campos_formulario);
 return $respuesta;
 }$xajax->registerFunction("formulario_campos_procesar");
@@ -1029,7 +992,7 @@ return $respuesta;
 $xajax->registerFunction("formulario_opciones_select");
 
 function crear_campos_formulario($form){
-//creo el xajaxResponse para generar una salida
+
 $form = mysql_seguridad($form);
 $respuesta = new xajaxResponse('utf-8');
 $div = $form['div'];
@@ -1249,7 +1212,7 @@ $campos_formulario .= "
 																	  }
 			}///fin de edicion
 
-//echo $campos_formulario;
+
 												
 $respuesta->addAssign($div,"innerHTML",$campos_formulario);
 
@@ -1332,7 +1295,7 @@ $resultado .="</table>";
 $consulta_campos_todos ="SELECT  form_campos.id, form_campos.campo_nombre, form_campos.campo_descripcion FROM form_campos WHERE form_campos.id_empresa = '$_SESSION[id_empresa]' 
  ORDER BY campo_nombre ";	
 $sql_consulta_campo =mysql_query($consulta_campos_todos,$link); 
-//if(mysql_num_rows($sql_consulta_campo) !='0')	{
+
 $resultado .="<div name='atencion' id='atencion' style='display:inline'></div>
 <select class='form-control' name='id_form_campo' id='id_form_campo' onchange=\"xajax_agregar_campos('grabar_campos','$div',this.value,'$id')\">";
 $resultado .= "<option value=''> Agregar campo a $nombre  </option>";
@@ -1340,9 +1303,7 @@ $resultado .= "<option value=''> Agregar campo a $nombre  </option>";
 $resultado .= "<option value='$row[id]' title='$row[campo_descripcion]'>$row[campo_nombre]</option>";
 																											}
 $resultado .="</select> <hr>";	
-												//				}											
-														
-										//	}
+
 											}/// fin de consultar_campos
 											
 if($tipo=='grabar_campos'){
@@ -1394,8 +1355,7 @@ $sql_consulta_eliminar = mysql_query($consulta,$link);
 $div=func_get_arg(5);
 $id_consulta=func_get_arg(4);
 $respuesta->addScript("xajax_agregar_campos('consultar_campos','$div','$id_consulta')");
-//return $respuesta;
-//$resultado = $consulta;
+
 						}
 			}
 
@@ -1413,7 +1373,6 @@ return $respuesta;
 								
 									}/// fin de obligatorio												
 if($tipo == 'orden'){ /// orden
-//if($id == '0'){$id='1';}else{$id='0';}
 $control = func_get_arg(3); 
 $consulta= "UPDATE `form_contenido_campos` SET `orden` = '$id' WHERE `control` = '$control' LIMIT 1 "; 
 $sql_consulta_grabar =mysql_query($consulta,$link);
@@ -1503,7 +1462,7 @@ VALUES ('$nombre', '$descripcion', '1', '1', '$publico', '$propietario','$formul
 $sql=mysql_query($consulta,$link);
 
 $respuesta->addalert("El formularo se grabó satisfactoriamente");
-//$respuesta->addScript("xajax_formulario_listado('','$div')");
+
 }
 $respuesta->addAssign($div,"innerHTML",$resultado);
 
@@ -1530,7 +1489,7 @@ $sql=mysql_query($consulta,$link);
 $divider = 3;
 if (mysql_num_rows($sql)!='0' ){
 	$i =0;
-	//mysql_data_seek($sql, 0);
+
 		while( $row = mysql_fetch_array( $sql ) ) {
 			$id= $row[id];
 		$cantidad =	formulario_contar($row[id]);
@@ -1551,8 +1510,6 @@ if (mysql_num_rows($sql)!='0' ){
 		if($primer[0] !='') {$primer = "<tr><td>Primer registro: <a onclick=\"xajax_formulario_modal('$id','','$primer[1]'); \"><b>".date ( "Y-m-d h:i:s" , $primer[0])."</b></a></td></tr>";}else{$primer='';}
 		$ultimo = 	formulario_uso("$id",'','ultimo') ;
 		if($ultimo[0] !='') {$ultimo = "<tr><td>Último registro: <a onclick=\"xajax_formulario_modal('$id','','$ultimo[1]'); \"><b>".date ( "Y-m-d h:i:s" , $ultimo[0])."</b></a></td></tr>";}else{$ultimo='';}
-		//<a onclick=\"xajax_formulario_modal('1','','5ab6173143303cfa10a7ce5b5dc40427'); \">Contacto</a>
-		//$estado = editar_campo("form_id","$row[id]","publico","");
 		
 		$nombre = editar_campo("form_id","$row[id]","nombre","");
 		$descripcion = editar_campo("form_id","$row[id]","descripcion","");
@@ -1591,7 +1548,7 @@ $resultado .=  "<div class='col-sm-4' style=';'>
 						</div>
 					</div> ";
 
-//$resultado .=  " x $item y";
+
 	if($i%$divider==0) {
 			$resultado .= "
 			
@@ -1622,11 +1579,7 @@ $consulta ="
 	mysql_query("SET NAMES 'utf8'");
 	$sql=mysql_query($consulta,$link);
 	if (mysql_num_rows($sql)!='0'){
-		/*
-		<input value="" type="email" id="email_express" name="email_express" placeholder="Email" class="form-control" onclick="(this.value=''); " onchange="xajax_validar_usuario('email',(this.value),'email_express','login'); ">
-		<i class='fa fa-envelope-o'></i>
-		<div class='badge' title='$campo_descripcion'> $id_campo</div> 
-		*/
+
 		$value = 	remplacetas('form_datos','id_campo',$id_campo,'contenido'," control = '$control'") ;
 		if($value[0] !='') {$value= "$value[0]";}ELSE{$value='';}
 		$campo_nombre=mysql_result($sql,0,"campo_nombre");
@@ -1741,11 +1694,7 @@ foreach($formulario as $c=>$v){
 				INSERT INTO `form_datos` (`id`, `id_campo`,`form_id`, `id_usuario`, `contenido`, `timestamp`, `control`, ip , id_empresa) 
 										VALUES (NULL, '$c', '$formulario[form_id]', '$_SESSION[id]', '$v', UNIX_TIMESTAMP(), '$formulario[control]',$graba_ip,'$id_empresa');"; 
 			$sql=mysql_query($consulta,$link);
-			//	$respuesta->addAlert("$consulta");		return $respuesta;
-	/*if($sql) {
-
 	
-	}	*/		
 			
 			}
  								
@@ -1856,7 +1805,7 @@ return $respuesta;
 
 
 }
-//else {$respuesta =" $id , $respuesta ,$control"; return $respuesta;}
+
 
 $consulta = "
 		SELECT * FROM  form_id, form_contenido_campos 
@@ -1951,10 +1900,8 @@ function Conectarse(){
 }
 
 function limpia_div($capa){
-//creo el xajaxResponse para generar una salida
 $respuesta = new xajaxResponse('utf-8');
 $respuesta->addAssign($capa,"style.padding","0px");
-//$respuesta->addAssign($capa,"innerHTML",'');
 $respuesta->addClear($capa,"innerHTML");
 
 return $respuesta;
@@ -1981,9 +1928,7 @@ $resultado=" <SELECT class='form-control' NAME='$name' id='$name' onchange=\"$on
 <option value=''>Seleccione </option>
 				" ;
 while( $row = mysql_fetch_array( $sql ) ) {
-	/*if($row[$value] =='0'){$selected = "selected";}
-	elseif($row[$value] =='1'){$selected = "selected";}
-	else {$selected =="";}*/
+
 $resultado .= "<option value='$row[$value]' $selected > ".substr($row[$campo1], 0, 150 )." ".substr($row[$campo2], 0, 30 )."  </option>";
 															}
 $resultado .= "</select>";
@@ -2205,25 +2150,6 @@ if (!empty($_SERVER['HTTP_CLIENT_IP']))
 		return $_SERVER['HTTP_X_FORWARDED_FOR'];
 	
 	return $_SERVER['REMOTE_ADDR'];
-/*
-    if (isset($_SERVER)) {
 
-        if (isset($_SERVER["HTTP_X_FORWARDED_FOR"]))
-            return $_SERVER["HTTP_X_FORWARDED_FOR"];
-        
-        if (isset($_SERVER["HTTP_CLIENT_IP"]))
-            return $_SERVER["HTTP_CLIENT_IP"];
-
-        return $_SERVER["REMOTE_ADDR"];
-    }
-
-    if (getenv('HTTP_X_FORWARDED_FOR'))
-        return getenv('HTTP_X_FORWARDED_FOR');
-
-    if (getenv('HTTP_CLIENT_IP'))
-        return getenv('HTTP_CLIENT_IP');
-
-    return getenv('REMOTE_ADDR');
-    */
 }
 ?>
