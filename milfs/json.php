@@ -18,8 +18,8 @@ $link=Conectarse();
 
 
 	
-	$consulta = "	SELECT  contenido as data, control,form_datos.form_id as id, timestamp
-					FROM form_datos, form_campos 
+	$consulta = "	SELECT  distinct(contenido) as data, control,form_datos.form_id as id, timestamp
+					FROM form_datos
 					WHERE form_datos.id_campo = '$id_campo' 
 					AND form_id = '$id'
 					";
@@ -37,7 +37,7 @@ while( $row = mysql_fetch_array( $sql ) ) {
 	$marcador = array();
 	$propiedades = array();
 		//$marcador["id"] = $id;
-		$titulo = remplacetas("form_datos","control","$row[control]","contenido","id_campo ='28' AND timestamp ='$row[timestamp]'");
+		//$titulo = remplacetas("form_datos","control","$row[control]","contenido","id_campo ='28' AND timestamp ='$row[timestamp]'");
 		//$marcador["id"] = $id;
 		$campos = explode(" ",$row[data]);
 														$lat = $campos[0];
