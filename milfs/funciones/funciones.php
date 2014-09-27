@@ -143,8 +143,7 @@ return;
 						
 					</div>
 				</div>
-				
-
+			
 					";
 
 	$respuesta->addAssign($div,"innerHTML",$resultado);
@@ -374,7 +373,7 @@ function subir_imagen($respuesta){
 
 $javascript="includes/upload.php";
 $resultado .="
-<form method='post' class='form' enctype='multipart/form-data'
+<form method='post' class='' enctype='multipart/form-data'
 action=  $javascript 
 target='iframeUpload' class='form-horizontal'>
 <input class='form-control'  name='fileUpload' type='file' onchange=\"submit()\" />
@@ -480,39 +479,29 @@ $respuesta = new xajaxResponse('utf-8');
 	mysql_query("SET NAMES 'utf8'");
 
  $resultado .= "Importando formulario <b>$perfil_nombre</b> ($perfil)
-  <table class='table table-bordered table-striped'>";
+ <table class='table table-bordered table-striped'>";
 	$nombre = "tmp/$filename";
 	if($accion == "grabar") {
 
 	}
 	if (($handle = fopen($nombre, 'r')) !== FALSE)
     { 
+    
+while (($datos = fgetcsv($handle,0,"|")) !== FALSE) {
+        $numero = count($datos);
+if($fila >=1) {
+       
+        $resultado .= "<tr>";
+        $numero_columna = 0;
+        for ($c=0; $c < $numero; $c++) {
+        	$columna = $datos[$c];
 
-    while (($data = fgetcsv($handle, 1000, ';',$enclosure = '"' )) !== FALSE)
-    { 
-if ($fila >=1)
-    { 
-$numero = count($data);
-for ($c=0; $c < $numero; $c++) {   } 
-
-foreach($data as $row) {
-$control=md5($perfil.$fila.time()); 
-$ip =  obtener_ip();
-
-      $valores = explode( '|', $row );
-      $resultado .= "<tr>";
-      $numero_columna = 0;
-      $grabar = "";
-      $consulta="";
-      $consulta_campos = "";
-      foreach ($valores as $columna){
-      	      $grabar = "";
-
-$resultado .= "<td >$columna </td>"; // Muestra todos los campos de la fila actual 
+            
 if($columna !=""){
 
 	if($accion === "grabar"){
-
+$control=md5($perfil.$fila.time()); 
+$ip =  obtener_ip();
 		$graba_ip = " ip = INET_ATON('".$ip."') ";
 $consulta_campos = "INSERT INTO form_datos SET timestamp= '".time()."', id_usuario='$_SESSION[id]',id_empresa='$_SESSION[id_empresa]',form_id ='$perfil',
 $graba_ip ,
@@ -520,62 +509,51 @@ control = '$control', $consulta id_campo = '$campo[$numero_columna]' , contenido
 		  	$verificar_campo =   	formulario_verificar_campo($perfil,$campo[$numero_columna]);
   			if($verificar_campo == NULL){}else{
   				$sql = mysql_query($consulta_campos,$link);
+  			if($sql) {
+  				 $class='success';
+  			$sql_resultado = "<i class='fa fa-check-square-o'></i>";
+  			
+  			
+  			}
+  			else {
+  			$class='danger';
+  			}
+
+
   				}
 	
 									}
 
-$sql_arreglo[timestamp] = time();
-$sql_arreglo[id_empresa] = $_SESSION[id_empresa];
-$sql_arreglo[id_especialista] = $_SESSION[id_usuario];
-$sql_arreglo[id_campo] = $campo[$numero_columna];
-$sql_arreglo[contenido]  = $columna;
-
-
-
 					
-}
+}            
+			            $resultado .= "<td  >$columna  $sql_resultado </td>";
+            
+            $numero_columna ++;
+        }
+        $resultado .= "<tr>";
+		     }
+		     else {
+    $resultado .= "<thead><tr>";
 
-$numero_columna ++;
-
-}
-
-
-if($accion ==="grabar"){
-
-
-
-	$muestra_consulta = "Grabado";
-		$respuesta->addAssign("aviso_archivo","innerHTML",$resultado);
-	$respuesta->addScript("xajax_formulario_importar()");
-
-
-	}else{$muestra_consulta ="";}
-      $resultado .= "<td><!-- $grabar --> $error $muestra_consulta </td></tr>";
-
-}
-
-    } else{
-
-      $titulos = explode( '|', $data[0] );
-      $resultado .= "<tr>";
-      $posicion = 0;
-      foreach($titulos as $titulo){
-      	$campo[$posicion] = $titulo;
-
-  			if($titulo == "usuario" or $titulo == "turno" or $titulo == "110" or $titulo == "perfil"){$verificar_campo ="";}else{
-  			$verificar_campo =   	formulario_verificar_campo($perfil,$titulo);
+              $posicion = 0;
+        for ($c=0; $c < $numero; $c++) {
+        	$titulo = $datos[$c] ;
+        $verificar_campo =   	formulario_verificar_campo($perfil,$titulo);
   			if($verificar_campo == NULL){$verificar_campo ="<i class='fa fa-frown-o'></i>"; $class='danger';}
   			else{$verificar_campo ="<i class='fa fa-check-square-o'></i>"; $class='success';}
-  		}
-  			$verificar_campo = $verificar_campo;
-$resultado .= "<th class='$class' >$titulo $verificar_campo</th>"; // Muestra todos los campos de la fila actual 
-$posicion ++;
-}
-      $resultado .= "</tr>";
+        	$campo[$posicion] = $datos[$c];
+            $resultado .= "<th class='$class'>$verificar_campo $titulo</th>";
+            $posicion ++;
+            
+        }
 
+  		
+    $resultado .= "<tr></thead>";
     }
-$fila++;
-      } 
+		      $fila++;
+    }
+        
+    
                 $resultado .= "</table> $fila ";
      } 
 
@@ -1570,7 +1548,35 @@ $respuesta->addAssign($div,"innerHTML",$resultado);
 return $respuesta;
 }$xajax->registerFunction("formulario_listado");
 
-function formulario_campos_render($id_campo,$id_form,$control){
+
+function campo_multiple($id_campo,$id_form,$control,$item){
+//if ( !isset ( $_SESSION['id'] ) ) {	return;}
+	
+ if($item==''){$item=1;}
+	$id= $item;
+$render = formulario_campos_render($id_campo,$id_form,$control,$item+1);
+	$ingredientes = "
+<div id='ingrediente_linea_$id' style='display:inline'> 
+ $render
+</div>
+
+	
+
+	";
+	$boton= "		<div style='display:inline' class='btn btn-link'  onclick=\"xajax_campo_multiple('$id_campo','$id_form','$control','".($item+1)."') \">
+		<i class='fa fa-plus-circle'></i> Agregar campo
+		</div>";
+$div = "id_campo_$id_campo"."_".$id;
+$respuesta = new xajaxResponse('utf-8');
+$respuesta->addAssign($div,"innerHTML",$ingredientes);
+$respuesta->addAssign("boton_".$id_campo."","innerHTML","$boton ");
+return $respuesta;
+					
+}
+$xajax->registerFunction("campo_multiple");
+
+
+function formulario_campos_render($id_campo,$id_form,$control,$item){
 
 $consulta ="
 	SELECT * 
@@ -1583,16 +1589,16 @@ $consulta ="
 	mysql_query("SET NAMES 'utf8'");
 	$sql=mysql_query($consulta,$link);
 	if (mysql_num_rows($sql)!='0'){
-
+		if($item=='') {$item ="0";}else {$item=$item;}	
 		$value = 	remplacetas('form_datos','id_campo',$id_campo,'contenido'," control = '$control'") ;
 		if($value[0] !='') {$value= "$value[0]";}ELSE{$value='';}
 		$campo_nombre=mysql_result($sql,0,"campo_nombre");
 		$campo_descripcion=mysql_result($sql,0,"campo_descripcion");
 		$campo_tipo_accion=mysql_result($sql,0,"tipo_campo_accion");
-		if($campo_tipo_accion == 'text'){$render = "<input value='$value' type='text' id='$id_campo' name='$id_campo' class='form-control' placeholder='$campo_descripcion' > ";}
-		elseif($campo_tipo_accion == 'date'){$render = "<input value='$value' type='date' id='$id_campo' name='$id_campo' class='form-control' placeholder='$campo_descripcion' > ";}
+		if($campo_tipo_accion == 'text'){$render = "<input value='$value' type='text' id='".$id_campo."[".$item."]' name='".$id_campo."[".$item."]' class='form-control' placeholder='$campo_descripcion' > ";}
+		elseif($campo_tipo_accion == 'date'){$render = "<input value='$value' type='date' id='".$id_campo."[".$item."]' name='".$id_campo."[".$item."]' class='form-control' placeholder='$campo_descripcion' > ";}
 		elseif($campo_tipo_accion == 'rango'){
-					$rango = rango("form_campos_valores","campo_valor","id_form_campo","$id_campo","$value","$id_campo",""); $render = $rango;}		
+					$rango = rango("form_campos_valores","campo_valor","id_form_campo","$id_campo","$value","".$id_campo."[".$item."]",""); $render = $rango;}		
 		elseif($campo_tipo_accion == 'mapa'){
 			$campos = explode(" ",$value);
 														$lat = $campos[0];
@@ -1600,21 +1606,22 @@ $consulta ="
 														$zoom = $campos[2];	
 									$render = "
 																		
-																		<iframe src='mapa.php?id=$id_campo&lat=$lat&lon=$lon&zoom=$zoom' width='100%' height='300px'></iframe>
-																		<input value='$value' type='text' id='$id_campo' name='$id_campo' class='form-control' placeholder='coordenadas' readonly >
+																		<iframe src='mapa.php?lat=$lat&lon=$lon&zoom=$zoom&id=".$id_campo."[".$item."]' width='100%' height='300px'></iframe>
+																		<input value='$value' type='text' id='".$id_campo."[".$item."]' name='".$id_campo."[".$item."]' class='form-control' placeholder='coordenadas' readonly >
 																		
 																				 ";}
 		elseif($campo_tipo_accion == 'email'){$render = "<code>Escriba un email válido</code>
-																			<input value='$value' type='email' id='$id_campo' name='$id_campo' class='form-control' placeholder='$campo_descripcion' > ";}
+																			<input value='$value' type='email' id='".$id_campo."[".$item."]' name='".$id_campo."[".$item."]' class='form-control' placeholder='$campo_descripcion' > ";}
 		elseif($campo_tipo_accion == 'envio'){$render = "<code>Se enviará un correo electrónico a este email</code>
-																			<input value='$value' type='email' id='$id_campo' name='$id_campo' class='form-control' placeholder='$campo_descripcion' > ";}
-		elseif($campo_tipo_accion == 'textarea'){$render = "<textarea id='$id_campo' name='$id_campo' class='form-control' placeholder='$campo_descripcion' >$value</textarea> ";}
+																			<input value='$value' type='email' id='".$id_campo."[".$item."]' name='".$id_campo."[".$item."]' class='form-control' placeholder='$campo_descripcion' > ";}
+		elseif($campo_tipo_accion == 'textarea'){$render = "<textarea id='".$id_campo."[".$item."]' name='".$id_campo."[".$item."]' class='form-control' placeholder='$campo_descripcion' >$value</textarea> ";}
 		elseif($campo_tipo_accion == 'limit'){
-			$limite = limite("$id_campo",'');
+			$limite = limite("".$id_campo."[".$item."]",'');
 			$rows = ceil($limite / 50 )+1; 
 			$render = "$limite /
 					
-			<span id='aviso_$id_campo' class='alert-info'></span>  <textarea onkeyup= \"xajax_limite('$id_campo',(this.value));\" cols='50' rows='$rows' id='$id_campo' name='$id_campo' class='form-control' placeholder='$campo_descripcion' >$value</textarea> 
+			<span id='aviso_".$id_campo."[".$item."]' class='alert-info'></span> 
+				<textarea onkeyup= \"xajax_limite('".$id_campo."[".$item."]',(this.value));\" cols='50' rows='$rows' id='".$id_campo."[".$item."]' name='".$id_campo."[".$item."]' class='form-control' placeholder='$campo_descripcion' >$value</textarea> 
 			";
 			
 				}
@@ -1623,17 +1630,33 @@ $consulta ="
 			$select = select('form_campos_valores','campo_valor','campo_valor','',"id_form_campo = $id_campo","$id_campo");
 			$render = "$select ";}
 		elseif($campo_tipo_accion == 'number'){$render = "<code>(Este campo solo acepta números)</code>
-															<input value='$value' type='number' id='$id_campo' name='$id_campo' class=' has-warning form-control' placeholder='$campo_descripcion' > ";}
-		else{$render = "<input value='$value' type='text' id='$id_campo' name='$id_campo' class='form-control' placeholder='$campo_descripcion' > ";}
-		$input = "
-		<div class='input-group' id='input_$id_campo' >
-			<div class='badge'>$id_campo</div><label class=' ' for='$id_campo'>  $campo_nombre </label>
+															<input value='$value' type='number' id='".$id_campo."[".$item."]' name='".$id_campo."[".$item."]' class=' has-warning form-control' placeholder='$campo_descripcion' > ";}
+		else{$render = "<input value='$value' type='text' id='".$id_campo."[".$item."]' name='".$id_campo."[".$item."]' class='form-control' placeholder='$campo_descripcion' > ";}
 			
-$render 
-			
+		$campo_multiple  = "
+	<div id='id_campo_$id_campo"."_".$item."'>
+		<div id='boton_$id_campo' style='display:inline'>
+			<div class='btn btn-primary btn-link'  onclick=\"xajax_campo_multiple('$id_campo','$id_form','$control','$item') \" >
+			<i class='fa fa-plus-circle'></i> Agregar campo
+			</div>
 		</div>
-
+	</div>
+	";
+	if($item == 0) { $label = "<label class='control-label ' for='$id_campo"."_".$item."'> $id_campo $campo_nombre </label>";}
+				else {$label = "<label class=' sr-only' for='$id_campo"."_".$item."'>$campo_nombre</label>";}
+		$input = "
+		<div class='form-group' id='input_".$id_campo."[".$item."]' >
+			$label
+			<!-- <div class='input-group' id='input_".$id_campo."[".$item."]' > -->
+			<div class='col-lg-12'>
+			$render 
+			</div>
+			<!-- </div> -->
+		</div>
+$campo_multiple
 		";
+		
+
 	}
 	return $input;
 }
@@ -1650,10 +1673,12 @@ if (preg_match('/^[^0-9][a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[@][a-zA-Z0-9_]+([.][a-z
 function formulario_grabar($formulario) {
 	$respuesta = new xajaxResponse('utf-8');
 	$formulario	= mysql_seguridad($formulario);
+	$consulta_grabada ='0';
 	$control = $formulario[control]; // 
 	$form_id = $formulario[form_id]; // 
 	if($formulario[imagen] !=''){$formulario[0] = $formulario[imagen];}
-	$consulta_form = "SELECT * FROM form_contenido_campos,form_campos
+	
+		$consulta_form = "SELECT * FROM form_contenido_campos,form_campos
 							WHERE form_contenido_campos.id_campo = form_campos.id 
 							AND  id_form = '$form_id' ";
 	$link=Conectarse(); 
@@ -1661,68 +1686,109 @@ function formulario_grabar($formulario) {
 	$sql=mysql_query($consulta_form,$link);
 
 	if (mysql_num_rows($sql)!='0'){
-		while( $row = mysql_fetch_array( $sql ) ) {
-$id_campo = "$row[id_campo]";
- 
-			if($row[campo_tipo] ==='12' OR $row[campo_tipo] ==='13') { 
-						 
-			$validar = validar_email($formulario[$row[id_campo]]);
-				if($validar == '0') {  
+					mysql_data_seek($sql, 0);
+			while( $row = mysql_fetch_array( $sql ) ) {
 				
-	$respuesta->addAssign("input_"."$id_campo","className"," input-group has-error  ");	
-	$respuesta->addAlert("Se necesita un email válido ");	
-	return $respuesta;			
-				}else {
-	$respuesta->addAssign("input_"."$id_campo","className"," input-group has-success ");															
-				}			
-			 }
-			if($row[campo_tipo] =='17') {
-			$limite = limite("$id_campo",'');
-			$size= strlen($formulario[$row[id_campo]]);
-			$restante = ($limite - $size);
-			if( $restante < 0) {
-			
-	$respuesta->addAssign("input_"."$id_campo","className"," input-group has-error  ");	
-	$respuesta->addAlert("ATENCION: El campo $row[campo_nombre] no debe tener mas de $limite caractéres $restante");
-	return $respuesta;
-									}
-												}
-			if($row[obligatorio] ==='1') 
-			{
-				if( $formulario[$id_campo] =='') {
-				$obligatorio++;
-				$respuesta->addAssign("input_"."$id_campo","className"," input-group has-error  ");
-															}else {
-			$respuesta->addAssign("input_"."$id_campo","className"," input-group has-success ");															
-															}
-			}else {//$obligatorio .='';
-			$respuesta->addAssign("input_"."$id_campo","className"," input-group has-success  ");
-			}
-			$campos_esperados .= "<li>$row[id_campo] / $row[obligatorio] / $formulario[$id_campo] /$obligatorio </li>";
-																}
-											}
-			if($obligatorio !='' ) {
-								$resultado .= " <div class='alert alert-danger'><i class='fa fa-exclamation-triangle'></i>( $validar ) Algunos campos obligatorios no se han llenado</div>";
-				}else{
+
+//////
 					if(isset ( $_SESSION[id_empresa])){$id_empresa = $_SESSION[id_empresa]; }else{ 
 			$id_empresa = 	remplacetas('form_id','id',$formulario[form_id],'id_empresa',"") ;
 			$id_empresa = $id_empresa[0];					
 					}
 foreach($formulario as $c=>$v){ 
 
+				
+//LISTA ELEMENTOS DE UN ARRAY
+if (is_array($v) ){
+	foreach($v as $C=>$V){
+				$campo_tipo =  remplacetas("form_campos","id",$c,"campo_tipo","");
+				$campo_nombre =  remplacetas("form_campos","id",$c,"campo_nombre","");
+			if($V != '') {
+								
 
-			if(($v !='') && (is_numeric($c)) ) {
-				$ip =  obtener_ip();
+				
+$datos .= "<p>$$c =  \$formulario['$c'][$C]; // <b>$V</b>  /$campo_tipo[0] </p>";
+		if($campo_tipo[0] =='12' OR $campo_tipo[0] =='13') { 
+	$validar = validar_email($V);
+					if($validar == '0') {  		
+	$respuesta->addAssign("input_".$c."[".$C."]","className"," form-group has-error  ");
+	$respuesta->addScript("document.getElementById('".$c."[".$C."]').focus(); ");	
+	$respuesta->addAlert("Se necesita un email válido");	
+	return $respuesta;			
+				}else {
+	$respuesta->addAssign("input_".$c."[".$C."]","className"," form-group has-success ");															
+				}			
+																					 }
+		if($campo_tipo[0] =='3' ) { 
+	$validar = is_numeric($V);
+					if($validar == '0') {  		
+	$respuesta->addAssign("input_".$c."[".$C."]","className"," form-group has-error  ");
+	$respuesta->addScript("document.getElementById('".$c."[".$C."]').focus(); ");	
+	$respuesta->addAlert("El campo $campo_nombre[0] solo acepta valores numéricos");	
+	return $respuesta;			
+				}else {
+	$respuesta->addAssign("input_".$c."[".$C."]","className"," form-group has-success ");	
+		return $respuesta;														
+				}			
+																					 }
+																					 																					 
+			if($campo_tipo[0]=='17') {
+			$limite = limite("$c",'');
+			$size= strlen($V);
+			$restante = ($limite - $size);
+			if( $restante < 0) {
+			
+	$respuesta->addAssign("input_".$c."[".$C."]","className"," form-group has-error  ");	
+	$respuesta->addAlert("ATENCION: El campo $campo_nombre[0] no debe tener mas de $limite caractéres, sobran $restante");
+	$respuesta->addScript("document.getElementById('".$c."[".$C."]').focus(); ");	
+	return $respuesta;
+									}
+												}
+																																 
+						
+
+								}
+else{ //busca campos vacios
+$campo_obligatorio =  remplacetas("form_contenido_campos","id_campo",$c,"obligatorio","id_form = '$formulario[form_id]'");
+if($campo_obligatorio[0] =='1'){
+
+	$respuesta->addAssign("input_".$c."[".$C."]","className"," form-group has-error  ");	
+	$respuesta->addAlert("ATENCION: El campo $campo_nombre[0] es obligatorio");
+	$respuesta->addScript("document.getElementById('".$c."[".$C."]').focus(); ");
+	return $respuesta;
+											}
+}								
+								  
+								
+if(($V !='') && (is_numeric($c)) ) {					
+$ip =  obtener_ip();
 				$graba_ip = "INET_ATON('".$ip."') ";
 				$consulta ="
 				INSERT INTO `form_datos` (`id`, `id_campo`,`form_id`, `id_usuario`, `contenido`, `timestamp`, `control`, ip , id_empresa) 
-										VALUES (NULL, '$c', '$formulario[form_id]', '$_SESSION[id]', '$v', UNIX_TIMESTAMP(), '$formulario[control]',$graba_ip,'$id_empresa');"; 
-			$sql=mysql_query($consulta,$link);
-	
-			
-			}
- 								
+										VALUES (NULL, '$c', '$formulario[form_id]', '$_SESSION[id]', '$V', UNIX_TIMESTAMP(), '$formulario[control]',$graba_ip,'$id_empresa');";
+										
+				$sql=mysql_query($consulta,$link);
+				if($sql) { 
+		$consulta_grabada ='1';
+				}
+										 }
+								}		
+										
+						} else {
+			if($v !='') {$datos .= "<p>$$c = \$formulario['$c']; // <b>$v</b> </p>";}
+ 								}
 										}
+										
+										
+//$respuesta->addAssign("respuesta_$control","innerHTML","$consulta");
+///return $respuesta;
+
+																}
+											}
+
+
+if($consulta_grabada =='1') {
+										
 		$exito ="
 	<div class='alert alert-success'><h2><i class='fa fa-check-square-o'></i>
 		 Gracias por llenar el formulario $formulario[form_nombre] </h2>
@@ -1773,10 +1839,9 @@ $cuerpo ="
 			//$exito .= "$email[0] $headers ";
 		$respuesta->addAssign("div_$control","innerHTML","$exito ");
 		return $respuesta;														
-				}
-
-$respuesta->addAssign("respuesta_$control","innerHTML","$resultado");
-return $respuesta;
+		}
+//$respuesta->addAssign("respuesta_$control","innerHTML","$resultado");
+//return $respuesta;
 }
 $xajax->registerFunction("formulario_grabar");
 
@@ -1866,9 +1931,9 @@ if (mysql_num_rows($sql)!='0'){
 </div>";
 $subir_imagen = subir_imagen('');	
 	$muestra_form = "
-	<div id ='div_$control'>
+	<div id ='div_$control' style='' >
 	$subir_imagen 
-		<form role='form' id='$control'  name='$control' class=''  >
+		<form role='form' id='$control'  name='$control' class='form-horizontal'   >
 			<input type='hidden' id='control' name='control' value='$control'>
 			<input type='hidden'  id= 'form_id'  name= 'form_id' value='$id' >
 			<input type='hidden'  id= 'form_nombre'  name= 'form_nombre' value='$nombre' >
@@ -1880,8 +1945,15 @@ $subir_imagen = subir_imagen('');
 		$campos = formulario_campos_render($row[id_campo],$id,$control);
 	$muestra_form .= "$campos ";
 															}
-	$muestra_form .="<br><div id='respuesta_$control' name='respuesta_$control' ></div>
-						<div onclick=\" xajax_formulario_grabar(xajax.getFormValues('$control'));\"  class='btn btn-block btn-danger'>Grabar</div>
+	$muestra_form .="<br><div class='row' id='respuesta_$control' name='respuesta_$control' ></div>
+	<div class='row'>
+		<div class='col-xs-6'>
+						<div onclick=\" xajax_formulario_grabar(xajax.getFormValues('$control'));\"  class='btn btn-block btn-success'>Grabar</div>
+		</div>
+		<div class='col-xs-6'>
+						<div onclick=\" xajax_limpia_div('muestra_form');xajax_limpia_div('titulo_modal'); \" data-dismiss='modal' class='btn btn-block btn-danger'>Cancelar</div>
+		</div>
+	</div>
 							";
 										}
 
@@ -2000,16 +2072,17 @@ if($contenido !='') {
 	$respuesta = new xajaxResponse('utf-8');
 			$size= strlen($contenido);
 			$restante = ($limite - $size);
+			$div_input = "input_$id_campo";
 			if( $restante<=1) {
 $respuesta->addAssign("aviso_$id_campo","className","alert-danger ");	
-$respuesta->addAssign("input_$id_campo","className","has-error ");			
+$respuesta->addAssign("$div_input","className","has-error ");			
 			}
 			elseif( $restante<=10) {
 $respuesta->addAssign("aviso_$id_campo","className","alert-warning ");	
-$respuesta->addAssign("input_$id_campo","className","has-warning ");		
+$respuesta->addAssign("$div_input","className","has-warning ");		
 			}else{
 $respuesta->addAssign("aviso_$id_campo","className","alert-succes  ");	
-$respuesta->addAssign("input_$id_campo","className","has-success ");	
+$respuesta->addAssign("$div_input","className","has-success ");	
 }		
 			$respuesta->addAssign("aviso_$id_campo","innerHTML","$restante");
 			
