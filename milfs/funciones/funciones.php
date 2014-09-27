@@ -1231,7 +1231,7 @@ $resultado = "<div class='alert alert-warning'><i class='fa fa-exclamation-trian
 if ($tipo=='consultar_campos'){
  $consulta="
  SELECT form_contenido_campos.id_campo,
-	campo_nombre, obligatorio,control,prellenado,form_contenido_campos.orden 
+	campo_nombre, obligatorio,control,multiple,form_contenido_campos.orden 
  FROM form_contenido_campos, form_campos 
  WHERE form_campos.id_empresa = '$_SESSION[id_empresa]'  AND form_contenido_campos.id_form = $id 
  AND form_contenido_campos.id_campo = form_campos.id 
@@ -1595,6 +1595,7 @@ $consulta ="
 		$campo_nombre=mysql_result($sql,0,"campo_nombre");
 		$campo_descripcion=mysql_result($sql,0,"campo_descripcion");
 		$campo_tipo_accion=mysql_result($sql,0,"tipo_campo_accion");
+		$multiple=mysql_result($sql,0,"multiple");
 		if($campo_tipo_accion == 'text'){$render = "<input value='$value' type='text' id='".$id_campo."[".$item."]' name='".$id_campo."[".$item."]' class='form-control' placeholder='$campo_descripcion' > ";}
 		elseif($campo_tipo_accion == 'date'){$render = "<input value='$value' type='date' id='".$id_campo."[".$item."]' name='".$id_campo."[".$item."]' class='form-control' placeholder='$campo_descripcion' > ";}
 		elseif($campo_tipo_accion == 'rango'){
@@ -1632,7 +1633,7 @@ $consulta ="
 		elseif($campo_tipo_accion == 'number'){$render = "<code>(Este campo solo acepta números)</code>
 															<input value='$value' type='number' id='".$id_campo."[".$item."]' name='".$id_campo."[".$item."]' class=' has-warning form-control' placeholder='$campo_descripcion' > ";}
 		else{$render = "<input value='$value' type='text' id='".$id_campo."[".$item."]' name='".$id_campo."[".$item."]' class='form-control' placeholder='$campo_descripcion' > ";}
-			
+		if($multiple =='1'){		
 		$campo_multiple  = "
 	<div id='id_campo_$id_campo"."_".$item."'>
 		<div id='boton_$id_campo' style='display:inline'>
@@ -1642,6 +1643,7 @@ $consulta ="
 		</div>
 	</div>
 	";
+}
 	if($item == 0) { $label = "<label class='control-label ' for='$id_campo"."_".$item."'> $id_campo $campo_nombre </label>";}
 				else {$label = "<label class=' sr-only' for='$id_campo"."_".$item."'>$campo_nombre</label>";}
 		$input = "
