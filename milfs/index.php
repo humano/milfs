@@ -50,7 +50,8 @@ $xajax->processRequests();
 		//$onload = "onload = \"$('#muestraInfo').modal('toggle')\"";    	
 		//setcookie("aviso","presentacion",time()+60*60*24);
 					//	}
-					if($_REQUEST[id] !='' OR $_REQUEST[c]){$onload ="<script type=\"text/javascript\"> xajax_formulario_modal('$_REQUEST[id]','$_REQUEST[t]','$_REQUEST[c]')</script>";}
+					//($id,$form_respuesta,$control,$tipo)
+					if($_REQUEST[id] !='' OR $_REQUEST[c]){$onload ="<script type=\"text/javascript\"> xajax_formulario_modal('$_REQUEST[id]','','$_REQUEST[c]','$_REQUEST[t]')</script>";}
 ?>
 </head>
 <body  >
@@ -64,7 +65,7 @@ form_publico("$_REQUEST[f]");
     <!-- Brand and toggle get grouped for better mobile display -->
     <div class="navbar-header">
       <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-        <span class="sr-only">Menu</span>
+        <span class="sr-only">MILFS</span>
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
@@ -72,26 +73,7 @@ form_publico("$_REQUEST[f]");
       <a class="navbar-brand" href="#"><img src="favicon-152.png" style="width:60px" alt="MILFS" title="Multi Interactive Light Form System"></a>
     </div>
 
-    <!-- Collect the nav links, forms, and other content for toggling -->
-    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-      <ul class="nav navbar-nav">
-        <li><?php formulario_crear_campo('','','');  ?></li>
-        
-        <li><?php formulario_listado('','');  ?></li>
-        <li><?php formulario_consultar('',''); ?></li>
-        <li><?php formulario_importador(''); ?></li>
-        <li id='borra_tmp'><?php borrar_tmp(''); ?></li>
-         <li><a  href="#"  data-target='#muestraInfo'  data-toggle='modal'><i class="fa fa-smile-o "></i> Presentación</a></li>
-         <li ><?php configuracion(''); ?></li>
-        
-      </ul>
-       <ul class="nav navbar-nav navbar-right">
-       
-      <?php login_boton(); ?>
-      
-		</ul>
-
-    </div><!-- /.navbar-collapse -->
+<?php  echo milfs() ?>
   </div><!-- /.container-fluid -->
 </div>
 <?php }else{ } ?>

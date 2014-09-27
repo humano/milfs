@@ -74,8 +74,8 @@ function configuracion($accion) {
 	$div='contenido';
 if($accion =='') {
 $link ="<a title='Configuración' href='#' onclick=\"xajax_configuracion('mostrar') \"><i class='fa fa-cogs'></i></a>";
-print $link;
-return;
+
+return $link;
 }elseif($accion=='mostrar') {
 	$respuesta = new xajaxResponse('utf-8');
 	$resultado ="<h1><i class='fa fa-cogs'></i> Configuración</h1>";
@@ -304,8 +304,57 @@ return $respuesta;
 $xajax->registerFunction("editar_campo");
 
 
+function formulario_imprimir($id,$control) {
+	$id = mysql_seguridad($id);
+	if($id !='') {$w_id = "AND form_id = '$id'";}
+	$control = mysql_seguridad($control);
+	$consulta = "SELECT *
+						FROM form_contenido_campos 
+						WHERE form_contenido_campos.id_form = '$id'
+						ORDER BY form_contenido_campos.orden ASC
+						";
+$link=Conectarse(); 
+mysql_query("SET NAMES 'utf8'");
+$sql=mysql_query($consulta,$link);
+ 
+$timestamp=mysql_result($sql,0,"timestamp");
+$fecha  = date ( "Y-m-d h:i:s" , $timestamp);
 
-
+if (mysql_num_rows($sql)!='0'){
+	mysql_data_seek($sql, 0);
+	$resultado ="
+						<div class='row' >";
+		$imagen = formulario_valor_campo("$id","0","","$control");
+		$imagen = $imagen[3];
+		if($imagen[3] != null) {
+		$resultado .= "<img class='img-thumbnail responsive' src='images/secure/?file=600/$imagen'>";
+	}
+	while( $row = mysql_fetch_array( $sql ) ) {
+		$campo_tipo =  remplacetas('form_campos','id',$row[id_campo],'campo_tipo');
+		$campo_tipo =$campo_tipo[0];
+		$contenido = formulario_valor_campo("$id","$row[id_campo]","","$control");
+		$contenido = $contenido[3];
+		
+		if($campo_tipo=='15'){$contenido = "<img class='img-thumbnail responsive' src='images/secure/?file=600/$contenido'>"; }
+		elseif($campo_tipo=='14'){
+													$campos = explode(" ",$contenido);
+														$lat = $campos[0];
+														$lon = $campos[1];
+														$zoom = $campos[2];			
+			$contenido = "<img class='img-thumbnail responsive'  src='http://dev.openstreetmap.de/staticmap/staticmap.php?center=$lon,$lat&zoom=$zoom&size=550x150&maptype=mapnik&markers=$lon,$lat,red-pushpin' >"; 
+			}
+		else {$contenido = "$contenido";}
+	$campo_nombre =  remplacetas('form_campos','id',$row[id_campo],'campo_nombre');
+	
+	$resultado .= "<div class='row'><div class='col-lg-4 '>$campo_nombre[0]</div><div class='col-lg-8'><b>$contenido</b></div></div>";
+															}
+	$resultado .="</div>
+	<div class='badge pull-right'>Datos registrados el $fecha </div>
+	";
+}
+	return $resultado;
+}
+/*
 function formulario_imprimir($id,$control) {
 	$id = mysql_seguridad($id);
 	if($id !='') {$w_id = "AND form_id = '$id'";}
@@ -325,7 +374,7 @@ $fecha  = date ( "Y-m-d h:i:s" , $timestamp);
 if (mysql_num_rows($sql)!='0'){
 	mysql_data_seek($sql, 0);
 	$resultado ="
-						<table class='table' >";
+						$consulta<table class='table' >";
 	while( $row = mysql_fetch_array( $sql ) ) {
 		if($row[campo_tipo]=='15'){$contenido = "<img class='img-thumbnail responsive' src='images/secure/?file=600/$row[contenido]'>"; }
 		elseif($row[campo_tipo]=='14'){
@@ -344,7 +393,7 @@ if (mysql_num_rows($sql)!='0'){
 }
 	return $resultado;
 }
-
+*/
 function formulario_respuesta($id,$control) {
 	$id = mysql_seguridad($id);
 	$consulta = "SELECT * FROM form_id 
@@ -390,8 +439,8 @@ function formulario_importador($accion) {
 	
 	if($accion =='') {
 	$resultado="<a href='#' onclick =\"xajax_formulario_importador('formulario'); \"><i class='fa fa-upload'></i> Importador</a>";	
-	print $resultado;
-	return;	
+
+	return $resultado;	
 		}
 			$respuesta = new xajaxResponse('utf-8');
 			$formulariox =formulario_importar('','menu','');
@@ -595,8 +644,8 @@ function borrar_tmp($div) {
 if($div =='') {
 	$div="borra_tmp";
 $resultado ="<a href='#'  onclick =\"xajax_borrar_tmp('$div');\">Limpiar</a>";
-print $resultado;
-return ;
+
+return $resultado ;
 }
 $dir = "tmp/";
 $ficheroseliminados= 0;
@@ -799,8 +848,8 @@ function formulario_consultar($div){
 					$div = "contenido";
 					
 $resultado .= "<a href='#'  onclick=\"xajax_formulario_consultar('$div'); \"><i class='fa fa-search'></i>  Consultas</a>";
-					print  $resultado;
-					return;
+
+					return $resultado;
 		}
 
 	$formulario = select('form_id','id','nombre','xajax_formulario_campos_select((this.value),\'div_campos\')',"id_empresa = '$_SESSION[id_empresa]'");
@@ -1086,8 +1135,8 @@ $respuesta = new xajaxResponse('utf-8');
 					$div = "contenido";
 					$cerrar = "<a href='#'onclick=\"xajax_limpia_div('$div')\"> [X]</a> ";
 $resultado .= " <a href='#' onclick=\"xajax_formulario_crear_campo('$area','','$div'); \"><i class='fa fa-plus-square'></i> Campos </a>";
-					print  $resultado;
-					return;
+					
+					return $resultado;
 		}
 $link=Conectarse();
 mysql_query("SET NAMES 'utf8'");
@@ -1426,8 +1475,8 @@ function formulario_nuevo($formulario,$div){
 					$div = "contenido";
 					
 $resultado .= "<a href='#' onclick=\"xajax_formulario_nuevo('','$div'); \"><i class='fa fa-plus-square-o'></i> Formulario </a> ";
-					print  $resultado;
-					return;
+
+					return $resultado;
 		}
 if($formulario ==''){
 	$formulario_nombre = "nuevo_formulario";
@@ -1491,8 +1540,8 @@ function formulario_listado($formulario,$div){
 		if($div==''){
 					$div = "contenido";
 $resultado .= "<a href='#'  onclick=\"xajax_formulario_listado('','$div'); \"><i class='fa fa-list'></i> Formularios</a> ";
-					print  $resultado;
-					return;
+					
+					return $resultado;;
 		}
 $control = md5(rand(1,99999999).microtime());
 $respuesta = new xajaxResponse('utf-8');
@@ -1686,12 +1735,11 @@ $consulta ="
 	</div>
 	";
 }
-	if($item == 0) { $label = "<label class='control-label ' for='$id_campo"."_".$item."'> $id_campo $campo_nombre </label>";}
+	if($item == 0) { $label = "<label class='control-label ' for='$id_campo"."_".$item."'><span class='label label-default'> $id_campo</span> $campo_nombre </label>";}
 				else {$label = "<label class=' sr-only' for='$id_campo"."_".$item."'>$campo_nombre</label>";}
 		$input = "
 		<div class='form-group' id='input_".$id_campo."[".$item."]' >
 			$label
-			<!-- <div class='input-group' id='input_".$id_campo."[".$item."]' > -->
 			<div class='col-lg-12'>
 			$render 
 			</div>
@@ -1714,13 +1762,44 @@ if (preg_match('/^[^0-9][a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[@][a-zA-Z0-9_]+([.][a-z
 }
 }
 
+
+
+function formulario_valor_campo($perfil,$id_campo,$valor,$id_control){
+
+
+if($id_control !=""){ $control ="AND `control` = '$id_control'";}else {$control ="";}
+
+$link=Conectarse(); 
+mysql_query("SET NAMES 'utf8'");
+$valor=mysql_real_escape_string($valor);
+if($valor !=""){ $valor ="AND md5(contenido) LIKE '$valor'";}else {$valor ="";}
+$consulta = "SELECT *  FROM `form_datos` WHERE `form_id` = '$perfil' AND id_campo='$id_campo' $valor $control ORDER BY timestamp DESC LIMIT 1";
+$sql =mysql_query($consulta,$link);
+$cant =mysql_num_rows($sql);
+
+if (mysql_num_rows($sql) == '0'){
+ $existe = NULL;
+										}else {
+
+$control=mysql_result($sql,0,"control");
+$timestamp=mysql_result($sql,0,"timestamp");
+$contenido=mysql_result($sql,0,"contenido");
+$existe[]= $control;
+$existe[] = $timestamp;
+$existe[] = $consulta;
+$existe[] = $contenido;
+}
+return $existe;
+	}
+
 function formulario_grabar($formulario) {
 	$respuesta = new xajaxResponse('utf-8');
 	$formulario	= mysql_seguridad($formulario);
 	$consulta_grabada ='0';
 	$control = $formulario[control]; // 
 	$form_id = $formulario[form_id]; // 
-	if($formulario[imagen] !=''){$formulario[0] = $formulario[imagen];}
+	$tipo = $formulario[tipo]; // 
+	if($formulario[imagen] !=''){$formulario[0][0] = $formulario[imagen];}
 	
 		$consulta_form = "SELECT * FROM form_contenido_campos,form_campos
 							WHERE form_contenido_campos.id_campo = form_campos.id 
@@ -1802,9 +1881,15 @@ if($campo_obligatorio[0] =='1'){
 	return $respuesta;
 											}
 }								
-								  
-								
-if(($V !='') && (is_numeric($c)) ) {					
+$md5 = md5($V);
+$igual = formulario_valor_campo("$form_id","$c","$md5","$formulario[control]");
+if(is_null($igual) ){$repetido = 0;}else{
+$repetido = 1;
+}
+//$respuesta->addAssign("respuesta_$control","innerHTML","$repetido");
+//return $respuesta;
+
+if(($V !='') && (is_numeric($c)) AND $repetido !=1 ) {					
 $ip =  obtener_ip();
 				$graba_ip = "INET_ATON('".$ip."') ";
 				$consulta ="
@@ -1902,13 +1987,14 @@ function mysql_seguridad($inp) {
 
 function formulario_modal($id,$form_respuesta,$control,$tipo) {
 	$respuesta = new xajaxResponse('utf-8');
- 
+	$formulario_respuesta = formulario_respuesta("$id","$control");
 	$id_empresa = remplacetas('form_id','id',$id,'id_empresa') ;
 	$id_empresa = $id_empresa[0];
 	$encabezado = empresa_datos("$id_empresa",'encabezado');
-	$pie = empresa_datos("$id_empresa",'pie');
+	$pie = "$formulario_respuesta";
+	$pie .= empresa_datos("$id_empresa",'pie');
 	$formulario_descripcion = remplacetas('form_id','id',$id,'descripcion') ;
-	$cabecera ="$encabezado<h3>$formulario_nombre[0]</h3><p>$formulario_descripcion[0]</p>$nuevo_formulario $formulario_respuesta ";
+	$cabecera ="$encabezado<h3>$formulario_nombre[0]</h3><p>$formulario_descripcion[0]</p>$nuevo_formulario  ";
 	$publico = remplacetas('form_id','id',$id,'publico') ;
 		if($publico[0] != 1 AND (!isset ( $_SESSION[id]) )) {
 		$muestra_form ="<div class='alert alert-danger  '>
@@ -1923,11 +2009,12 @@ return $respuesta;
 	
 	}
 		$nuevo_formulario = "<a href ='?id=$id'>Llenar otro formulario </a>";
-	if($control !='' AND $form_respuesta =='' ) {
-$muestra_form = formulario_imprimir("$id","$control"); 
+	if($control !='' AND  $tipo =='' ) {
+
+$impresion = formulario_imprimir("$id","$control"); 
 
 $formulario_nombre = remplacetas('form_id','id',$id,'nombre') ;
-$formulario_respuesta = formulario_respuesta("$id","$control");
+$muestra_form = "$impresion";
 
 
 $respuesta->addAssign("muestra_form","innerHTML","$muestra_form");
@@ -1981,6 +2068,7 @@ $subir_imagen = subir_imagen('');
 			<input type='hidden' id='control' name='control' value='$control'>
 			<input type='hidden'  id= 'form_id'  name= 'form_id' value='$id' >
 			<input type='hidden'  id= 'form_nombre'  name= 'form_nombre' value='$nombre' >
+			<input type='hidden'  id= 'tipo'  name= 'tipo' value='$tipo' >
 				<input class='form-control'   class='sr-only' type='hidden' id='imagen' name='imagen' >
 	";
 			mysql_data_seek($sql, 0);
@@ -2326,5 +2414,39 @@ if (!empty($_SERVER['HTTP_CLIENT_IP']))
 	
 	return $_SERVER['REMOTE_ADDR'];
 
+}
+
+function milfs(){
+	$crear_campos = formulario_crear_campo('','','');
+	$listado =  formulario_listado('','');
+	$consultas = formulario_consultar('','');
+	$importador = formulario_importador('');
+	$limpiar_cache = borrar_tmp('');
+	$configuracion= configuracion('');
+	$login = login_boton(); 
+	$menu = 
+"    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class='collapse navbar-collapse' id='bs-example-navbar-collapse-1'>
+      <ul class='nav navbar-nav'>
+
+        <li>$crear_campos</li>
+        
+        <li>$listado</li>
+        <li>$consultas</li>
+        <li>$importador</li>
+        <li id='borra_tmp'>$limpiar_cache</li>
+         <li><a  href='#'  data-target='#muestraInfo'  data-toggle='modal'><i class='fa fa-smile-o '></i> Presentación</a></li>
+         <li >$configuracion</li>
+        
+      </ul>
+       <ul class='nav navbar-nav navbar-right'>
+       
+      $login
+      
+		</ul>
+
+    </div><!-- /.navbar-collapse -->";
+    
+    return $menu;
 }
 ?>
