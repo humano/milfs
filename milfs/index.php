@@ -76,8 +76,7 @@ form_publico("$_REQUEST[f]");
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav">
         <li><?php formulario_crear_campo('','','');  ?></li>
-        <li><?php formulario_nuevo('','');  ?></li>
-        <li><?php agregar_campos('','despacho','');  ?></li>
+        
         <li><?php formulario_listado('','');  ?></li>
         <li><?php formulario_consultar('',''); ?></li>
         <li><?php formulario_importador(''); ?></li>

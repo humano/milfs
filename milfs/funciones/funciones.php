@@ -193,7 +193,9 @@ $respuesta = new xajaxResponse('utf-8');
 		if(mysql_affected_rows($link) != 0){
 
 														}
-
+if($div !='') {
+	$respuesta->addAssign($div,"innerHTML",$valor);
+				}
 									return $respuesta;					
 }
 $xajax->registerFunction("actualizar_campo");
@@ -1230,7 +1232,7 @@ $resultado = "<div class='alert alert-warning'><i class='fa fa-exclamation-trian
 										
 if ($tipo=='consultar_campos'){
  $consulta="
- SELECT form_contenido_campos.id_campo,
+ SELECT form_contenido_campos.id_campo, form_contenido_campos.id,
 	campo_nombre, obligatorio,control,multiple,form_contenido_campos.orden 
  FROM form_contenido_campos, form_campos 
  WHERE form_campos.id_empresa = '$_SESSION[id_empresa]'  AND form_contenido_campos.id_form = $id 
@@ -1242,38 +1244,67 @@ if ($tipo=='consultar_campos'){
  $nombre =mysql_result($sql_nombre,0,"nombre");
  //if (mysql_num_rows($sql)!='0'){
 $resultado ="$cerrar<h2>$nombre</h2>
-				<table class='table'>"; 
-				$resultado .= "<tr><th>Campo</th><th>Obligatorio</th><th>Orden</th><th></th></tr>";
+				"; 
+$resultado .= "<div class='row'>
+						<div class='col-md-4 hidden-md'>
+							Campo
+						</div>
+						<div class='col-md-2 '>
+							Obligatorio
+						</div>
+						<div class='col-md-3'>
+							Orden
+						</div>
+						<div class='col-md-2  '>
+							Multiple
+						</div>
+						<div class='col-md-1 '>
+							Borrar
+						</div>
+						
+					</div>";
 
 while( $row = mysql_fetch_array( $sql ) ) 	{
-$resultado .= "<tr>
-						<td><sup><font color='#7F7F7F'>($row[id_campo]) </font></sup> $row[campo_nombre]</td>
-						<td>
-							<div name='obligatorio_$row[control]' id='obligatorio_$row[control]' style='display:inline'>
-								<a title='Click para cambiar el valor' 
-								onClick=\"xajax_agregar_campos('obligatorio','obligatorio_$row[control]','$row[obligatorio]','$row[control]')\">$row[obligatorio]
-								</a>
+$resultado .= "<div class='row'>
+						<div class='col-md-4'>
+							<span class='label label-default'>$row[id_campo]</span> $row[campo_nombre]
+						</div>
+						<div class='col-md-2' title='OBLIGATORIO'>
+							<div class='input-group '>
+								<span class='input-group-addon'></span>
+								<input  type='range' value='$row[obligatorio]' min='0' max='1' class='form-control'
+								onchange =\"xajax_actualizar_campo('form_contenido_campos','$row[id]','obligatorio',(this.value),'',''); \">
+								<span class='input-group-addon alert-success'></span>
 							</div>
-						</td>
-
-						<td>
-							<div name='orden_$row[control]' id='orden_$row[control]' style='display:inline'>
-								<a title='Click para cambiar el valor' 
-								onClick=\"xajax_agregar_campos('orden','orden_$row[control]','$row[orden]','$row[control]')\">$row[orden]
-								</a>
+						</div>
+						<div class='col-md-3' title='ORDEN'>
+							<div class='input-group '>
+								<span class='input-group-addon' id='orden_$row[control]' >$row[orden]</span>
+								<input  type='range' value='$row[orden]' min='0' max='100' class='form-control'
+								onchange =\"xajax_actualizar_campo('form_contenido_campos','$row[id]','orden',(this.value),'','orden_$row[control]'); \">
+								
 							</div>
-						</td>
-						<td>
-								<div name='eliminar_$row[control]' id='eliminar_$row[control]' style='display:inline'>
-								<a title='Click para cambiar el valor' 
+						</div>
+						<div class='col-md-2' title='MULTIPLE'>
+							<div class='input-group '>
+								<span class='input-group-addon'></span>
+								<input  type='range' value='$row[multiple]' min='0' max='1' class='form-control'
+								onchange =\"xajax_actualizar_campo('form_contenido_campos','$row[id]','multiple',(this.value),'',''); \">
+								<span class='input-group-addon alert-success'></span>
+							</div>
+						</div>
+						<div class='col-md-1' title='ELIMINAR'>
+							<div name='eliminar_$row[control]' id='eliminar_$row[control]' >
+								<a class='btn btn-danger btn-block' title='Click para cambiar el valor' 
 								onClick=\"xajax_agregar_campos('eliminar','eliminar_$row[control]','','$row[control]','$id','$div')\">
 								<i class='fa fa-trash-o'></i>
 								</a>
 							</div>
-						</td>
-					</tr>";
+						</div>
+						
+					</div>";
 															}
-$resultado .="</table>";	
+$resultado .="";	
 $consulta_campos_todos ="SELECT  form_campos.id, form_campos.campo_nombre, form_campos.campo_descripcion FROM form_campos WHERE form_campos.id_empresa = '$_SESSION[id_empresa]' 
  ORDER BY campo_nombre ";	
 $sql_consulta_campo =mysql_query($consulta_campos_todos,$link); 
@@ -1416,11 +1447,14 @@ $resultado .= "
 		<label for='formulario_respuesta'>Formulario anidado con: </label>
 		$formulario_respuesta 
 	</div> 
+	<div class='input-group '>
+						
+								<span class='input-group-addon'>Privado</span>
+								<input  id='publico'  name='publico'  type='range' value='0' min='0' max='1' class='form-control'>
+								<span class='input-group-addon alert-danger'>Público</span>
+							</div>
 	<div class='form-group alert-warning'>
-		<label for='publico' class='checkbox-inline'>
-			<input type='checkbox' value='1' name='publico' id='publico'> Cualquiera puede llenar este formulario. 
-			
-		</label>
+	
 	</div>
 	<div class='btn  btn-success btn-block' onclick=\"xajax_formulario_nuevo(xajax.getFormValues('$formulario_nombre'),'$div') \">
 		Grabar
@@ -1443,8 +1477,7 @@ $consulta = "INSERT INTO `form_id` ( `nombre`, `descripcion`, `activo`, `modific
 VALUES ('$nombre', '$descripcion', '1', '1', '$publico', '$propietario','$formulario_respuesta','$_SESSION[id_empresa]');";
 $sql=mysql_query($consulta,$link);
 
-$respuesta->addalert("El formularo se grabó satisfactoriamente");
-
+$respuesta->addscript("xajax_formulario_listado('','contenido'); ");
 }
 $respuesta->addAssign($div,"innerHTML",$resultado);
 
@@ -1457,7 +1490,7 @@ function formulario_listado($formulario,$div){
 	$id_empresa= $_SESSION['id'];
 		if($div==''){
 					$div = "contenido";
-$resultado .= "<a href='#'  onclick=\"xajax_formulario_listado('','$div'); \"><i class='fa fa-list'></i> Listado</a> ";
+$resultado .= "<a href='#'  onclick=\"xajax_formulario_listado('','$div'); \"><i class='fa fa-list'></i> Formularios</a> ";
 					print  $resultado;
 					return;
 		}
@@ -1482,7 +1515,7 @@ if (mysql_num_rows($sql)!='0' ){
 							<div class='input-group '>
 								<span class='input-group-addon'>Privado</span>
 								<input  type='range' value='$estado[0]' min='0' max='1' class='form-control'
-								onchange =\"xajax_actualizar_campo('form_id','$row[id]','publico',(this.value),'','ok'); \">
+								onchange =\"xajax_actualizar_campo('form_id','$row[id]','publico',(this.value),'',''); \">
 								<span class='input-group-addon alert-danger'>Público</span>
 							</div>
 						</td></tr>";
@@ -1499,7 +1532,15 @@ if (mysql_num_rows($sql)!='0' ){
 		if($geo[0] !='') { $mapa= "<tr><td><a href='geo.php?id=$id' target='mapa'><i class='fa fa-globe'></i> Mapa</a></td></tr>";}else {$mapa='';}
 		
 		if($i % $divider==0) {
-		$resultado .= "<div class='row '  id='grid' style='';>	";
+			$nuevo_formulario = "<a class='btn btn-primary ' href='#' onclick=\"xajax_formulario_nuevo('','contenido'); \">
+				<i class='fa fa-plus-square-o'></i> Crear formulario </a>"; 
+		$resultado .= "
+		
+						<div class='row '  id='grid' style=''>
+							<div class='col-sm-12' style=';'>
+							$nuevo_formulario
+							</div>
+							";
 								}
 			$i++;
 $resultado .=  "<div class='col-sm-4' style=';'>
@@ -1516,6 +1557,7 @@ $resultado .=  "<div class='col-sm-4' style=';'>
 									<tr><td>Creado por: <b>$propietario[0]</td></tr>
 									<tr><td>Creación: <b>$row[creacion]</b></td></tr>
 									$mapa $estado
+									<tr><td><div class='btn btn-block btn-default' onclick=\"xajax_agregar_campos('consultar_campos','contenido','$row[id]')\">Modificar campos</div></td></tr>
 								
 									<tr><td><a class='btn btn-primary btn-block' href='#' onclick=\"xajax_formulario_modal('$row[id]'); \">Llenar</a></td></tr>
 								</table>	
