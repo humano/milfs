@@ -24,7 +24,7 @@ $consulta ="SELECT count(control) as cantidad FROM form_datos WHERE form_id = '$
 		$sql=mysql_query($consulta,$link);
 		if (mysql_num_rows($sql)!='0'){
 		$resultado=mysql_result($sql,0,"cantidad");
-		}else {$resultado ='';}
+		}else {$resultado ='0';}
 return $resultado;
 }
 
@@ -348,52 +348,14 @@ if (mysql_num_rows($sql)!='0'){
 	
 	$resultado .= "<div class='row'><div class='col-lg-4 '>$campo_nombre[0]</div><div class='col-lg-8'><b>$contenido</b></div></div>";
 															}
-	$resultado .="</div>
+	
+	$resultado .=" </div>
 	<div class='badge pull-right'>Datos registrados el $fecha </div>
 	";
 }
 	return $resultado;
 }
-/*
-function formulario_imprimir($id,$control) {
-	$id = mysql_seguridad($id);
-	if($id !='') {$w_id = "AND form_id = '$id'";}
-	$control = mysql_seguridad($control);
-	$consulta = "SELECT form_datos.*,campo_nombre, contenido, campo_tipo FROM form_datos, form_campos 
-						WHERE form_datos.id_campo = form_campos.id 
-						AND control ='$control' 
-						$w_id GROUP BY form_datos.id_campo order by form_datos.timestamp DESC 
-						";
-$link=Conectarse(); 
-mysql_query("SET NAMES 'utf8'");
-$sql=mysql_query($consulta,$link);
- 
-$timestamp=mysql_result($sql,0,"timestamp");
-$fecha  = date ( "Y-m-d h:i:s" , $timestamp);
 
-if (mysql_num_rows($sql)!='0'){
-	mysql_data_seek($sql, 0);
-	$resultado ="
-						$consulta<table class='table' >";
-	while( $row = mysql_fetch_array( $sql ) ) {
-		if($row[campo_tipo]=='15'){$contenido = "<img class='img-thumbnail responsive' src='images/secure/?file=600/$row[contenido]'>"; }
-		elseif($row[campo_tipo]=='14'){
-													$campos = explode(" ",$row[contenido]);
-														$lat = $campos[0];
-														$lon = $campos[1];
-														$zoom = $campos[2];			
-			$contenido = "<img class='img-thumbnail responsive'  src='http://dev.openstreetmap.de/staticmap/staticmap.php?center=$lon,$lat&zoom=$zoom&size=150x150&maptype=mapnik&markers=$lon,$lat,red-pushpin' >"; 
-			}
-		else {$contenido = "$row[contenido]";}
-	$resultado .= "<tr><td>$row[campo_nombre]</td><td>$contenido</td></tr>";
-															}
-	$resultado .="</table>
-	<div class='badge pull-right'>Datos registrados el $fecha </div>
-	";
-}
-	return $resultado;
-}
-*/
 function formulario_respuesta($id,$control) {
 	$id = mysql_seguridad($id);
 	$consulta = "SELECT * FROM form_id 
@@ -667,22 +629,122 @@ return $respuesta;
 	}
 $xajax->registerFunction("borrar_tmp");
 	
+
+function formulario_imprimir_linea($id,$control,$tipo) {
+	$id = mysql_seguridad($id);
+	if($id !='') {$w_id = "AND form_id = '$id'";}
+	$control = mysql_seguridad($control);
+	$consulta = "SELECT *
+						FROM form_contenido_campos 
+						WHERE form_contenido_campos.id_form = '$id'
+						ORDER BY form_contenido_campos.orden ASC
+						";
+$link=Conectarse(); 
+mysql_query("SET NAMES 'utf8'");
+$sql=mysql_query($consulta,$link);
+ 
+$timestamp=mysql_result($sql,0,"timestamp");
+$fecha  = date ( "Y-m-d h:i:s" , $timestamp);
+
+if (mysql_num_rows($sql)!='0'){
+	mysql_data_seek($sql, 0);
+	$resultado ="
+						<tr >";
+		$imagen = formulario_valor_campo("$id","0","","$control");
+		$imagen = $imagen[3];
+		if($imagen[3] != null) {
+		$imagen= "<img class='img-thumbnail responsive' src='images/secure/?file=150/$imagen'>";
+	}
+	$resultado .="<td>$imagen</td>";
+	while( $row = mysql_fetch_array( $sql ) ) {
+		$campo_tipo =  remplacetas('form_campos','id',$row[id_campo],'campo_tipo');
+		$campo_tipo =$campo_tipo[0];
+		$contenido = formulario_valor_campo("$id","$row[id_campo]","","$control");
+		$contenido = $contenido[3];
+		$campo_nombre =  remplacetas('form_campos','id',$row[id_campo],'campo_nombre');
+		if($tipo=="titulos") {
+			$contenido = "<b>$campo_nombre[0]</b>";
+		}
+		elseif($tipo=="titulos_csv"){
+		$csv .= '"'.$campo_nombre[0].'";';
+		}
+		elseif($tipo=="linea_csv"){
+		$csv .= '"'.$contenido.'";';	
+		}
+		else{
+			$limite = 100;
+			$size= strlen($contenido);
+			$restante = ($limite - $size);
+			if($size > $limite) {
+			$contenido = substr($contenido,0, $length = 100)."... ";//$contenido;
+										}
+		}
+
+	
+	
+	$resultado .= "<td>$contenido</td>";
+	
+															}
+	
+	$resultado .=" </tr>";
+}
+	if($tipo =='titulos_csv' or $tipo=='linea_csv') {
+	
+return $csv;	
+	}
+	return $resultado;
+}
+	
+	
 function matriz_formulario($formulario,$div,$registros,$pagina,$formato){
-	$id=mysql_real_escape_string($id);
-
+	$respuesta = new xajaxResponse('utf-8');
+if ( !isset ( $_SESSION['id_empresa'] ) ) {	
+$respuesta->addRedirect("index.php");
+//header("Location: index.php");
+return $respuesta;
+}
+$formulario = mysql_seguridad($formulario);
+$perfil = $formulario["form_id_id"];
 $control = md5(rand(1,99999999).microtime());
-$respuesta = new xajaxResponse('utf-8');
 
+$cantidad =	formulario_contar($perfil);
+$formulario_nombre = remplacetas('form_id','id',$perfil,'nombre') ;
+if($perfil !=''){$perfil ="AND form_id = '$perfil'";}Else{
+			$resultado ="<div class='alert alert-danger'><h1><i class='fa fa-exclamation-triangle'></i> Por favor seleccione un formulario</h1></div>";
+			$respuesta->addAssign($div,"innerHTML",$resultado);
+			return $respuesta;
+	}
+if($cantidad < 1) {
+			$resultado ="<div class='alert alert-danger'>
+								<h1><i class='fa fa-exclamation-triangle'></i>
+										El formulario <strong>\"$formulario_nombre[0]\"</strong> no tiene registros
+								</h1>
+							</div>";
+			$respuesta->addAssign($div,"innerHTML",$resultado);
+		return $respuesta;
+
+}
 
 $fecha_inicio = $formulario["inicio"];
 $fin = $formulario["fin"];
-$perfil = $formulario["form_id_id"];
-if($perfil !=''){$perfil ="AND form_id = '$perfil'";}Else{$perfil ='';}
 $id_campo = $formulario["id_campo"];
 $busqueda = $formulario["busqueda"];
+
 if($formato =='csv') {$orden = "ORDER BY form_datos_id ASC ";}else{$orden = "ORDER BY form_datos_id DESC ";}
-if($id_campo ==''){$campo ='';}else{$campo ="AND id_campo = '$id_campo'";}
-if($busqueda !=''){$busca ="AND contenido LIKE '$busqueda'";}Else{$busca ='';}
+if($id_campo ==''){
+							$campo ='';
+							
+						}else{
+			if($busqueda =='') {
+			$resultado ="<div class='alert alert-danger'><h1><i class='fa fa-exclamation-triangle'></i> Por favor escriba una palabra para buscar</h1></div>";
+			$respuesta->addAssign($div,"innerHTML",$resultado);
+			return $respuesta;
+														}
+							$campo ="AND id_campo = '$id_campo'";
+							
+							}
+
+if($busqueda !=''){$busca ="AND contenido LIKE '%%$busqueda%%'";}Else{$busca ='';}
 
 $link=Conectarse(); 
 mysql_query("SET NAMES 'utf8'");
@@ -694,107 +756,104 @@ $consulta = "	SELECT  *,from_unixtime(timestamp) AS fecha , form_datos.id AS for
 					$perfil 
 					$campo  
 					AND timestamp BETWEEN UNIX_TIMESTAMP('$fecha_inicio') 
-					AND UNIX_TIMESTAMP('$fin 23:59:59') $orden";
+					AND UNIX_TIMESTAMP('$fin 23:59:59') GROUP BY control $orden";
+
+
 
 $sql=mysql_query($consulta,$link);
-
-if (mysql_num_rows($sql)!='0'){
-	if($formato=='csv'){ 
-	$nombre_archivo ="tmp/Formulario_".mktime()."_".$_SESSION['id'].".csv";
-	$resultado ="<a href='$nombre_archivo'>Descargar Archivo</a>";
-$archivo_reporte=fopen($nombre_archivo , "w");
-
-$encabezado =";;Periodo\n;;$inicio\n;;$fin \n ";
-fputs ($archivo_reporte,$encabezado);
-	$tabla .= "ID;Fecha;Timestamp;Formulario;Campo;Contenido;Control\n";
-fputs ($archivo_reporte,$tabla);
-while( $row = mysql_fetch_array( $sql ) ) {
-		$formulario_nombre = remplacetas('form_id','id',$row[form_id],'nombre') ;
-$linea = array("$row[form_datos_id]","$row[fecha]","$row[timestamp]","$formulario_nombre[0]","$row[campo_nombre]","$row[contenido]","$row[control]");
-
-fputcsv ($archivo_reporte,$linea,';');
-															}
-rewind($archivo_reporte);
-
-$respuesta->addAssign($div,"innerHTML",$resultado);
-return $respuesta;
-
-	}
-		}	else{
-			$respuesta ="<div class='alert alert-warning'><i class='fa fa-exclamation-triangle'></i> No hay resultados</div>";
+if (mysql_num_rows($sql)==0){
+			$resultado ="<div class='alert alert-danger'><h1><i class='fa fa-exclamation-triangle'></i> No hay resultados para la consulta</h1></div>";
 			$respuesta->addAssign($div,"innerHTML",$resultado);
-		return $respuesta;
-		}
+			return $respuesta;
 		
-
-if ($pagina =='') {
-   $inicio = 0;
-   $pagina = 1;
-}
-else {
-   $inicio = ($pagina - 1) * $registros;
-}
-
-$total_registros = mysql_num_rows($sql);
-if($total_registros < $registros) {
-$limite ="";
-}else{
-$limite ="  LIMIT $inicio, $registros ";
-}
-
-
-$consulta_limite = $consulta.$limite;
-$sql=mysql_query($consulta_limite,$link);
-
-if (mysql_num_rows($sql)!='0'){
-	$resultado .= "<a onclick=\"xajax_limpia_div('resultados')\">Limpiar resultado</a> | ";
-if($formato!='csv'){ 
-	$resultado.= "<a onClick=\"xajax_matriz_formulario(xajax.getFormValues('peticion'),'resultados','','','csv');\">Exportar resultados a CSV</a>
-	
-	
-	";
+									}
+if (mysql_num_rows($sql)!=0){
+		$total_registros = mysql_num_rows($sql);
+	if($formato=='csv'){ 
+		$nombre_archivo ="tmp/Formulario_".mktime()."_".$_SESSION['id'].".csv";
+		$boton_descarga ="<a class='btn btn-default btn-success' href='$nombre_archivo'>Descargar <i class='fa fa-cloud-download'></i></a>";
+			$archivo_reporte=fopen($nombre_archivo , "w");
+				$encabezado =";;Periodo\n;;$inicio\n;;$fin \n ";
+					fputs ($archivo_reporte,$encabezado);
+						$tabla .= "ID;Fecha;Timestamp;Formulario;Campo;Contenido;Control\n";
+					fputs ($archivo_reporte,$titulo);
+					mysql_data_seek($sql, 0);
+					while( $row = mysql_fetch_array( $sql ) ) 
+							{
+						$titulo = formulario_imprimir_linea($row[form_id],$row[control],'titulos_csv');
+						$linea = formulario_imprimir_linea($row[form_id],$row[control],'linea_csv');
+						$formulario_nombre = remplacetas('form_id','id',$row[form_id],'nombre') ;
+ 						$linea = $linea."\n";
+						$lineas .= $linea;
 							}
-	$resultado .="<table rules=groups>";
-$total_paginas = ceil($total_registros / $registros); 
-$indice .=  "<tr>";
-if(($pagina - 1) > 0) {
-$indice .=  "<td ><a title='Cambiar a la página ".($pagina-1)."'  onClick=\"xajax_matriz_formulario(xajax.getFormValues('peticion'),'resultados','$registros','".($pagina-1)."');\"' style='cursor:pointer'>< Anterior</a> </td>";
-												}
-															
-for ($i=1; $i<=$total_paginas; $i++)
-   if ($pagina == $i){
-$indice .=  "<th>".$pagina."</th> ";
-} else {
-$indice .=  "
-<td><a title='Cambiar a la pagina $i' onClick=\"xajax_matriz_formulario(xajax.getFormValues('peticion'),'resultados','$registros','$i');\"' style='cursor:pointer'>$i</a> </td>";
-}
+						$contenido ="$titulo \n $lineas";
+					//rewind($archivo_reporte);
+					fputs ($archivo_reporte,$contenido);
+	$respuesta->addAssign("boton_descarga","innerHTML",$boton_descarga);
+	$respuesta->addAssign($div,"innerHTML",$resultado);
+	return $respuesta;
 
-if(($pagina + 1)<=$total_paginas) {
+							}
+										}	
+								else{
+	$respuesta ="<div class='alert alert-warning'><i class='fa fa-exclamation-triangle'></i> No hay resultados</div>";
+	$respuesta->addAssign($div,"innerHTML",$resultado);
+	return $respuesta;
+									}
+/// PAGINACION
+				if ($pagina =='') {$inicio = 0; $pagina = 1; }
+				else { $inicio = ($pagina - 1) * $registros;}
 
-$indice .= "<td><a  title='Cambiar a la pagina ".($pagina+1)."' onClick=\"xajax_matriz_formulario(xajax.getFormValues('peticion'),'resultados','$registros','".($pagina+1)."');\"' style='cursor:pointer'> Siguiente ></a></td>";
-}
+				if($total_registros < $registros) { $limite ="";}
+				else{$limite ="  LIMIT $inicio, $registros ";}
+				$consulta_limite = $consulta.$limite;
+				$sql=mysql_query($consulta_limite,$link);
+					if (mysql_num_rows($sql)!='0'){
+	$botones .= "<a class='btn btn-default' onclick=\"xajax_borrar_tmp('resultados'); xajax_limpia_div('resultados'); xajax_limpia_div('resultados_encabezado')\">Limpiar<i class='fa fa-trash-o'></i></a> ";
+				if($formato!='csv'){ 
+	$botones .= "	<a class='btn btn-default' onClick=\"xajax_matriz_formulario(xajax.getFormValues('peticion'),'resultados','','','csv');\">
+							Exportar <i class='fa fa-file-text-o'></i>
+						</a>";
+										}
+	$paginacion ="<ul class='pagination  pull-right'>";
+				$total_paginas = ceil($total_registros / $registros); 
+				if(($pagina - 1) > 0) {
+					$indice .="<li><a title='Cambiar a la página ".($pagina-1)."'  onClick=\"xajax_matriz_formulario(xajax.getFormValues('peticion'),'resultados','$registros','".($pagina-1)."');\"' style='cursor:pointer'>< Anterior</a> </li>";
+													}
+						for ($i=1; $i<=$total_paginas; $i++)
+						   if ($pagina == $i){
+					$indice .=  "<li class='active'><a title='Cambiar a la pagina $i' onClick=\"xajax_matriz_formulario(xajax.getFormValues('peticion'),'resultados','$registros','$i');\"' style='cursor:pointer'>$i</a> </li>";
+													} 
+							else {
+					$indice .=  "<li><a title='Cambiar a la pagina $i' onClick=\"xajax_matriz_formulario(xajax.getFormValues('peticion'),'resultados','$registros','$i');\"' style='cursor:pointer'>$i</a> </li>";
+								}
 
-$indice .= "<hr><font size='-2'>Pagina <b>$pagina</b> de <b>$total_paginas</b> total registros: <b>$total_registros</b></font>
- </tr></table>";
-$resultado .= $indice;
+				if(($pagina + 1)<=$total_paginas) {
+					$indice .= "<li><a  title='Cambiar a la pagina ".($pagina+1)."' onClick=\"xajax_matriz_formulario(xajax.getFormValues('peticion'),'resultados','$registros','".($pagina+1)."');\"' style='cursor:pointer'> Siguiente ></a></li>";
+																}
+					$indice .= "</ul>";
+	$paginacion .= $indice;
+	$encabezado = " 
+						<br>
+						<div class='row' id='botonera'>
+							<div class='col-sm-12'>$botones $paginacion <span id='boton_descarga'></span>  <span class='label label-default '>$total_registros registros</span></div>
 
-
-	mysql_data_seek($sql, 0);
-	$resultado .=" <table  class='table'>";
-	$resultado .= "<TR><TH COLSPAN='6'>MUESTRA $registros REGISTROS  de $total_registros</TH></TR>
-	<tr><th>ID</th><th>Fecha</th><th>Timestamp</th><th>Formulario</th><th>Campo</th><th>Contenido</th></tr>";
+						</div>";
 $fila=0;
-while( $row = mysql_fetch_array( $sql ) ) {
+	mysql_data_seek($sql, 0);
+	while( $row = mysql_fetch_array( $sql ) ) {
 		$formulario_nombre = remplacetas('form_id','id',$row[form_id],'nombre') ;
-	$fila = $fila +1;
-	if ($fila %2 == 0){$bg='LightCyan';}else{ $bg='FFFFFF';}
-
-$resultado .= "<tr><td>$row[form_datos_id]</td><td>$row[fecha]</td><td>$row[timestamp]</td><td nowrap><a target='form' href='?id=$row[form_id]&c=$row[control]'><i class='fa fa-share-square-o'></i></a><a onclick=\"xajax_formulario_modal('$row[form_id]','','$row[control]'); \" class='btn btn-link btn-success'>$formulario_nombre[0]</a> <a target='form' href='?id=$row[form_id]&c=$row[control]&t=edit'><i class='fa fa-pencil'></i></a> </td><td>$row[campo_nombre]</td><td>$row[contenido]</td></tr>";
+		$fila = $fila +1;
+			if ($fila %2 == 0){$bg='LightCyan';}else{ $bg='FFFFFF';}
+		$depliegue = formulario_imprimir_linea($row[form_id],$row[control]);
+		$titulo = formulario_imprimir_linea($row[form_id],$row[control],'titulos');
+	$campos .= "$depliegue";
 															}
-															
-	$resultado .="</table>";
-										}else{$resultado = "No hay resultados para mostrar ";}
-
+	$resultado .="<div class='table-responsive' ><table class='table ' style='max-width:450px;' >$titulo $campos</table></div>";
+														}else{
+	$resultado ="<div class='alert alert-danger'><h1><i class='fa fa-exclamation-triangle'></i> No hay resultados para la consulta</h1></div>";
+																}
+$respuesta->addAssign("resultados_encabezado","innerHTML",$encabezado);
 $respuesta->addAssign($div,"innerHTML",$resultado);
 
 return $respuesta;
@@ -844,55 +903,63 @@ return $respuesta;
 $xajax->registerFunction("formulario_campos_select");
 
 function formulario_consultar($div){
-			if($div==''){
-					$div = "contenido";
-					
-$resultado .= "<a href='#'  onclick=\"xajax_formulario_consultar('$div'); \"><i class='fa fa-search'></i>  Consultas</a>";
-
-					return $resultado;
-		}
-
+	if($div==''){
+		$div = "contenido";
+		$resultado .= "<a href='#'  onclick=\"xajax_formulario_consultar('$div'); \"><i class='fa fa-search'></i>  Consultas</a>";
+	return $resultado;
+					}
 	$formulario = select('form_id','id','nombre','xajax_formulario_campos_select((this.value),\'div_campos\')',"id_empresa = '$_SESSION[id_empresa]'");
 	$fecha = time (); 
-$ahora  = date ( "Y-m-d" , $fecha ); 
-$peticion = "
-<form role='form' name='peticion' id='peticion' action='rss.php' target='rss' method='post'>
-	<div class='row'>
-		<div class='col-sm-3 col-xs-6'>
-			<div class='form-group'>
-				<label for='inicio'>Inicio</label>
-				<input type='date' name='inicio'  id='inicio' class='form-control' title='YYYY-MM-DD'>
+	$ahora  = date ( "Y-m-d" , $fecha ); 
+	$peticion = "
+		<form role='form' name='peticion' id='peticion' action='rss.php' target='rss' method='post'>
+			<div class='row'>
+				<div class='col-lg-4 '>
+					<div class='row'>
+						<div class='col-lg-6'>
+							<div class='form-group'>
+								<label for='inicio'>Desde</label>
+								<input type='date' name='inicio'  id='inicio' class='form-control' title='YYYY-MM-DD'>
+							</div>
+						</div>
+						<div class='col-lg-6'>
+							<div class='form-group'>
+								<label for='fin'>Hasta</label>
+								<input type='date' name='fin'  id='fin' class='form-control'  title='YYYY-MM-DD' value='$ahora' >
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class='col-lg-8'>
+					<div class='row'>
+						<div class='col-lg-4'>
+							<div class='form-group'>
+								<label for='busqueda'>Frase a buscar</label>
+								<input type=text name='busqueda'  id='busqueda' placeholder='Cadena de busqueda' class='form-control'  >
+							</div>
+						</div>
+						<div class='col-lg-4'>
+							<div class='form-group'>
+								<label for='formulario'>Formulario</label>
+								$formulario
+							</div>
+						</div>
+						<div class='col-lg-4'>
+							<div id='div_campos'  name='div_campos' style='display:inline;'></div>
+							
+						</div>
+					</div>
+				</div>
 			</div>
-		</div>
-		<div class='col-sm-3 col-xs-6'>
-			<div class='form-group'>
-				<label for='fin'>Fin</label>
-				<input type='date' name='fin'  id='fin' class='form-control'  title='YYYY-MM-DD' value='$ahora' >
-			</div>
-		</div>
-		<div class='col-sm-3'>
-			<div class='form-group'>
-				<label for='formulario'>Formulario</label>
-				$formulario
-				 <div id='div_campos'  name='div_campos' style='display:inline;'></div>
-			</div>
-		</div>
-		<div class='col-sm-3'>
-			<div class='form-group'>
-				<label for='busqueda'>Cadena de busqueda</label>
-				<input type=text name='busqueda'  id='busqueda' placeholder='Cadena de busqueda' class='form-control'  >
-			</div>
-		</div>
-	</div>
-
-
-
-
-<input type='submit' value='rss'>
+		</form> 
 <div class='btn btn-block btn-success' OnClick=\"xajax_matriz_formulario(xajax.getFormValues('peticion'),'resultados','50','');\">Consultar</div>
-
-</form> 
-<div id='resultados' name='resultados'></div> 
+<div class= 'col-xs-12' id='resultados_contenedor' name='resultados_contenedor' >
+	<div id='resultados_encabezado' name='resultados_encabezado' >
+		
+	</div>
+	<div id='resultados' name='resultados' style='overflow:auto ; max-width:95%px; max-height:400px;' >
+	</div>
+</div> 
 
 ";	
 $respuesta = new xajaxResponse('utf-8');
@@ -2009,7 +2076,7 @@ return $respuesta;
 	
 	}
 		$nuevo_formulario = "<a href ='?id=$id'>Llenar otro formulario </a>";
-	if($control !='' AND  $tipo =='' ) {
+	if($control !='' AND  $tipo !='edit' ) {
 
 $impresion = formulario_imprimir("$id","$control"); 
 
