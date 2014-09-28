@@ -648,19 +648,21 @@ $fecha  = date ( "Y-m-d h:i:s" , $timestamp);
 
 if (mysql_num_rows($sql)!='0'){
 	mysql_data_seek($sql, 0);
-	$resultado ="
-						<tr >";
+//	$resultado ="<tr >";
 		$imagen = formulario_valor_campo("$id","0","","$control");
 		$imagen = $imagen[3];
 		if($imagen[3] != null) {
-		$imagen= "<img class='img-thumbnail responsive' src='images/secure/?file=150/$imagen'>";
+		$imagen= "<img class='thumbnail' src='images/secure/?file=150/$imagen' alt='$imagen' style='max-width:100px;' title='$imagen'>";
 	}
-	$resultado .="<td>$imagen</td>";
+$td .= "<td>$imagen</td>";
 	while( $row = mysql_fetch_array( $sql ) ) {
+		
 		$campo_tipo =  remplacetas('form_campos','id',$row[id_campo],'campo_tipo');
 		$campo_tipo =$campo_tipo[0];
 		$contenido = formulario_valor_campo("$id","$row[id_campo]","","$control");
-		$contenido = $contenido[3];
+		$contenido_original = $contenido;
+		$control = $contenido[0];
+		$contenido = $contenido[3];		
 		$campo_nombre =  remplacetas('form_campos','id',$row[id_campo],'campo_nombre');
 		if($tipo=="titulos") {
 			$contenido = "<b>$campo_nombre[0]</b>";
@@ -678,15 +680,25 @@ if (mysql_num_rows($sql)!='0'){
 			if($size > $limite) {
 			$contenido = substr($contenido,0, $length = 100)."... ";//$contenido;
 										}
-		}
+			if($campo_tipo=='14'){
+				if($control !='') {
+													$campos = explode(" ",$contenido);
+														$lat = $campos[0];
+														$lon = $campos[1];
+														$zoom = $campos[2];			
+			$contenido = "<img class='img-thumbnail responsive'  src='http://dev.openstreetmap.de/staticmap/staticmap.php?center=$lon,$lat&zoom=$zoom&size=150x150&maptype=mapnik&markers=$lon,$lat,red-pushpin' >";
+											} else { $contenido ='';}
+			}
+			}
+
 
 	
-	
-	$resultado .= "<td>$contenido</td>";
+	$td .= "<td> $contenido </td>";
 	
 															}
+
 	
-	$resultado .=" </tr>";
+	$resultado .="$td";
 }
 	if($tipo =='titulos_csv' or $tipo=='linea_csv') {
 	
@@ -847,9 +859,21 @@ $fila=0;
 			if ($fila %2 == 0){$bg='LightCyan';}else{ $bg='FFFFFF';}
 		$depliegue = formulario_imprimir_linea($row[form_id],$row[control]);
 		$titulo = formulario_imprimir_linea($row[form_id],$row[control],'titulos');
-	$campos .= "$depliegue";
+					$menu ="<td nowrap style='width:100px;' >
+
+							<div class='btn-toolbar '>
+							<div class='btn-group btn-group-xs'>
+								<a class='btn btn-default' onclick=\"xajax_formulario_modal('$row[form_id]','','$row[control]'); \"><i class='fa fa-eye'></i></a>
+								<a class='btn btn-default' target='form' href='?id=$row[form_id]&c=$row[control]'><i class='fa fa-share-square-o'></i></a>
+								<a class='btn btn-default' target='form' href='?id=$row[form_id]&c=$row[control]&t=edit'><i class='fa fa-pencil'></i></a>
+								$imagen 
+							</div>
+							</div>
+
+						</td>";
+	$campos .= "<tr>$menu $depliegue</tr>";
 															}
-	$resultado .="<div class='table-responsive' ><table class='table ' style='max-width:450px;' >$titulo $campos</table></div>";
+	$resultado .="<div class='table-responsive' ><table class='table ' style='max-width:450px;' ><td></td>$titulo $campos</table></div>";
 														}else{
 	$resultado ="<div class='alert alert-danger'><h1><i class='fa fa-exclamation-triangle'></i> No hay resultados para la consulta</h1></div>";
 																}
