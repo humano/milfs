@@ -40,10 +40,12 @@ INSTALACION
 
 DISFRUTALO.
 
+<pre>
   #====#        
  |___|__\___    
  | _ |   |_ |}  
  "(_)""  ""(_)"    
+</pre>
 
 Twitter: @fredy_rivera
 	 @QWERTY.CO
