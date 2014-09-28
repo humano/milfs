@@ -774,7 +774,7 @@ $consulta = "	SELECT  *,from_unixtime(timestamp) AS fecha , form_datos.id AS for
 
 $sql=mysql_query($consulta,$link);
 if (mysql_num_rows($sql)==0){
-			$resultado ="<div class='alert alert-danger'><h1><i class='fa fa-exclamation-triangle'></i> No hay resultados para la consulta</h1></div>";
+			$resultado ="<div class='alert alert-danger'><h1><i class='fa fa-exclamation-triangle'></i> No hay resultados para la consulta $consulta</h1></div>";
 			$respuesta->addAssign($div,"innerHTML",$resultado);
 			return $respuesta;
 		
