@@ -686,7 +686,7 @@ $td .= "<td>$imagen</td>";
 														$lat = $campos[0];
 														$lon = $campos[1];
 														$zoom = $campos[2];			
-			$contenido = "<img class='img-thumbnail responsive'  src='http://dev.openstreetmap.de/staticmap/staticmap.php?center=$lon,$lat&zoom=$zoom&size=150x150&maptype=mapnik&markers=$lon,$lat,red-pushpin' >";
+			$contenido = "<img class='img-round'  src='http://dev.openstreetmap.de/staticmap/staticmap.php?center=$lon,$lat&zoom=$zoom&size=350x100&maptype=mapnik&markers=$lon,$lat,red-pushpin' >";
 											} else { $contenido ='';}
 			}
 			}
@@ -712,7 +712,6 @@ function matriz_formulario($formulario,$div,$registros,$pagina,$formato){
 	$respuesta = new xajaxResponse('utf-8');
 if ( !isset ( $_SESSION['id_empresa'] ) ) {	
 $respuesta->addRedirect("index.php");
-//header("Location: index.php");
 return $respuesta;
 }
 $formulario = mysql_seguridad($formulario);
@@ -774,7 +773,7 @@ $consulta = "	SELECT  *,from_unixtime(timestamp) AS fecha , form_datos.id AS for
 
 $sql=mysql_query($consulta,$link);
 if (mysql_num_rows($sql)==0){
-			$resultado ="<div class='alert alert-danger'><h1><i class='fa fa-exclamation-triangle'></i> No hay resultados para la consulta $consulta</h1></div>";
+			$resultado ="<div class='alert alert-danger'><h1><i class='fa fa-exclamation-triangle'></i> No hay resultados para la consulta </h1></div>";
 			$respuesta->addAssign($div,"innerHTML",$resultado);
 			return $respuesta;
 		
@@ -1897,11 +1896,11 @@ function formulario_grabar($formulario) {
 							AND  id_form = '$form_id' ";
 	$link=Conectarse(); 
 	mysql_query("SET NAMES 'utf8'");
-	$sql=mysql_query($consulta_form,$link);
+//	$sql=mysql_query($consulta_form,$link);
 
-	if (mysql_num_rows($sql)!='0'){
-					mysql_data_seek($sql, 0);
-			while( $row = mysql_fetch_array( $sql ) ) {
+//	if (mysql_num_rows($sql)!='0'){
+//					mysql_data_seek($sql, 0);
+//			while( $row = mysql_fetch_array( $sql ) ) {
 				
 
 //////
@@ -1935,16 +1934,16 @@ $datos .= "<p>$$c =  \$formulario['$c'][$C]; // <b>$V</b>  /$campo_tipo[0] </p>"
 																					 }
 		if($campo_tipo[0] =='3' ) { 
 	$validar = is_numeric($V);
-					if($validar == '0') {  		
+					if(is_numeric($V) ) {
+	$respuesta->addAssign("input_".$c."[".$C."]","className"," form-group has-success ");	
+		//return $respuesta;														
+				}else{  		
 	$respuesta->addAssign("input_".$c."[".$C."]","className"," form-group has-error  ");
 	$respuesta->addScript("document.getElementById('".$c."[".$C."]').focus(); ");	
 	$respuesta->addAlert("El campo $campo_nombre[0] solo acepta valores numéricos");	
 	return $respuesta;			
-				}else {
-	$respuesta->addAssign("input_".$c."[".$C."]","className"," form-group has-success ");	
-		return $respuesta;														
-				}			
-																					 }
+				} 			
+											}
 																					 																					 
 			if($campo_tipo[0]=='17') {
 			$limite = limite("$c",'');
@@ -1963,6 +1962,7 @@ $datos .= "<p>$$c =  \$formulario['$c'][$C]; // <b>$V</b>  /$campo_tipo[0] </p>"
 
 								}
 else{ //busca campos vacios
+
 $campo_obligatorio =  remplacetas("form_contenido_campos","id_campo",$c,"obligatorio","id_form = '$formulario[form_id]'");
 if($campo_obligatorio[0] =='1'){
 
@@ -1971,13 +1971,19 @@ if($campo_obligatorio[0] =='1'){
 	$respuesta->addScript("document.getElementById('".$c."[".$C."]').focus(); ");
 	return $respuesta;
 											}
-}								
+
+}
+								
 $md5 = md5($V);
 $igual = formulario_valor_campo("$form_id","$c","$md5","$formulario[control]");
 if(is_null($igual) ){$repetido = 0;}else{
 $repetido = 1;
 }
-//$respuesta->addAssign("respuesta_$control","innerHTML","$repetido");
+
+$debug .= " (c= $c md5 = $md5 , igual = $igual, repetid =$repetido  <!--, V= $V -->)<br>";
+$respuesta->addAssign("respuesta_$control","innerHTML","$debug");
+//return $respuesta;
+//$respuesta->addAlert("$debug");
 //return $respuesta;
 
 if(($V !='') && (is_numeric($c)) AND $repetido !=1 ) {					
@@ -1988,23 +1994,25 @@ $ip =  obtener_ip();
 										VALUES (NULL, '$c', '$formulario[form_id]', '$_SESSION[id]', '$V', UNIX_TIMESTAMP(), '$formulario[control]',$graba_ip,'$id_empresa');";
 										
 				$sql=mysql_query($consulta,$link);
+				$debug .= "$consulta = $sql ,";
 				if($sql) { 
 		$consulta_grabada ='1';
 				}
 										 }
-								}		
+										 
+								} ///fin del array		
 										
-						} else {
+						}///fin del array primario
+						 else {
 			if($v !='') {$datos .= "<p>$$c = \$formulario['$c']; // <b>$v</b> </p>";}
  								}
 										}
 										
 										
-//$respuesta->addAssign("respuesta_$control","innerHTML","$consulta");
-///return $respuesta;
 
-																}
-											}
+
+//																}
+//											}
 
 
 if($consulta_grabada =='1') {
@@ -2061,7 +2069,7 @@ $cuerpo ="
 		return $respuesta;														
 		}
 //$respuesta->addAssign("respuesta_$control","innerHTML","$resultado");
-//return $respuesta;
+return $respuesta;
 }
 $xajax->registerFunction("formulario_grabar");
 
