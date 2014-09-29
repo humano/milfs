@@ -304,13 +304,15 @@ return $respuesta;
 $xajax->registerFunction("editar_campo");
 
 
-function formulario_imprimir($id,$control) {
+function formulario_imprimir($id,$control,$tipo) {
 	$id = mysql_seguridad($id);
+	if($tipo =='obligatorio'){ $w_tipo = "AND obligatorio = '1' ";}
 	if($id !='') {$w_id = "AND form_id = '$id'";}
 	$control = mysql_seguridad($control);
 	$consulta = "SELECT *
 						FROM form_contenido_campos 
 						WHERE form_contenido_campos.id_form = '$id'
+								$w_tipo
 						ORDER BY form_contenido_campos.orden ASC
 						";
 $link=Conectarse(); 
@@ -2111,7 +2113,7 @@ return $respuesta;
 		$nuevo_formulario = "<a href ='?id=$id'>Llenar otro formulario </a>";
 	if($control !='' AND  $tipo !='edit' ) {
 
-$impresion = formulario_imprimir("$id","$control"); 
+$impresion = formulario_imprimir("$id","$control",""); 
 
 $formulario_nombre = remplacetas('form_id','id',$id,'nombre') ;
 $muestra_form = "$impresion";

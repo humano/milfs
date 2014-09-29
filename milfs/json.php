@@ -46,7 +46,7 @@ while( $row = mysql_fetch_array( $sql ) ) {
 		$marcador["type"] = "Point";
 		$marcador["coordinates"] = array($lat,$lon);
 		//$marcador["loc"] = array('lat'=>$lat,'lon'=>$lon);
-		$formulario = formulario_imprimir($perfil,$row[control]);
+		$formulario = formulario_imprimir($perfil,$row[control],'obligatorio');
 		$propiedades["name"] ="$id,$row[control] $formulario";
 		
 		//formulario_imprimir($id,$control)
