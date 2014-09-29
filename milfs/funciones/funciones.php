@@ -326,22 +326,23 @@ if (mysql_num_rows($sql)!='0'){
 						<div class='row' >";
 		$imagen = formulario_valor_campo("$id","0","","$control");
 		$imagen = $imagen[3];
-		if($imagen[3] != null) {
+		if($imagen[3] != "") {
 		$resultado .= "<img class='img-thumbnail responsive' src='images/secure/?file=600/$imagen'>";
-	}
+	}else {$resultado .="";}
 	while( $row = mysql_fetch_array( $sql ) ) {
 		$campo_tipo =  remplacetas('form_campos','id',$row[id_campo],'campo_tipo');
 		$campo_tipo =$campo_tipo[0];
 		$contenido = formulario_valor_campo("$id","$row[id_campo]","","$control");
 		$contenido = $contenido[3];
 		
-		if($campo_tipo=='15'){$contenido = "<img class='img-thumbnail responsive' src='images/secure/?file=600/$contenido'>"; }
+		if($campo_tipo=='15'){if($contenido !=""){$contenido = "<img class='img-thumbnail responsive' src='images/secure/?file=600/$contenido'>"; }else{$contenido="";}}
+				
 		elseif($campo_tipo=='14'){
 													$campos = explode(" ",$contenido);
 														$lat = $campos[0];
 														$lon = $campos[1];
 														$zoom = $campos[2];			
-			$contenido = "<img class='img-thumbnail responsive'  src='http://dev.openstreetmap.de/staticmap/staticmap.php?center=$lon,$lat&zoom=$zoom&size=550x150&maptype=mapnik&markers=$lon,$lat,red-pushpin' >"; 
+			$contenido = "<img class='img-thumbnail '  src='http://dev.openstreetmap.de/staticmap/staticmap.php?center=$lon,$lat&zoom=$zoom&size=350x150&maptype=mapnik&markers=$lon,$lat,red-pushpin' >"; 
 			}
 		else {$contenido = "$contenido";}
 	$campo_nombre =  remplacetas('form_campos','id',$row[id_campo],'campo_nombre');
@@ -352,7 +353,7 @@ if (mysql_num_rows($sql)!='0'){
 	$resultado .=" </div>
 	<div class='badge pull-right'>Datos registrados el $fecha </div>
 	";
-}
+}else {$resultado ="No hay datos";}
 	return $resultado;
 }
 

@@ -6,7 +6,7 @@ require ('funciones/funciones.php');
 
 	$fecha_inicio = mysql_seguridad($_REQUEST[inicio]);
 	$fin = mysql_seguridad($_REQUEST[fin]);
-	$perfil = mysql_seguridad($_REQUEST[form_id_id]);
+	$perfil = mysql_seguridad($_REQUEST[id]);
 	$id = mysql_seguridad($_REQUEST[id]);
 	$busqueda = mysql_seguridad($_REQUEST[cadena]);
 	$campo = buscar_campo_tipo($id,"14");
@@ -46,8 +46,8 @@ while( $row = mysql_fetch_array( $sql ) ) {
 		$marcador["type"] = "Point";
 		$marcador["coordinates"] = array($lat,$lon);
 		//$marcador["loc"] = array('lat'=>$lat,'lon'=>$lon);
-		$formulario = formulario_imprimir($pefil,$row[control]);
-		$propiedades["name"] =$formulario;
+		$formulario = formulario_imprimir($perfil,$row[control]);
+		$propiedades["name"] ="$id,$row[control] $formulario";
 		
 		//formulario_imprimir($id,$control)
 		//$marcador["zoom"] = $zoom;
