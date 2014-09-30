@@ -305,6 +305,7 @@ $xajax->registerFunction("editar_campo");
 
 
 function formulario_imprimir($id,$control,$tipo) {
+
 	$id = mysql_seguridad($id);
 	if($tipo =='obligatorio'){ $w_tipo = "AND obligatorio = '1' ";}
 	if($id !='') {$w_id = "AND form_id = '$id'";}
@@ -323,6 +324,7 @@ $timestamp=mysql_result($sql,0,"timestamp");
 $fecha  = date ( "Y-m-d h:i:s" , $timestamp);
 
 if (mysql_num_rows($sql)!='0'){
+
 	mysql_data_seek($sql, 0);
 	$resultado ="
 						<div class='row' >";
@@ -344,12 +346,32 @@ if (mysql_num_rows($sql)!='0'){
 														$lat = $campos[0];
 														$lon = $campos[1];
 														$zoom = $campos[2];			
-			$contenido = "<img class='img-thumbnail '  src='http://dev.openstreetmap.de/staticmap/staticmap.php?center=$lon,$lat&zoom=$zoom&size=350x150&maptype=mapnik&markers=$lon,$lat,red-pushpin' >"; 
+			$contenido = "
+			<img class='img-thumbnail '  src='http://dev.openstreetmap.de/staticmap/staticmap.php?center=$lon,$lat&zoom=$zoom&size=350x150&maptype=mapnik&markers=$lon,$lat,red-pushpin' >"; 
 			}
-		else {$contenido = "$contenido";}
+		else {
+			$html ="$contenido";
+$html = html_entity_decode($html);
+	//$html = str_replace('&ndash;','-',$html);
+	//$html = str_replace('&quot;','"',$html);
+	//$html = preg_replace('/\&amp;(nbsp);/','&${1};',$html);
+
+	
+	$html = str_replace('{{PAGENAME}}',$title,$html);
+	
+	// Table
+	$html = convertTables($html);
+	
+	$html = simpleText($html);
+	
+
+
+
+	
+			$contenido = "$html";}
 	$campo_nombre =  remplacetas('form_campos','id',$row[id_campo],'campo_nombre');
 	
-	$resultado .= "<div class='row'><div class='col-lg-4 '>$campo_nombre[0]</div><div class='col-lg-8'><b>$contenido</b></div></div>";
+	$resultado .= "<div class='row'><div class='col-lg-4 '>$campo_nombre[0]</div><div class='col-lg-8'>$contenido</div></div>";
 															}
 	
 	$resultado .=" </div>
@@ -1887,7 +1909,7 @@ return $existe;
 
 function formulario_grabar($formulario) {
 	$respuesta = new xajaxResponse('utf-8');
-	$formulario	= mysql_seguridad($formulario);
+	//$formulario	= mysql_seguridad($formulario);
 	$consulta_grabada ='0';
 	$control = $formulario[control]; // 
 	$form_id = $formulario[form_id]; // 
@@ -1983,8 +2005,8 @@ if(is_null($igual) ){$repetido = 0;}else{
 $repetido = 1;
 }
 
-$debug .= " (c= $c md5 = $md5 , igual = $igual, repetid =$repetido  <!--, V= $V -->)<br>";
-$respuesta->addAssign("respuesta_$control","innerHTML","$debug");
+//$debug .= " (c= $c md5 = $md5 , igual = $igual, repetid =$repetido  <!--, V= $V -->)<br>";
+//$respuesta->addAssign("respuesta_$control","innerHTML","$debug");
 //return $respuesta;
 //$respuesta->addAlert("$debug");
 //return $respuesta;
@@ -1992,6 +2014,7 @@ $respuesta->addAssign("respuesta_$control","innerHTML","$debug");
 if(($V !='') && (is_numeric($c)) AND $repetido !=1 ) {					
 $ip =  obtener_ip();
 				$graba_ip = "INET_ATON('".$ip."') ";
+				$V = mysql_real_escape_string($V);
 				$consulta ="
 				INSERT INTO `form_datos` (`id`, `id_campo`,`form_id`, `id_usuario`, `contenido`, `timestamp`, `control`, ip , id_empresa) 
 										VALUES (NULL, '$c', '$formulario[form_id]', '$_SESSION[id]', '$V', UNIX_TIMESTAMP(), '$formulario[control]',$graba_ip,'$id_empresa');";
@@ -2081,7 +2104,7 @@ function mysql_seguridad($inp) {
         return array_map(__METHOD__, $inp); 
 
     if(!empty($inp) && is_string($inp)) { 
-        return str_replace(array('\\', "\0", "\n", "\r", "'", '"', "\x1a"), array('\\\\', '\\0', '\\n', '\\r', "\\*", "\\*", '\\Z'), $inp); 
+        return str_replace(array('\\', "\0",  "'", '"', "\x1a"), array('\\\\', '\\0', "\\*", "\\*", '\\Z'), $inp); 
     } 
 
     return $inp; 
