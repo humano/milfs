@@ -8,36 +8,6 @@
 |_|   |_||___| |_______||___|    |_______|
 
 </pre>
-DEFINICION
-MILFS es una aplicación web para en la captura de datos de forma ágil y su
-posterior proceso, a priori se puede ver como un sistema apra la creación 
-de formularios pero su poder va mas allá, MILFS maneja los campos de los 
-campos de los formularios de manera semántica lo que prermite su posterior 
-interpretación, por ejemplo:
-
-Si necesitamos recabar datos en un evento creamos un formulario con los campos:
-1. Nombres
-2. Email
-3. Telefono
-Estos campos solo los creamos la si no existen, luego para cada evento creamos 
-un nuevo formulario y usamos los campos existentes y gracias a esto en la base 
-de datos se almacenará siempre la información de "Nombres" en un campo "Nombres"
-lo cual le propporciona semántica a la información.
-
-MILFS también cuenta con campos especiales como el de mapa el cual proporciona
-la posibilidad de georeferenciar los datos capturados y luego exibirlos como un
-mapa. 
-
-Si deseas capturar mucha información y almacenarla de manera estructurada o quieres
-reemplazar cientos de hojas electronicas por un sistema de datos, MILF es lo 
-que estabas buscando.
-
-MILFS también cuenta con un subsistema de importación que te permite subir datos
-almacenados en un archivo CSV.
-
-Sabemos que aun nos falta mucha documentación para enseñar a manejar todo el poder
-de MILFS, Pero bueno, gracias por la ayuda ;-) 
-
 
 INSTALACION
 

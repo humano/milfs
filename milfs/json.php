@@ -3,6 +3,7 @@
 require ('xajax/xajax.inc.php');
 $xajax = new xajax();
 require ('funciones/funciones.php');
+require ('funciones/convert.php');
 
 	$fecha_inicio = mysql_seguridad($_REQUEST[inicio]);
 	$fin = mysql_seguridad($_REQUEST[fin]);
@@ -24,7 +25,7 @@ $link=Conectarse();
 					AND form_id = '$id'
 					";
 					
- //echo $consulta;
+// echo $consulta;
 
 	mysql_query("SET NAMES 'UTF8'");
 

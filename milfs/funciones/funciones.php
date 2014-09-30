@@ -316,6 +316,7 @@ function formulario_imprimir($id,$control,$tipo) {
 								$w_tipo
 						ORDER BY form_contenido_campos.orden ASC
 						";
+//						return $consulta;
 $link=Conectarse(); 
 mysql_query("SET NAMES 'utf8'");
 $sql=mysql_query($consulta,$link);
@@ -377,7 +378,7 @@ $html = html_entity_decode($html);
 	$resultado .=" </div>
 	<div class='badge pull-right'>Datos registrados el $fecha </div>
 	";
-}else {$resultado ="No hay datos";}
+}else {$resultado ="No hay datos ";}
 	return $resultado;
 }
 
@@ -1666,6 +1667,12 @@ mysql_query("SET NAMES 'utf8'");
 $consulta = "SELECT * FROM form_id WHERE id_empresa ='$_SESSION[id_empresa]' AND modificable !='0' ORDER BY id DESC";
 $sql=mysql_query($consulta,$link);
 $divider = 3;
+			$nuevo_formulario = "<a class='btn btn-primary ' href='#' onclick=\"xajax_formulario_nuevo('','contenido'); \">
+				<i class='fa fa-plus-square-o'></i> Crear formulario </a>"; 
+			$resultado .= "
+							<div class='col-sm-12' style=';'>
+							$nuevo_formulario
+							</div>";
 if (mysql_num_rows($sql)!='0' ){
 	$i =0;
 
@@ -1696,14 +1703,11 @@ if (mysql_num_rows($sql)!='0' ){
 		if($geo[0] !='') { $mapa= "<tr><td><a href='geo.php?id=$id' target='mapa'><i class='fa fa-globe'></i> Mapa</a></td></tr>";}else {$mapa='';}
 		
 		if($i % $divider==0) {
-			$nuevo_formulario = "<a class='btn btn-primary ' href='#' onclick=\"xajax_formulario_nuevo('','contenido'); \">
-				<i class='fa fa-plus-square-o'></i> Crear formulario </a>"; 
+
 		$resultado .= "
 		
 						<div class='row '  id='grid' style=''>
-							<div class='col-sm-12' style=';'>
-							$nuevo_formulario
-							</div>
+
 							";
 								}
 			$i++;
@@ -1748,7 +1752,7 @@ $resultado .=  "<div class='col-sm-4' style=';'>
 															
 	$resultado .="";
 										}
-else{ $resultado = "<div class='alert alert-warning' ><h2>Aún no se han diseñado formularios</h2></div> ";}
+else{ $resultado .= "<div class='alert alert-warning' ><h2>Aún no se han diseñado formularios</h2></div> ";}
 $respuesta->addAssign($div,"innerHTML",$resultado);
 
 return $respuesta;
@@ -2155,7 +2159,7 @@ return $respuesta;
 $consulta = "
 		SELECT * FROM  form_id, form_contenido_campos 
 		WHERE form_id.id = form_contenido_campos.id_form 
-		AND form_id.id = '$id'  
+		AND form_id.id = '$id' ORDER BY  form_contenido_campos.orden ASC
 		";
 $link=Conectarse(); 
 mysql_query("SET NAMES 'utf8'");
@@ -2169,7 +2173,7 @@ if (mysql_num_rows($sql)!='0'){
 	$encabezado = empresa_datos("$id_empresa",'encabezado');
 	$pie = empresa_datos("$id_empresa",'pie');
 	$cabecera = "
-	<div>$encabezado</div>
+	<div>$encabezado </div>
 	<div class='alert alert-info'  >
 		<div class='row'>
 		<div class='col-xs-4'>	
