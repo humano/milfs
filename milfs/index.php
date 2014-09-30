@@ -3,9 +3,12 @@ session_start();
 //ini_set('display_errors', 'On');
 require ('xajax/xajax.inc.php');
 $xajax = new xajax();
+
 require ('funciones/funciones.php');
+require ('funciones/convert.php');
 require ('funciones/login.php');
 $xajax->processRequests(); 
+//$xajax->debugOn();
 ?>
 <!DOCTYPE html>
 <html lang="en">
