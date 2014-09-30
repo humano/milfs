@@ -1029,7 +1029,7 @@ mysql_query("
 						`orden` = '$campo_orden' ,
 						`campo_area` = '$campo_area',
 						`campo_tipo` = '$campo_tipo',
-						`id_empresa` = '$id_empresa',
+						`id_empresa` = '$_SESSION[id_empresa]',
 						`activo` = '$activo'
 						WHERE `form_campos`.`id` ='$id_campo_editar'
 						LIMIT 1",$link);
