@@ -677,9 +677,9 @@ if (mysql_num_rows($sql)!='0'){
 //	$resultado ="<tr >";
 		$imagen = formulario_valor_campo("$id","0","","$control");
 		$imagen = $imagen[3];
-		if($imagen[3] != null) {
+		if($imagen[3] != null AND $tipo !='titulos') {
 		$imagen= "<img class='thumbnail' src='images/secure/?file=150/$imagen' alt='$imagen' style='max-width:100px;' title='$imagen'>";
-	}
+	}else {$imagen='';}
 $td .= "<td>$imagen</td>";
 	while( $row = mysql_fetch_array( $sql ) ) {
 		
