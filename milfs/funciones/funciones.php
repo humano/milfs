@@ -1886,13 +1886,13 @@ if (preg_match('/^[^0-9][a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[@][a-zA-Z0-9_]+([.][a-z
 function formulario_valor_campo($perfil,$id_campo,$valor,$id_control){
 
 
-if($id_control !=""){ $control ="AND `control` = '$id_control'";}else {$control ="";}
+//if($id_control !=""){ $control ="AND `control` = '$id_control'";}else {$control ="";}
 
 $link=Conectarse(); 
 mysql_query("SET NAMES 'utf8'");
 $valor=mysql_real_escape_string($valor);
 if($valor !=""){ $valor ="AND md5(contenido) LIKE '$valor'";}else {$valor ="";}
-$consulta = "SELECT *  FROM `form_datos` WHERE `form_id` = '$perfil' AND id_campo='$id_campo' $valor $control ORDER BY timestamp DESC LIMIT 1";
+$consulta = "SELECT *  FROM `form_datos` WHERE `form_id` = '$perfil' AND id_campo='$id_campo' $valor AND `control` = '$id_control' ORDER BY timestamp DESC LIMIT 1";
 $sql =mysql_query($consulta,$link);
 $cant =mysql_num_rows($sql);
 
