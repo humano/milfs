@@ -1892,17 +1892,22 @@ $link=Conectarse();
 mysql_query("SET NAMES 'utf8'");
 $valor=mysql_real_escape_string($valor);
 if($valor !=""){ $valor ="AND md5(contenido) LIKE '$valor'";}else {$valor ="";}
-$consulta = "SELECT *  FROM `form_datos` WHERE `form_id` = '$perfil' AND id_campo='$id_campo' $valor AND `control` = '$id_control' ORDER BY timestamp DESC LIMIT 1";
+$consulta = "SELECT *  FROM `form_datos` WHERE `form_id` = '$perfil' AND id_campo='$id_campo' $valor AND `control` = '$id_control' ORDER BY timestamp DESC ";
 $sql =mysql_query($consulta,$link);
 $cant =mysql_num_rows($sql);
 
 if (mysql_num_rows($sql) == '0'){
  $existe = NULL;
 										}else {
-
 $control=mysql_result($sql,0,"control");
 $timestamp=mysql_result($sql,0,"timestamp");
-$contenido=mysql_result($sql,0,"contenido");
+mysql_data_seek($sql, 0);
+while( $row = mysql_fetch_array( $sql ) ) {
+
+$contenido .= "$row[contenido] </br> ";
+
+//$contenido=mysql_result($sql,0,"contenido");
+														}
 $existe[]= $control;
 $existe[] = $timestamp;
 $existe[] = $consulta;
