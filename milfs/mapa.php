@@ -12,7 +12,7 @@
   #map {width: 100%;height: 280px;}
 </style>
 </head>
-<body>
+<body onload="javascript:window.parent.document.getElementById('<?php echo $_REQUEST[id]?>').value= '';">
 
 
 
@@ -24,13 +24,16 @@
 	
  ?>
 <script>
+ 
 var map = L.map('map')
     .setView([<?php echo $lon ?>, <?php echo $lat ?>], <?php echo $zoom ?>);
 L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
 //var lat = window.parent.document.getElementById('lat');
 //var lng = window.parent.document.getElementById('lon');
-var mapa = window.parent.document.getElementById('<?php echo $_REQUEST[id]?>');
+
+//var mapa = window.parent.document.getElementById('<?php echo $_REQUEST[id]?>');
+
 
 var marker = L.marker([<?php echo $lon ?>,<?php echo $lat ?>],{draggable: true}).addTo(map);
 
@@ -49,7 +52,8 @@ function ondragend() {
 
    // lat.value= m.lat;
    // lng.value= m.lng;
-    mapa.value= m.lng+' '+m.lat+' '+z;
+    //mapa.value= m.lng+' '+m.lat+' '+z;
+    window.parent.document.getElementById('<?php echo $_REQUEST[id]?>').value= m.lng+' '+m.lat+' '+z;
 }
 </script>
 
