@@ -9,18 +9,22 @@ if ( !isset ( $_SESSION['id'] ) ) {
 if($_REQUEST[u] == "escritorio") {$respuesta = "escritorio/";}
 // Script Que copia el archivo temporal subido al servidor en un directorio.
 $tipo = $_FILES['fileUpload']['type'];
+if($tipo=="image/png") {$ext = ".png";	} elseif($tipo=="image/jpeg") {$ext = ".jpg";	}
+else {$ext = "novalida";} 
 // Definimos Directorio donde se guarda el archivo
 //$dir = '../../../images_secure';
 // Intentamos Subir Archivo
 // (1) Comprobamos que existe el nombre temporal del archivo
 
+
 if (isset($_FILES['fileUpload']['tmp_name'])) {
 	$size= $_FILES['fileUpload']['size'];
 //	$nombre =MD5(time()).".jpg";
 // (2) - Comprobamos que se trata de un archivo de imágen
-if ($tipo == 'image/jpeg' AND $size  <= 4000000 ) {
+//if ($tipo == 'image/jpeg' AND $size  <= 4000000 ) {
+if (($tipo == 'image/jpeg' or $tipo =='image/png') AND $size  <= 4000000 ) {
 // (3) Por ultimo se intenta copiar el archivo al servidor.
-$name = MD5(time()).".jpg";
+$name = MD5(time())."$ext";
 $nombre= "../../../images_secure/full/".$name;
 
 //if (!copy($_FILES['fileUpload']['tmp_name'],"$nombre"))
