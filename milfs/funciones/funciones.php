@@ -1,5 +1,6 @@
 <?php
 function buscar_campo_tipo($id,$tipo) {
+	//// esta función retorna el id para un campo de un tipo especifico dentro de un formulario.
 $consulta ="SELECT form_campos.id, form_campos.campo_nombre FROM form_tipo_campo,form_campos,form_contenido_campos
 					WHERE form_tipo_campo.id_tipo_campo = form_campos.campo_tipo
                     AND form_contenido_campos.id_campo = form_campos.id
@@ -383,6 +384,7 @@ $html = html_entity_decode($html);
 }
 
 function formulario_respuesta($id,$control) {
+	if($id=='') {return;}
 	$id = mysql_seguridad($id);
 	$consulta = "SELECT * FROM form_id 
 						WHERE formulario_respuesta = '$id' 
@@ -690,6 +692,7 @@ $td .= "<td>$imagen</td>";
 		//$control = $contenido[0];
 		$contenido = $contenido[3];		
 		$campo_nombre =  remplacetas('form_campos','id',$row[id_campo],'campo_nombre');
+		$campo_nombre[0] ="[$row[id_campo]] $campo_nombre[0]";
 		if($tipo=="titulos") {
 			$contenido = "<b>$campo_nombre[0]</b>";
 		}
@@ -704,7 +707,7 @@ $td .= "<td>$imagen</td>";
 			$size= strlen($contenido);
 			$restante = ($limite - $size);
 			if($size > $limite) {
-			$contenido = substr($contenido,0, $length = 100)."... ";//$contenido;
+			$contenido = substr($contenido,0, $length = 200)."... ";//$contenido;
 										}
 			if($campo_tipo=='14'){
 				if($control !='') {
@@ -1818,14 +1821,14 @@ $consulta ="
 									$render = "
 																		
 																		<iframe src='mapa.php?lat=$lat&lon=$lon&zoom=$zoom&id=".$id_campo."[".$item."]' width='100%' height='300px'></iframe>
-																		<input value='$value' type='text' id='".$id_campo."[".$item."]' name='".$id_campo."[".$item."]' class='form-control' placeholder='coordenadas' readonly >
+																		<input   value='$value' type='text' id='".$id_campo."[".$item."]' name='".$id_campo."[".$item."]' class='form-control' placeholder='coordenadas' readonly >
 																		
 																				 ";}
 		elseif($campo_tipo_accion == 'email'){$render = "<code>Escriba un email válido</code>
 																			<input value='$value' type='email' id='".$id_campo."[".$item."]' name='".$id_campo."[".$item."]' class='form-control' placeholder='$campo_descripcion' > ";}
 		elseif($campo_tipo_accion == 'envio'){$render = "<code>Se enviará un correo electrónico a este email</code>
 																			<input value='$value' type='email' id='".$id_campo."[".$item."]' name='".$id_campo."[".$item."]' class='form-control' placeholder='$campo_descripcion' > ";}
-		elseif($campo_tipo_accion == 'textarea'){$render = "<textarea id='".$id_campo."[".$item."]' name='".$id_campo."[".$item."]' class='form-control' placeholder='$campo_descripcion' >$value</textarea> ";}
+		elseif($campo_tipo_accion == 'textarea'){$render = "<textarea cols='50' rows='15' id='".$id_campo."[".$item."]' name='".$id_campo."[".$item."]' class='form-control' placeholder='$campo_descripcion' >$value</textarea> ";}
 		elseif($campo_tipo_accion == 'limit'){
 			$limite = limite("".$id_campo."[".$item."]",'');
 			$rows = ceil($limite / 50 )+1; 
@@ -1881,7 +1884,7 @@ if (preg_match('/^[^0-9][a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[@][a-zA-Z0-9_]+([.][a-z
 }
 }
 
-function formulario_valor_campo($perfil,$id_campo,$valor,$id_control){
+function formulario_valor_campo_ORIGINAL($perfil,$id_campo,$valor,$id_control){
 
 
 //if($id_control !=""){ $control ="AND `control` = '$id_control'";}else {$control ="";}
@@ -1916,6 +1919,45 @@ $existe[] = $contenido;
 return $existe;
 	}
 
+
+
+function formulario_valor_campo($perfil,$id_campo,$valor,$id_control){
+
+
+//if($id_control !=""){ $control ="AND `control` = '$id_control'";}else {$control ="";}
+$campo_multiple =  remplacetas("form_contenido_campos","id_campo",$id_campo,"multiple"," id_form ='$perfil'");
+$campo_multiple = $campo_multiple[0];
+if($campo_multiple !="1"){ $limite =" DESC limit 1 ";}else {$limite =" ASC ";}
+
+$link=Conectarse(); 
+mysql_query("SET NAMES 'utf8'");
+$valor=mysql_real_escape_string($valor);
+if($valor !=""){ $valor ="AND md5(contenido) LIKE '$valor'";}else {$valor ="";}
+$consulta = "SELECT *  FROM `form_datos` WHERE `form_id` = '$perfil' AND id_campo='$id_campo' $valor AND `control` = '$id_control' ORDER BY timestamp $limite ";
+$sql =mysql_query($consulta,$link);
+$cant =mysql_num_rows($sql);
+
+if (mysql_num_rows($sql) == '0'){
+ $existe = NULL;
+										}else {
+
+$control=mysql_result($sql,0,"control");
+$timestamp=mysql_result($sql,0,"timestamp");
+mysql_data_seek($sql, 0);
+if($cant === 1) {
+	$contenido=mysql_result($sql,0,"contenido");
+					}else {
+while( $row = mysql_fetch_array( $sql ) ) {
+	$contenido .= "$row[contenido] <br> ";
+														}
+							}
+$existe[]= $control;
+$existe[] = $timestamp;
+$existe[] = $consulta;
+$existe[] = "$contenido";
+}
+return $existe;
+	}
 function formulario_grabar($formulario) {
 	$respuesta = new xajaxResponse('utf-8');
 	//$formulario	= mysql_seguridad($formulario);
@@ -2143,7 +2185,7 @@ return $respuesta;
 	
 	}
 		$nuevo_formulario = "<a href ='?id=$id'>Llenar otro formulario </a>";
-	if($control !='' AND  $tipo !='edit' ) {
+	if($control !='' AND  $tipo =='' ) {
 
 $impresion = formulario_imprimir("$id","$control",""); 
 
@@ -2205,10 +2247,11 @@ $subir_imagen = subir_imagen('');
 			<input type='hidden'  id= 'tipo'  name= 'tipo' value='$tipo' >
 				<input class='form-control'   class='sr-only' type='hidden' id='imagen' name='imagen' >
 	";
+	if($tipo=="edit") {$control_edit = "$control";}else {$control_edit = "";}
 			mysql_data_seek($sql, 0);
 	while( $row = mysql_fetch_array( $sql ) ) {
 
-		$campos = formulario_campos_render($row[id_campo],$id,$control);
+		$campos = formulario_campos_render($row[id_campo],$id,$control_edit);
 	$muestra_form .= "$campos ";
 															}
 	$muestra_form .="<br><div class='row' id='respuesta_$control' name='respuesta_$control' ></div>
