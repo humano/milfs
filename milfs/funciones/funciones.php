@@ -687,7 +687,7 @@ $td .= "<td>$imagen</td>";
 		$campo_tipo =$campo_tipo[0];
 		$contenido = formulario_valor_campo("$id","$row[id_campo]","","$control");
 		$contenido_original = $contenido;
-		$control = $contenido[0];
+		//$control = $contenido[0];
 		$contenido = $contenido[3];		
 		$campo_nombre =  remplacetas('form_campos','id',$row[id_campo],'campo_nombre');
 		if($tipo=="titulos") {
@@ -896,7 +896,7 @@ $fila=0;
 							</div>
 
 						</td>";
-	$campos .= "<tr>$menu $depliegue</tr>";
+	$campos .= "<tr title =''>$menu $depliegue </tr>";
 															}
 	$resultado .="<div class='table-responsive' ><table class='table ' style='max-width:450px;' ><td></td>$titulo $campos</table></div>";
 														}else{
@@ -1881,8 +1881,6 @@ if (preg_match('/^[^0-9][a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[@][a-zA-Z0-9_]+([.][a-z
 }
 }
 
-
-
 function formulario_valor_campo($perfil,$id_campo,$valor,$id_control){
 
 
@@ -1892,22 +1890,24 @@ $link=Conectarse();
 mysql_query("SET NAMES 'utf8'");
 $valor=mysql_real_escape_string($valor);
 if($valor !=""){ $valor ="AND md5(contenido) LIKE '$valor'";}else {$valor ="";}
-$consulta = "SELECT *  FROM `form_datos` WHERE `form_id` = '$perfil' AND id_campo='$id_campo' $valor AND `control` = '$id_control' ORDER BY timestamp DESC ";
+$consulta = "SELECT *  FROM `form_datos` WHERE `form_id` = '$perfil' AND id_campo='$id_campo' $valor AND `control` = '$id_control' ORDER BY timestamp DESC limit 1";
 $sql =mysql_query($consulta,$link);
 $cant =mysql_num_rows($sql);
 
 if (mysql_num_rows($sql) == '0'){
  $existe = NULL;
 										}else {
+
 $control=mysql_result($sql,0,"control");
 $timestamp=mysql_result($sql,0,"timestamp");
 mysql_data_seek($sql, 0);
+if($cant === 1) {
+	$contenido=mysql_result($sql,0,"contenido");
+					}else {
 while( $row = mysql_fetch_array( $sql ) ) {
-
-$contenido .= "$row[contenido] </br> ";
-
-//$contenido=mysql_result($sql,0,"contenido");
+	$contenido .= "$row[contenido] <br> ";
 														}
+							}
 $existe[]= $control;
 $existe[] = $timestamp;
 $existe[] = $consulta;
