@@ -1,4 +1,15 @@
+<?php
+session_start();
+//ini_set('display_errors', 'On');
+require ('xajax/xajax.inc.php');
+$xajax = new xajax();
+require ('funciones/funciones.php');
+require ('funciones/convert.php');
+require ('funciones/login.php');
+$xajax->processRequests(); 
 
+
+?>
 <!DOCTYPE html>
 <html lang="en">
    <head >
@@ -20,7 +31,7 @@
 <link href="css/bootstrap.min.css" rel="stylesheet">
   <style type="text/css">
   body {  padding: 0; margin: 0;  }
-  html, body, #cupcake-map {  height: 100%;  }
+  html, body, #cupcake-map { z-index: 10; position:absolute; top:0; bottom:0px; width:100%;  }
   .leaflet-popup-content {
     width:600px !important;
 }
@@ -47,5 +58,8 @@
     geojson.addTo(map);
   });
   </script>
+  <div  class="center-block" style="  z-index:10000; position:absolute; bottom:10px;">
+  <div role='row' class='row center-block' style="width:95% ; "><?php echo aplicacion_datos("$_REQUEST[id]");?></div>
+  </div>
 </body>
 </html>
