@@ -3,7 +3,6 @@ session_start();
 //ini_set('display_errors', 'On');
 require ('xajax/xajax.inc.php');
 $xajax = new xajax();
-
 require ('funciones/funciones.php');
 require ('funciones/convert.php');
 require ('funciones/login.php');
@@ -24,7 +23,7 @@ $xajax->processRequests();
 	<link rel="apple-touch-icon-precomposed" href="favicon-152.png">
 	<link href="css/font-awesome/css/font-awesome.css" rel="stylesheet">
  <link href="http://getbootstrap.com/examples/sticky-footer-navbar/sticky-footer-navbar.css" rel="stylesheet">
-
+<link href="css/estilos.php?d" rel="stylesheet">
 
 <style>
   #map {width: 500px;height:200px;}

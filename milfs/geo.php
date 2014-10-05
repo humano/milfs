@@ -29,6 +29,7 @@ $xajax->processRequests();
 
 <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7/leaflet.css" />
 <link href="css/bootstrap.min.css" rel="stylesheet">
+<link href="css/estilos.php" rel="stylesheet">
   <style type="text/css">
   body {  padding: 0; margin: 0;  }
   html, body, #cupcake-map { z-index: 10; position:absolute; top:0; bottom:0px; width:100%;  }

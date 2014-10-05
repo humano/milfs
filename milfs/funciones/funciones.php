@@ -399,10 +399,10 @@ $html = html_entity_decode($html);
 	$resultado .= "
 	<div class='row'>
 		<div class='col-sx-4 '>
-			<h3>$campo_nombre[0]</h4>
+			<span class='campo_nombre' id='nombre_$row[id_campo]'>$campo_nombre[0]</span>
 		</div>
 		<div class='col-sx-8'>
-			$contenido
+			<span class='campo_contenido' id='contenido_$row[id_campo]'>$contenido</span>
 		</div>
 	</div>";
 															}
