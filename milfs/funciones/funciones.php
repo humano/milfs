@@ -39,7 +39,7 @@ return $resultado;
 
 
 function formulario_contar($id) {
-$consulta ="SELECT count(control) as cantidad FROM form_datos WHERE form_id = '$id' GROUP BY form_id,control order by cantidad DESC LIMIT 1 ";
+$consulta ="SELECT count(distinct control) as cantidad FROM form_datos WHERE form_id = '$id' GROUP BY form_id order by cantidad DESC LIMIT 1 ";
 	$link=Conectarse(); 
 	mysql_query("SET NAMES 'utf8'");
 		$sql=mysql_query($consulta,$link);
@@ -789,7 +789,7 @@ if($perfil !=''){$perfil ="AND form_id = '$perfil'";}Else{
 if($cantidad < 1) {
 			$resultado ="<div class='alert alert-danger'>
 								<h1><i class='fa fa-exclamation-triangle'></i>
-										El formulario <strong>\"$formulario_nombre[0]\"</strong> no tiene registros
+										El formulario <strong>\"$formulario_nombre[0]\"</strong> no tiene registros $consulta
 								</h1>
 							</div>";
 			$respuesta->addAssign($div,"innerHTML",$resultado);
