@@ -48,7 +48,7 @@ while( $row = mysql_fetch_array( $sql ) ) {
 		$marcador["coordinates"] = array($lat,$lon);
 		//$marcador["loc"] = array('lat'=>$lat,'lon'=>$lon);
 		$formulario = formulario_imprimir($perfil,$row[control],'obligatorio');
-		$propiedades["name"] ="$formulario";
+		$propiedades["name"] ="<div class='container-fluid' id='contenedor_datos' >$formulario</div>";
 		
 		//formulario_imprimir($id,$control)
 		//$marcador["zoom"] = $zoom;

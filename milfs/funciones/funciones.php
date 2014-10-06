@@ -352,7 +352,12 @@ if (mysql_num_rows($sql)!='0'){
 		$imagen = formulario_valor_campo("$id","0","","$control");
 		$imagen = $imagen[3];
 		if($imagen[3] != "") {
-		$resultado .= "<img class='img-thumbnail responsive' src='images/secure/?file=600/$imagen'>";
+		$resultado .= "
+			<div class='row' id='contenedor_imagen'>
+				<div class='col-lg-12 '>
+					<img class='img-thumbnail responsive' src='images/secure/?file=300/$imagen'>
+				</div>
+			</div>";
 	}else {$resultado .="";}
 	while( $row = mysql_fetch_array( $sql ) ) {
 		$multiple ="$row[multiple]";
@@ -361,7 +366,7 @@ if (mysql_num_rows($sql)!='0'){
 		$contenido = formulario_valor_campo("$id","$row[id_campo]","","$control");
 		$contenido = $contenido[3];
 		
-		if($campo_tipo=='15'){if($contenido !=""){$contenido = "<img class='img-thumbnail responsive' src='images/secure/?file=600/$contenido'>"; }else{$contenido="";}}
+		if($campo_tipo=='15'){if($contenido !=""){$contenido = "<img class='img-thumbnail responsive' src='images/secure/?file=150/$contenido'>"; }else{$contenido="";}}
 				
 		elseif($campo_tipo=='14'){
 			if($contenido !='') {
@@ -397,11 +402,11 @@ $html = html_entity_decode($html);
 	$campo_nombre =  remplacetas('form_campos','id',$row[id_campo],'campo_nombre');
 	
 	$resultado .= "
-	<div class='row'>
-		<div class='col-sx-4 '>
+	<div class='row' id='contenedor_$row[id_campo]'>
+		<div class='col-lg-3 '>
 			<span class='campo_nombre' id='nombre_$row[id_campo]'>$campo_nombre[0]</span>
 		</div>
-		<div class='col-sx-8'>
+		<div class='col-lg-9'>
 			<span class='campo_contenido' id='contenido_$row[id_campo]'>$contenido</span>
 		</div>
 	</div>";
@@ -409,6 +414,8 @@ $html = html_entity_decode($html);
 	
 	//$resultado .=" </div>	<!-- <div class='badge pull-right'>Datos registrados el $fecha </div> -->	";
 }else {$resultado ="No hay datos ";}
+		$resultado =" $resultado
+		<a target='_blank' href='index.php?id=$id&c=$control' class='pull-right'>Ampliar</a>";
 	return $resultado;
 }
 
@@ -2288,7 +2295,7 @@ return $respuesta;
 $impresion = formulario_imprimir("$id","$control",""); 
 
 $formulario_nombre = remplacetas('form_id','id',$id,'nombre') ;
-$muestra_form = "$impresion";
+$muestra_form = "<div class='container-fluid' id='contenedor_datos' >$impresion</div>";
 
 
 $respuesta->addAssign("muestra_form","innerHTML","$muestra_form");
