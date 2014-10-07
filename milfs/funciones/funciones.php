@@ -76,11 +76,15 @@ function empresa_datos($id_empresa,$tipo) {
 	if($tipo=='encabezado') {
 
 $resultado ="
-<div class=''>
-	<img class='img-responsive' src='images/secure/?file=600/$imagen[0]'>
-	<div class='caption'>
-	<h3>$razon_social[0]</h3>
-	<p class='lead'>$slogan[0]</p>
+<div class='datos_empresa row' role='row'>
+	<div class='col-sm-2'>
+		<img id='logo_empresa' class='img-responsive' src='images/secure/?file=600/$imagen[0]'>
+	</div>
+	<div class='col-sm-10'>
+		<div class='caption'>
+		<h3>$razon_social[0]</h3>
+		<p class='lead'>$slogan[0]</p>
+		</div>
 	</div>
 </div>
 ";
@@ -415,7 +419,8 @@ $html = html_entity_decode($html);
 	//$resultado .=" </div>	<!-- <div class='badge pull-right'>Datos registrados el $fecha </div> -->	";
 }else {$resultado ="No hay datos ";}
 		$resultado =" $resultado
-		<a target='_blank' href='index.php?id=$id&c=$control' class='pull-right'>Ampliar</a>";
+		<a class='btn btn-default pull-right' onclick=\"xajax_formulario_modal('$id','','$control'); \"> Ampliar</a> 
+		<a target='_blank' href='index.php?id=$id&c=$control' class='btn btn-default pull-right'><i class='fa fa-share-square-o'></i> Compartir</a>";
 	return $resultado;
 }
 

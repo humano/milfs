@@ -8,7 +8,6 @@ require ('funciones/convert.php');
 require ('funciones/login.php');
 $xajax->processRequests(); 
 
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -19,7 +18,7 @@ $xajax->processRequests();
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="fredyrivera" >
-    
+     <?php $xajax->printJavascript("xajax/");  ?>
     <link rel="shortcut icon" href="favicon-152.png">
 	<link rel="apple-touch-icon-precomposed" href="favicon-152.png">
 	<link href="css/font-awesome/css/font-awesome.css" rel="stylesheet">
@@ -34,7 +33,7 @@ $xajax->processRequests();
   body {  padding: 0; margin: 0;  }
   html, body, #cupcake-map { z-index: 10; position:absolute; top:0; bottom:0px; width:100%;  }
   .leaflet-popup-content {
-    width:600px !important;
+     width:600px !important; 
 }
   </style>
 
@@ -62,5 +61,31 @@ $xajax->processRequests();
   <div  class="center-block" style="  z-index:10000; position:absolute; bottom:10px;">
   <div role='row' class='row center-block' style="width:95% ; "><?php echo aplicacion_datos("$_REQUEST[id]");?></div>
   </div>
+  <!-- Modal -->
+
+<div class='modal fade ' id='muestraInfo' tabindex='-1' role='dialog' aria-labelledby='myModalLabel' aria-hidden='true'>
+  <div class='modal-dialog' >
+    <div class='modal-content'>
+      <div class='modal-header' >
+        <button type='button' class='close' data-dismiss='modal' aria-hidden='true'>&times;</button>
+        <h4 class='modal-title' id='myModalLabel_info'><div id='titulo_modal'></div></h4>
+      </div>
+      <div class='modal-body'>
+      
+       <div id='muestra_form'></div>
+      </div>
+      <div class='modal-footer' id='pie_modal'>
+        
+       
+      </div>
+    </div>
+  </div>
+</div>
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+     <script src="js/jquery.min.js"></script> 
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/scripts.js"></script>
 </body>
 </html>

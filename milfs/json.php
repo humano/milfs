@@ -21,7 +21,7 @@ $link=Conectarse();
 					AND form_id = '$id' 
 					";
 					*/
-						$consulta = "SELECT contenido as data , form_id as id, control, GROUP_CONCAT(id  ORDER by timestamp desc ) as identificador  
+						$consulta = "SELECT  form_id as id, control, GROUP_CONCAT(contenido  ORDER by timestamp desc ) as data  
 											FROM `form_datos` 
 											WHERE form_id = '$id' 
 											AND id_campo ='$id_campo' $valor
@@ -45,13 +45,17 @@ while( $row = mysql_fetch_array( $sql ) ) {
 		//$marcador["id"] = $id;
 		//$titulo = remplacetas("form_datos","control","$row[control]","contenido","id_campo ='28' AND timestamp ='$row[timestamp]'");
 		//$marcador["id"] = $id;
-		$campos = explode(" ",$row[data]);
+		//$identificador=mysql_result($sql,0,"identificador");
+		$identificador = explode(',',$row[data]);
+		$identificador = $identificador[0]; 
+		$campos = explode(" ",$identificador);
 														$lat = $campos[0];
 														$lon = $campos[1];
 														$zoom = $campos[2];	
 		$marcador["type"] = "Point";
 		$marcador["coordinates"] = array($lat,$lon);
 		//$marcador["loc"] = array('lat'=>$lat,'lon'=>$lon);
+		
 		$formulario = formulario_imprimir($perfil,$row[control],'obligatorio');
 		$propiedades["name"] ="<div class='container-fluid' id='contenedor_datos' >$formulario</div>";
 		
