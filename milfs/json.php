@@ -14,18 +14,23 @@ require ('funciones/convert.php');
 	$id_campo = $campo[0];
 	  
 $link=Conectarse();
-
-
-
-
-	
+/*
 	$consulta = "	SELECT  distinct(contenido) as data, control,form_datos.form_id as id, timestamp
 					FROM form_datos
 					WHERE form_datos.id_campo = '$id_campo' 
-					AND form_id = '$id'
+					AND form_id = '$id' 
 					";
-					
-// echo $consulta;
+					*/
+						$consulta = "SELECT contenido as data , form_id as id, control, GROUP_CONCAT(id  ORDER by timestamp desc ) as identificador  
+											FROM `form_datos` 
+											WHERE form_id = '$id' 
+											AND id_campo ='$id_campo' $valor
+											group by  control  
+											ORDER BY  orden  desc";
+
+
+
+ //echo $consulta;
 
 	mysql_query("SET NAMES 'UTF8'");
 
