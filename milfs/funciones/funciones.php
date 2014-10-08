@@ -787,12 +787,17 @@ if ( !isset ( $_SESSION['id_empresa'] ) ) {
 $respuesta->addRedirect("index.php");
 return $respuesta;
 }
-$formulario = mysql_seguridad($formulario);
+$link=Conectarse(); 
+mysql_query("SET NAMES 'utf8'");
+//$formulario = mysql_seguridad($formulario);
+mysql_real_escape_string($formulario);
 $perfil = $formulario["form_id_id"];
+$filtro = $formulario["campo_filtro"];
 $control = md5(rand(1,99999999).microtime());
 
 $cantidad =	formulario_contar($perfil);
 $formulario_nombre = remplacetas('form_id','id',$perfil,'nombre') ;
+if($filtro !='' ){$filtro ="AND contenido = '$filtro'";}
 if($perfil !=''){$perfil ="AND form_id = '$perfil'";}Else{
 			$resultado ="<div class='alert alert-danger'><h1><i class='fa fa-exclamation-triangle'></i> Por favor seleccione un formulario</h1></div>";
 			$respuesta->addAssign($div,"innerHTML",$resultado);
@@ -801,7 +806,7 @@ if($perfil !=''){$perfil ="AND form_id = '$perfil'";}Else{
 if($cantidad < 1) {
 			$resultado ="<div class='alert alert-danger'>
 								<h1><i class='fa fa-exclamation-triangle'></i>
-										El formulario <strong>\"$formulario_nombre[0]\"</strong> no tiene registros $consulta
+										El formulario <strong>\"$formulario_nombre[0]\"</strong> no tiene registros 
 								</h1>
 							</div>";
 			$respuesta->addAssign($div,"innerHTML",$resultado);
@@ -830,8 +835,7 @@ if($id_campo ==''){
 
 if($busqueda !=''){$busca ="AND contenido LIKE '%%$busqueda%%'";}Else{$busca ='';}
 
-$link=Conectarse(); 
-mysql_query("SET NAMES 'utf8'");
+
 
 $consulta = "	SELECT  *,from_unixtime(timestamp) AS fecha , form_datos.id AS form_datos_id
 					FROM form_datos, form_campos 
@@ -839,6 +843,7 @@ $consulta = "	SELECT  *,from_unixtime(timestamp) AS fecha , form_datos.id AS for
 					$busca 
 					$perfil 
 					$campo  
+					$filtro
 					AND timestamp BETWEEN UNIX_TIMESTAMP('$fecha_inicio') 
 					AND UNIX_TIMESTAMP('$fin 23:59:59') GROUP BY control $orden";
 
@@ -947,8 +952,9 @@ $fila=0;
 															}
 	$resultado .="<div class='table-responsive' ><table class='table ' style='max-width:450px;' ><td></td>$titulo $campos</table></div>";
 														}else{
-	$resultado ="<div class='alert alert-danger'><h1><i class='fa fa-exclamation-triangle'></i> No hay resultados para la consulta</h1></div>";
+	$resultado .="<div class='alert alert-danger'><h1><i class='fa fa-exclamation-triangle'></i> No hay resultados para la consulta </h1></div>";
 																}
+	//$resultado .="$consulta";
 $respuesta->addAssign("resultados_encabezado","innerHTML",$encabezado);
 $respuesta->addAssign($div,"innerHTML",$resultado);
 
@@ -972,6 +978,7 @@ $resultado[] = $consulta;
 										$resultado[2] = $consulta;}
 return $resultado;
 } 
+
 function formulario_campos_select($perfil,$div){
 	$respuesta = new xajaxResponse('utf-8');
 $link=Conectarse(); 
@@ -979,16 +986,18 @@ mysql_query("SET NAMES 'utf8'");
 $consulta = "
 	SELECT * FROM form_contenido_campos, form_campos 
 	WHERE form_contenido_campos.id_campo = form_campos.id
-	AND id_form = '$perfil' ";
+	AND id_form = '$perfil' 
+	ORDER BY campo_nombre ASC";
 $sql=mysql_query($consulta,$link);
 if (mysql_num_rows($sql)!='0'){
 $resultado = "<label for='id_campo'>Campo</label>
-						<select class='form-control' name='id_campo' id='id_campo' >
+						<select onchange=\"xajax_formulario_campos_filtro('$perfil',(this.value),'filtro_$perfil'); \" class='form-control' name='id_campo' id='id_campo' >
 							<option value=''>Todos los campos</option>";
 while( $row = mysql_fetch_array( $sql ) ) {
 $resultado .= "		<option value='$row[id_campo]' title='$row[campo_descripcion]'>$row[campo_nombre]</option>";
 															}
-$resultado .= "	</select >";										}
+$resultado .= "	</select >
+						<div id='filtro_$perfil'></div>";										}
 else{$resultado = '';}
 
 
@@ -998,6 +1007,38 @@ return $respuesta;
 	}
 $xajax->registerFunction("formulario_campos_select");
 
+
+function formulario_campos_filtro($perfil,$campo,$div){
+	$respuesta = new xajaxResponse('utf-8');
+$link=Conectarse(); 
+mysql_query("SET NAMES 'utf8'");
+$consulta = "
+	SELECT * FROM form_datos
+	WHERE form_id =  '$perfil' 
+	AND id_campo = '$campo'
+	GROUP BY contenido 
+	ORDER BY contenido asc";
+$sql=mysql_query($consulta,$link);
+if (mysql_num_rows($sql)!='0'){
+$resultado = "<label for='id_campo'>Filtro</label>
+						<select class='form-control' name='campo_filtro' id='campo_filtro' >
+							<option value=''>Todos</option>";
+while( $row = mysql_fetch_array( $sql ) ) {
+$resultado .= "		<option value='$row[contenido]' title=''>$row[contenido]</option>";
+															}
+$resultado .= "	</select >";
+										}
+else{$resultado = '';}
+
+
+$respuesta->addAssign($div,"innerHTML",$resultado);
+return $respuesta;
+	
+	}
+$xajax->registerFunction("formulario_campos_filtro");
+
+
+//$select = select('form_campos_valores','campo_valor','campo_valor','',"id_form_campo = $id_campo","$id_campo");
 function formulario_consultar($div){
 	if($div==''){
 		$div = "contenido";
@@ -1031,7 +1072,7 @@ function formulario_consultar($div){
 						<div class='col-lg-4'>
 							<div class='form-group'>
 								<label for='busqueda'>Frase a buscar</label>
-								<input type=text name='busqueda'  id='busqueda' placeholder='Cadena de busqueda' class='form-control'  >
+								<input value='%%' type=text name='busqueda'  id='busqueda' placeholder='Cadena de busqueda' class='form-control'  >
 							</div>
 						</div>
 						<div class='col-lg-4'>
@@ -1697,7 +1738,11 @@ return $respuesta;
 }$xajax->registerFunction("formulario_nuevo");
 
 function formulario_listado($formulario,$div){
-
+if ( !isset ( $_SESSION['id_empresa'] ) ) {
+	$respuesta = new xajaxResponse('utf-8');	
+$respuesta->addRedirect("index.php");
+return $respuesta;
+}
 	$id=mysql_real_escape_string($id);
 	$id_empresa= $_SESSION['id'];
 		if($div==''){
