@@ -17,6 +17,38 @@
 
 
 <div id='map'></div>
+<script type='text/javascript'>
+ 
+  if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(function(position){
+      var latitude = position.coords.latitude;
+      var longitude = position.coords.longitude;
+      });
+ 
+      
+/*      var map = L.map('map')
+ 
+      L.tileLayer('http://{s}.tile.cloudmade.com/1cc75fcc8e2243d1b2f6aab1e5850be1/998/256/{z}/{x}/{y}.png', {
+      attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://cloudmade.com">CloudMade</a>',
+      maxZoom: 18
+      }).addTo(map);
+   */   
+   //   map.locate({setView: true, maxZoom: 16});
+ 
+   /*   function onLocationFound(e) {
+        var radius = e.accuracy / 2;
+ 
+        L.marker(e.latlng).addTo(map)
+            .bindPopup("You are within " + radius + " meters from this point").openPopup();
+ 
+        L.circle(e.latlng, radius).addTo(map);
+      }
+ 
+      map.on('locationfound', onLocationFound);
+ */
+  }
+ 
+</script>
 <?php 
 	if ($_REQUEST[lat] !='') {$lat=$_REQUEST[lat];}else {$lat= "-75.5570125579834";}
 	if ($_REQUEST[lon] !='') {$lon=$_REQUEST[lon];}else {$lon= "6.2463742841860";}
@@ -26,7 +58,8 @@
 <script>
  
 var map = L.map('map')
-    .setView([<?php echo $lon ?>, <?php echo $lat ?>], <?php echo $zoom ?>);
+   // .setView([<?php echo $lon ?>, <?php echo $lat ?>], <?php echo $zoom ?>);
+    .setView([latitude, longitude], <?php echo $zoom ?>);
 L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
 //var lat = window.parent.document.getElementById('lat');

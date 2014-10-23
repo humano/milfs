@@ -1,10 +1,10 @@
 <?php 
+session_start();
 //ini_set('display_errors', 'On');
 require ('xajax/xajax.inc.php');
 $xajax = new xajax();
-//require ('json.lab.php');
 require ('funciones/funciones.php');
-//require ('funciones/convert.php');
+require ('funciones/convert.php');
 $xajax->processRequests(); 
 if($_REQUEST[id2] =='') {$agregar= $_REQUEST[id];}else {$agregar = $_REQUEST[id2];}
 $formulario_nombre = remplacetas('form_id','id',$_REQUEST[id],'nombre') ;
@@ -32,7 +32,7 @@ $agregar_nombre = remplacetas('form_id','id',$agregar,'nombre') ;
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
-    <meta name="author" content="fredyrivera" >
+     <meta name="author" content="fredyrivera" >
      <?php $xajax->printJavascript("xajax/");  ?>
     <link rel="shortcut icon" href="favicon-152.png">
 	<link rel="apple-touch-icon-precomposed" href="favicon-152.png">
@@ -55,42 +55,76 @@ $agregar_nombre = remplacetas('form_id','id',$agregar,'nombre') ;
   </style>
 
   <script src="http://code.jquery.com/jquery-2.1.0.min.js"></script>
-<!--   <link rel="points" type="application/json" href="json.php?id=<?php echo $_REQUEST["id"] ?>"> -->
+<!--   <link rel="points" type="application/json" href="json.lab.php?id=<?php echo $_REQUEST["id"] ?>"> -->
 </head>
-<body>
+<body >
+<audio id="foobar" src="images/audios/audio6.mp3" preload="auto" autoplay loop controls></audio>
+<style>
+.info {
+	width: 800px;
+	height: 90%;
+	overflow-y: auto;
+	overflow-x: hidden;
+  position:absolute;
+  top:100px;
+  left:50px;
+  }
+  .info div {
+    
+    border-radius:3px;
+    }
+</style>
 <div id='map'></div>
+<div id='info' class='info' draggable="true"></div>
+
 <script>
 L.mapbox.accessToken = 'pk.eyJ1IjoiaHVtYW5vIiwiYSI6IlgyRTFNdFEifQ.OmQBXmcVg_zq-vMpr8P5vQ';
 var map = L.mapbox.map('map', 'humano.jki5hno0')
-    .setView([40, -74.50], 8);
+     .setView([40, -74.50], 15);
 
-var geoJson = [ <?php echo imprime_geojson("$_REQUEST[id]","$_REQUEST[id2]");?> ];
-var myLayer = L.mapbox.featureLayer()
-  .setGeoJSON(geoJson)
-  .addTo(map);
-  
-myLayer.on('layeradd', function(e) {
-	    var marker = e.layer,
+// As with any other AJAX request, this technique is subject to the Same Origin Policy:
+// http://en.wikipedia.org/wiki/Same_origin_policy
+var featureLayer = L.mapbox.featureLayer()
+    //.loadURL('json.lab.php?id=<?php echo $id ?>')
+     .loadURL('json.lab.php?id=<?php echo $_REQUEST[id] ?>&id2=<?php echo $_REQUEST[id2] ?>')
+    // Once this layer loads, we set a timer to load it again in a few seconds.
+    .on('ready', run)
+    .addTo(map);
+// Add custom popups to each using our custom feature properties
+featureLayer.on('layeradd', function(e) {
+    var marker = e.layer,
         feature = marker.feature;
-           // Create custom popup content
-    var popupContent =  '' + feature.properties.description + '';
 
+    // Create custom popup content
+    var popupContent =  '' + feature.properties.name + '' +
+                            
+                            feature.properties.title +'';
+	var aviso = feature.properties.name;
+	          info.innerHTML = aviso;
     // http://leafletjs.com/reference.html#popup
     marker.bindPopup(popupContent,{
         closeButton: false,
         minWidth: 320
     });
-
-         marker.setIcon(L.icon(feature.properties.icon));
-
+      marker.setIcon(L.icon(feature.properties.icon));
 });
- 
-map.fitBounds(myLayer.getBounds());
-myLayer.setGeoJSON(geoJson);
+function run() {
+    featureLayer.eachLayer(function(l) {
+        map.panTo(l.getLatLng());
+    });
+    window.setTimeout(function() {
+        //featureLayer.loadURL('json.lab.php?id=<?php echo $_REQUEST[id] ?>');
+        featureLayer.loadURL('json.lab.php?id=<?php echo $_REQUEST[id] ?>&id2=<?php echo $_REQUEST[id2] ?>');
+        //featureLayer.loadURL('https://wanderdrone.appspot.com/');
+        //alert("Hola");
+          info.innerHTML = aviso;
+    },15000);
+}
 </script>
-<div  class="panel-map" id='panel_map_<?php echo $id ?>' style="">
+<div  class="panel-map" id='panel_map_<?php echo $_REQUEST[id] ?>' style="z-index: 2 !important;">
   <div role='row' class='row center-block' style="; "><?php echo mapa_ficha("$_REQUEST[id]");?></div>
-    <a class="btn btn-primary btn-block" href="#" onclick="xajax_formulario_modal('<?php echo $agregar ?>'); ">Agregar<br> <?php echo $agregar_nombre[0]; ?></a>
+  <a class="btn btn-primary btn-block" href="#" onclick="xajax_formulario_modal('<?php echo $agregar ?>'); ">Agregar<br> <?php echo $agregar_nombre[0]; ?></a>
+  <a onClick="window.location.reload()">*</a>
   </div>
   <!-- Modal -->
 
