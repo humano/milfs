@@ -7,7 +7,7 @@ require ('funciones/funciones.php');
 require ('funciones/convert.php');
 require ('funciones/login.php');
 $xajax->processRequests(); 
-
+$logo = remplacetas('empresa','id','1','imagen') ;
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -46,6 +46,7 @@ $xajax->processRequests();
 	<div class="">
 
       <!-- Static navbar -->
+      <img  style="max-height:50px;" src="images/secure/?file=150/<?php echo $logo[0] ?>" >
       <div class="navbar navbar-default " role="navigation">
         <div class="container-fluid">
           <div class="navbar-header">
@@ -55,7 +56,7 @@ $xajax->processRequests();
               <span class="icon-bar"></span>
               <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#">C3P</a>
+            <a class="navbar-brand" href="#"></a>
           </div>
           <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
@@ -68,7 +69,7 @@ $xajax->processRequests();
       </div>
 	</div><!-- /container -->
 	<div id ='contenedor' style='  margin-top:-10px; ' class="">
-	
+	<?php echo contenido_aleatorio("6"); ?>
 	</div>
   <div  class="center-block" style="  z-index:10000; bottom:10px;">
   <div role='row' class='row center-block' style="width:95% ; "><?php //echo aplicacion_datos("$_REQUEST[id]");?></div>
