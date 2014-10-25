@@ -303,7 +303,7 @@ function aplicaciones_listado($id_form,$tipo){
 		$w_publico =" publico ='1'";
 $link=Conectarse(); 
 mysql_query("SET NAMES 'utf8'");
-$consulta = "SELECT * FROM form_id WHERE  $w_publico ORDER BY id DESC ";
+$consulta = "SELECT * FROM form_id WHERE  $w_publico ORDER BY orden asc ";
 $sql=mysql_query($consulta,$link);
 
 
@@ -344,7 +344,7 @@ function contenido_listado($id){
 	$campo_titulo = remplacetas('parametrizacion','campo',$id,'descripcion'," tabla='form_id' and  opcion = 'titulo'") ;
 if($campo_titulo[0] !='') {$w_campo = "AND id_campo = '$campo_titulo[0]'";}
 $campo_titulo = $campo_titulo[0];
-$consulta ="SELECT * FROM  form_datos WHERE form_id = '$id' $w_campo GROUP BY control order by contenido ";
+$consulta ="SELECT *,GROUP_CONCAT(id  ORDER by timestamp desc ) as identificador FROM  form_datos WHERE form_id = '$id' $w_campo GROUP BY control order by contenido";
 $link=Conectarse(); 
 $sql=mysql_query($consulta,$link);
 if (mysql_num_rows($sql)!='0'){
@@ -352,7 +352,10 @@ if (mysql_num_rows($sql)!='0'){
 	$contenido = "<ul class='dropdown-menu' role='menu'>";
 		mysql_data_seek($sql, 0);
 while( $row = mysql_fetch_array( $sql ) ) {
-	$contenido  .= "<li><a href='#' onclick= \"xajax_contenido_mostrar('$row[form_id]','$row[control]','contenedor'); \">$row[contenido] </a></li>"; 
+	$identificador = explode(',',$row[identificador]);
+	$identificador = $identificador[0];
+	$titulo = remplacetas('form_datos','id',$identificador,'contenido',"") ;
+	$contenido  .= "<li><a href='#' onclick= \"xajax_contenido_mostrar('$row[form_id]','$row[control]','contenedor'); \">$titulo[0] </a> </li>"; 
 														}
  	$contenido .= "</ul>";
 										}
@@ -363,6 +366,19 @@ return " $contenido";
 }
 $xajax->registerFunction("contenido_listado");
 
+
+function contenido_aleatorio($id) {
+$link=Conectarse(); 
+$sql=mysql_query($consulta,$link);
+$consulta ="SELECT * FROM  form_datos WHERE form_id = '$id' ORDER BY rand() limit 1 ";
+$sql=mysql_query($consulta,$link);
+if (mysql_num_rows($sql)!='0'){
+	$control = mysql_result($sql,0,"control");
+	$contenido = formulario_imprimir("$id","$control","c3p"); 
+}
+return $contenido.$control;
+
+}
 function contenido_mostrar($id,$control,$div){
 
 	$respuesta = new xajaxResponse('utf-8');
@@ -2950,7 +2966,7 @@ function Conectarse(){
 		
 	include("includes/datos.php");
    		if(!isset($db)) {
-  // include("escritorio/includes/datos.php");
+   include("milfs/includes/datos.php");
    		}
 
    if (!($link=mysql_connect($servidor,$usuario,$password)))
