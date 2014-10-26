@@ -729,7 +729,7 @@ $xajax->registerFunction("editar_campo");
 
 
 function formulario_imprimir($id,$control,$tipo) {
-
+require ('includes/markdown.php');
 	$id = mysql_seguridad($id);
 		$publico = remplacetas('form_id','id',$id,'publico') ;
 		if($publico[0] != "1" and (!isset ( $_SESSION[id]) )) {
@@ -783,6 +783,7 @@ if (mysql_num_rows($sql)!='0'){
 		$contenido = formulario_valor_campo("$id","$row[id_campo]","","$control");
 		$md5_contenido = $contenido[4];
 		$contenido = $contenido[3];
+		//$contenido = Markdown($contenido);
 		
 		if($campo_tipo=='15'){if($contenido !=""){$contenido = "<img class='img-thumbnail responsive' src='images/secure/?file=150/$contenido'>"; }else{$contenido="";}}
 				
@@ -809,6 +810,7 @@ if (mysql_num_rows($sql)!='0'){
 //	$html = convertTables($html);
 //	$html = simpleText($html);
 	$contenido = nl2br($html);
+			$contenido = Markdown($contenido);
 			}
 	$campo_nombre =  remplacetas('form_campos','id',$row[id_campo],'campo_nombre');
 	$nombre[$row[id_campo]] = $campo_nombre[0] ;
@@ -2435,7 +2437,9 @@ $consulta ="
 																			<input value='$value' type='email' id='".$id_campo."[".$item."]' name='".$id_campo."[".$item."]' class='form-control' placeholder='$campo_descripcion' > ";}
 		elseif($campo_tipo_accion == 'envio'){$render = "<code>Se enviará un correo electrónico a este email</code>
 																			<input value='$value' type='email' id='".$id_campo."[".$item."]' name='".$id_campo."[".$item."]' class='form-control' placeholder='$campo_descripcion' > ";}
-		elseif($campo_tipo_accion == 'textarea'){$render = "<textarea cols='50' rows='15' id='".$id_campo."[".$item."]' name='".$id_campo."[".$item."]' class='form-control' placeholder='$campo_descripcion' >$value</textarea> ";}
+		elseif($campo_tipo_accion == 'textarea'){$render = "
+
+		<textarea cols='50' data-provide=\"markdown\"   rows='15' id='".$id_campo."[".$item."]' name='".$id_campo."[".$item."]' class='form-control' placeholder='$campo_descripcion' >$value</textarea> ";}
 		elseif($campo_tipo_accion == 'limit'){
 			$limite = limite("".$id_campo."[".$item."]",'');
 			$rows = ceil($limite / 50 )+1; 
@@ -2957,6 +2961,9 @@ $respuesta->addAssign("muestra_form","innerHTML","$muestra_form");
 $respuesta->addAssign("titulo_modal","innerHTML","$cabecera");
 $respuesta->addAssign("pie_modal","innerHTML","$pie");
 $respuesta->addscript("$('#muestraInfo').modal('toggle')");	
+$respuesta->addscript("$('textarea').markdown({autofocus:false,savable:false})");	
+//$('textarea').markdown({autofocus:false,savable:false}
+	
 return $respuesta;
 }
 $xajax->registerFunction("formulario_modal");
