@@ -6,6 +6,7 @@ $xajax = new xajax();
 require ('funciones/funciones.php');
 require ('funciones/convert.php');
 require ('funciones/login.php');
+
 $xajax->processRequests(); 
 //$xajax->debugOn();
 ?>
@@ -19,11 +20,18 @@ $xajax->processRequests();
     <meta name="description" content="">
     <meta name="author" content="fredyrivera" >
      <?php $xajax->printJavascript("xajax/");  ?>
-    <link rel="shortcut icon" href="favicon-152.png">
+	<link rel="shortcut icon" href="favicon-152.png">
 	<link rel="apple-touch-icon-precomposed" href="favicon-152.png">
 	<link href="css/font-awesome/css/font-awesome.css" rel="stylesheet">
- <link href="http://getbootstrap.com/examples/sticky-footer-navbar/sticky-footer-navbar.css" rel="stylesheet">
-<link href="css/estilos.php?d" rel="stylesheet">
+<!-- 	<link href="css/estilos.php?dd" rel="stylesheet">
+	<link href="css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" type="text/css" media="screen" href="css/bootstrap.css">
+	<link rel="stylesheet" type="text/css" media="screen" href="css/bootstrap-markdown.css">
+	<link rel="stylesheet" type="text/css" media="screen" href="css/bootstrap-markdown.min.css"> -->
+	<link rel="stylesheet" type="text/css" media="screen" href="css/bootstrap.css">
+	<link rel="stylesheet" type="text/css" media="screen" href="css/bootstrap-markdown.css">
+	<link rel="stylesheet" type="text/css" media="screen" href="css/bootstrap-markdown.min.css">
+
 
 <style>
   #map {width: 500px;height:200px;}
@@ -34,7 +42,7 @@ $xajax->processRequests();
     <title>I<3MILFS</title>
 
     <!-- Bootstrap core CSS -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
+    
 <!--     <script language="JavaScript" src="escritorio/librerias/scripts.js" type="text/javascript"></script> -->
     <!-- Custom styles for this template -->
     
@@ -146,7 +154,7 @@ if($_REQUEST[id] !=''){$onload ="<script type=\"text/javascript\"> xajax_formula
         <h4 class='modal-title' id='myModalLabel_info'><div id='titulo_modal'></div></h4>
       </div>
       <div class='modal-body'>
-      
+
        <div id='muestra_form'></div>
       </div>
       <div class='modal-footer' id='pie_modal'>
@@ -170,9 +178,19 @@ if($_REQUEST[id] !=''){$onload ="<script type=\"text/javascript\"> xajax_formula
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-     <script src="js/jquery.min.js"></script> 
-    <script src="js/bootstrap.min.js"></script>
+      <script src="js/jquery.min.js"></script>
+  <script src="js/bootstrap.js"></script>
+  <script src="js/markdown.js"></script>
+  <script src="js/to-markdown.js"></script>
+  <script src="js/bootstrap-markdown.js"></script>
+      <script src="js/scripts.js"></script>
+<!-- <script src="js/jquery.min.js"></script> 
+<script src="js/bootstrap.min.js"></script>
     <script src="js/scripts.js"></script>
-
+<script src="js/bootstrap-markdown.js"></script>
+<script src="js/markdown.js"></script>
+<script src="js/to-markdown.js"></script>
+<script src="js/bootstrap-markdown.js"></script>
+ -->
 </body>
 </html>

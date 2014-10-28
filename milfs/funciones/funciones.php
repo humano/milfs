@@ -48,7 +48,7 @@ function json($datos){
 //return $datos[control];
 
 	mysql_query("SET NAMES 'UTF8'");
-	$sql = mysql_query($consulta,$link) or die("error al ejecutar consulta $consulta ");
+	$sql = mysql_query($consulta,$link) or die("error al ejecutar consulta ");
  if (mysql_num_rows($sql)!='0'){
 	$id = 1;
 	$features = array();
@@ -830,7 +830,7 @@ $xajax->registerFunction("editar_campo");
 
 
 function formulario_imprimir($id,$control,$tipo) {
-require ('includes/markdown.php');
+require_once ('includes/markdown.php');
 	$id = mysql_seguridad($id);
 		$publico = remplacetas('form_id','id',$id,'publico') ;
 		if($publico[0] != "1" and (!isset ( $_SESSION[id]) )) {
@@ -895,7 +895,9 @@ if (mysql_num_rows($sql)!='0'){
 														$lon = $campos[1];
 														$zoom = $campos[2];			
 			$contenido = "
-			<img class='img-thumbnail '  src='http://dev.openstreetmap.de/staticmap/staticmap.php?center=$lon,$lat&zoom=$zoom&size=350x150&maptype=mapnik&markers=$lon,$lat,red-pushpin' >"; 
+
+			<img class='img-thumbnail '  src='http://api.tiles.mapbox.com/v4/examples.map-zr0njcqy/url-http%3A%2F%2Fqwerty.co%2Fdemo%2Fimages%2Fpin.png($lat,$lon,$zoom)/$lat,$lon,$zoom/350x150.png?access_token=pk.eyJ1IjoiaHVtYW5vIiwiYSI6IlgyRTFNdFEifQ.OmQBXmcVg_zq-vMpr8P5vQ' >
+			"; 
 										}
 			}
 		elseif($campo_tipo=='4'){ $contenido = "<a href='$contenido'>$contenido</a>";}
@@ -1346,7 +1348,9 @@ $td .= "<td>$imagen</td>";
 														$lat = $campos[0];
 														$lon = $campos[1];
 														$zoom = $campos[2];			
-			$contenido = "<img class='img-round'  src='http://dev.openstreetmap.de/staticmap/staticmap.php?center=$lon,$lat&zoom=$zoom&size=350x100&maptype=mapnik&markers=$lon,$lat,red-pushpin' >";
+			$contenido = "
+			<!-- <img class='img-round'  src='http://dev.openstreetmap.de/staticmap/staticmap.php?center=$lon,$lat&zoom=$zoom&size=350x100&maptype=mapnik&markers=$lon,$lat,red-pushpin' > -->
+						<img class='img-round '  src='http://api.tiles.mapbox.com/v4/examples.map-zr0njcqy/url-http%3A%2F%2Fqwerty.co%2Fdemo%2Fimages%2Fpin.png($lat,$lon,$zoom)/$lat,$lon,$zoom/350x100.png?access_token=pk.eyJ1IjoiaHVtYW5vIiwiYSI6IlgyRTFNdFEifQ.OmQBXmcVg_zq-vMpr8P5vQ' >";
 											} else { $contenido ='';}
 			}
 			}
