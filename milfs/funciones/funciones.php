@@ -1,4 +1,103 @@
 <?php
+function json($datos){
+		if ( !isset ( $_SESSION['id_empresa'] ) ) {	$publico = "AND form_id.publico = '1'  ";	$w_publico = "WHERE form_id.publico = '1'  "; }
+		else {	$publico = "AND form_id.id_empresa = '$_SESSION[id_empresa]'  ";	$w_publico = "WHERE form_id.id_empresa = '$_SESSION[id_empresa]' "; }
+	$datos = mysql_seguridad($datos);
+	$link=Conectarse();
+	if($datos[id] !=''){
+	$consulta = "SELECT form_datos.id as id_dato, form_datos.form_id AS id_formulario, nombre as formulario,  campo_nombre, contenido ,timestamp, control as identificador , form_datos.orden
+											FROM `form_datos` , `form_campos` ,form_id
+											WHERE  form_datos.id_campo = `form_campos`.id 
+											AND   form_datos.form_id = `form_id`.id 
+											AND (form_id = '$datos[id]'  )
+											$publico
+											ORDER BY  form_datos.control  ,form_datos.timestamp ";
+	}
+	elseif($datos[identificador] !=''){
+	$consulta = "SELECT form_datos.id as id_dato, form_datos.form_id AS id_formulario, nombre as formulario,  campo_nombre, contenido ,timestamp, control as identificador , form_datos.orden
+											FROM `form_datos` , `form_campos` ,form_id
+											WHERE  form_datos.id_campo = `form_campos`.id 
+											AND   form_datos.form_id = `form_id`.id 
+											AND (control = '$datos[identificador]'  )
+											$publico
+											";
+	}
+	elseif($datos[dato] !=''){
+	$consulta = "SELECT  form_datos.id as id_dato,  form_datos.form_id AS id_formulario, nombre as formulario,  nombre as formulario,  campo_nombre, contenido ,timestamp, control as identificador, form_datos.orden
+											FROM `form_datos` , `form_campos` ,form_id
+											WHERE  form_datos.id_campo = `form_campos`.id 
+											AND   form_datos.form_id = `form_id`.id 
+											AND (form_datos.id = '$datos[dato]'  )
+											$publico
+											";
+	}
+	else {
+	$consulta = "SELECT id as form_id, nombre as form_nombre, descripcion as form_descripcion , creacion , publico AS contenido_publico , modificable AS formulario_publico
+											FROM form_id $w_publico";
+					}
+		//	if($id_form2 !=""){$w_id2 =" OR form_id = '$id_form2'"; $or_2 ="or id_campo = '$id_campo2'";}
+		//AND ( id_campo ='$id_campo' )
+	  
+
+/*if($datos =="") {
+	$consulta = "SELECT * FROM form_id ";
+					}else{
+						
+}
+*/
+//return $datos[control];
+
+	mysql_query("SET NAMES 'UTF8'");
+	$sql = mysql_query($consulta,$link) or die("error al ejecutar consulta $consulta ");
+ if (mysql_num_rows($sql)!='0'){
+	$id = 1;
+	$features = array();
+	while($row = mysql_fetch_array( $sql ))
+    {
+        $features[] = $row;
+        $i++;
+    }
+/*
+while( $row = mysql_fetch_array( $sql ) ) {
+	$marcador = array();
+	$propiedades = array();
+		$identificador = explode(',',$row[data]);
+		$identificador = $identificador[0]; 
+		$campos = explode(" ",$identificador);
+														$lat = $campos[0];
+														$lon = $campos[1];
+														$zoom = $campos[2];	
+		$formulario = formulario_imprimir($row[id],$row[control],'full');
+
+		$marcador["type"] = "Point";
+		$marcador["coordinates"] = array($lat,$lon);
+		$propiedades = formulario_imprimir_linea($row[id],$row[control],"array");//
+		//$propiedades[description] ="HOLA MUNDO";
+		$propiedades[description] ="<div class='container-fluid' id='contenedor_datos' >$formulario</div>";
+		$propiedades[sounds] ="";
+		$propiedades[url] ='';
+		//$propiedades[title] ='Hola mundo';
+		//$propiedades[icon][iconUrl] = "images/pin.png";
+		$geometria .= "{\"type\":\"Feature\",\"geometry\":".json_encode($marcador,JSON_NUMERIC_CHECK|JSON_PRETTY_PRINT).",\"properties\":".json_encode($propiedades,JSON_NUMERIC_CHECK|JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT)."},";
+		$features[] = $marcador;
+															
+															$id++;
+															}
+															*/
+
+}
+//-75.58295 6.25578 16
+
+//encode and output jsonObject
+header('Content-Type: text/plain');
+//echo $consulta;
+
+$resultado = json_encode($features,JSON_NUMERIC_CHECK|JSON_PRETTY_PRINT);
+
+return $resultado;
+}
+
+
 
 function mapa_ficha($id) {
 
@@ -270,6 +369,8 @@ $geometria = "{
     \"features\": [$geometria ]}";
 return $geometria;
 }
+
+
 function aplicacion_presentacion($id,$div,$timeout){
 	if($timeout < '1000') {$timeout =5000;};
 	$respuesta = new xajaxResponse('utf-8');
