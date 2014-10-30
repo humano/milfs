@@ -830,7 +830,13 @@ $xajax->registerFunction("editar_campo");
 
 
 function formulario_imprimir($id,$control,$tipo) {
-require_once ('includes/markdown.php');
+include ('includes/markdown.php');
+if (function_exists("Markdown")) {
+
+}else{
+require_once ('milfs/includes/markdown.php');
+  }
+  //  include_once ('milfs/includes/markdown.php');
 	$id = mysql_seguridad($id);
 		$publico = remplacetas('form_id','id',$id,'publico') ;
 		if($publico[0] != "1" and (!isset ( $_SESSION[id]) )) {
