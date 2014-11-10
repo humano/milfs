@@ -464,8 +464,8 @@ $razon_social[0]
 
 <hr />
 <p>Se ha solicitado un cambio de clave para tu usuario.<br />
-Si fuiste tu quien lo solicit&oacute;, sigue este <a href='http://listas.museocasadelamemoria.org/milfs/index.php?change=$firma_recuperacion'>enlace</a> para realizar el cambio.</p>
-http://listas.museocasadelamemoria.org/milfs/index.php?change=$firma_recuperacion
+Si fuiste tu quien lo solicit&oacute;, sigue este <a href='http://$_SERVER[HTTP_HOST]/milfs/index.php?change=$firma_recuperacion'>enlace</a> para realizar el cambio.</p>
+http://$_SERVER[HTTP_HOST]/milfs/index.php?change=$firma_recuperacion
 
 <h3>Si no solicitaste el cambio, por favor comun&iacute;calo respondiendo este correo.</h3>
 </div>
