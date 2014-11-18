@@ -401,10 +401,12 @@ function aplicaciones_listado($id_form,$tipo){
 
 //		if($id_empresa !=''){ $_empresa = " ";}
 		//if($tipo =='publico'){ $w_publico =" publico ='0'";}else {$w_publico =" publico ='1'";}
+		if($id_form !="") {$w_form = " AND id = '$id_form'";}
 		$w_publico =" publico ='1'";
 $link=Conectarse(); 
 mysql_query("SET NAMES 'utf8'");
-$consulta = "SELECT * FROM form_id WHERE  $w_publico ORDER BY orden asc ";
+$consulta = "SELECT * FROM form_id WHERE  $w_publico $w_form ORDER BY orden asc ";
+mysql_real_escape_string($consulta);
 $sql=mysql_query($consulta,$link);
 
 
@@ -420,7 +422,7 @@ while( $row = mysql_fetch_array( $sql ) ) {
 $nombre = strtoupper("$row[nombre]");
 $contenido_listado = contenido_listado("$row[id]");
 $resultado_nav .= "<li class='dropdown' >
-							<a href='#' class='dropdown-toggle' data-toggle='dropdown'> $nombre <span class='caret'></span></a>
+							<a href='#' onclick=\"xajax_contenido_parallax('$row[id]');\" class='dropdown-toggle' data-toggle=''> $nombre </a>
 							$contenido_listado
 							";
 
@@ -439,6 +441,77 @@ else {return $resultado;}
 }
 $xajax->registerFunction("aplicaciones_listado");
 
+function contenido_parallax($id){
+$div = "contenedor";
+	$respuesta = new xajaxResponse('utf-8');
+	
+	$campo_titulo = remplacetas('parametrizacion','campo',$id,'descripcion'," tabla='form_id' and  opcion = 'titulo'") ;
+if($campo_titulo[0] !='') {$w_campo = "AND id_campo = '$campo_titulo[0]'";}
+$campo_titulo = $campo_titulo[0];
+$consulta ="SELECT *,GROUP_CONCAT(id  ORDER by timestamp desc ) as identificador FROM  form_datos WHERE form_id = '$id' $w_campo GROUP BY control order by contenido";
+$link=Conectarse(); 
+$sql=mysql_query($consulta,$link);
+if (mysql_num_rows($sql)!='0'){
+	$control = mysql_result($sql,0,control);
+	//$contenido = "<ul class='dropdown-menu' role='menu'>";
+		mysql_data_seek($sql, 0);
+				$contenido = " 
+
+";
+				$orden = 0;
+while( $row = mysql_fetch_array( $sql ) ) {
+	//$orden = $orden+500;
+	$identificador = explode(',',$row[identificador]);
+	$identificador = $identificador[0];
+	$contenido_desplegado = contenido_mostrar("$row[form_id]","$row[control]",'');
+
+	$titulo = remplacetas('form_datos','id',$identificador,'contenido',"") ;
+		$nav_li .="<li><a href='#$row[control]'>$titulo[0]</a></li>";
+	$contenido  .= "<style type='text/css'>
+								a[id= '$row[control]']:target ~ #main_$row[form_id] article.article 
+								{
+							    -webkit-transform: translateY(- $orden px);
+							    transform: translateY( - $orden px );
+						    	}
+						    	
+					    </style>
+   <a id='$row[control]'></a>
+							$contenido_desplegado 
+<!-- 							<a href='#' onclick= \"xajax_contenido_mostrar('$row[form_id]','$row[control]','contenedor'); \">$titulo[0] </a> -->
+						 "; 
+						$orden = $orden +600;
+														}
+ 	$contenido = "
+ 	<style type='text/css'>
+ 	.article {
+    width: 100%;
+    height: 500px;
+    z-index:0; 
+    -webkit-transform: translateZ( 0 );
+    transform: translateZ( 0 );
+    -webkit-transition: -webkit-transform 2s ease-in-out;
+    transition: transform 2s ease-in-out;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+}
+ 	</style>
+ 	<header class='nav' style='position: fixed;z-index: 10;' >
+    <div class='navbar navbar-default'>
+        <ul class='nav navbar-nav'>
+        $nav_li
+        </ul>
+    </div>
+</header>
+        <section id='main_$id'>$contenido</section>";
+										}
+
+//return " $contenido";
+		$respuesta->addAssign("$div","innerHTML","$contenido");
+		return $respuesta;
+
+}
+$xajax->registerFunction("contenido_parallax");
+
 function contenido_listado($id){
 
 	$respuesta = new xajaxResponse('utf-8');
@@ -456,7 +529,7 @@ while( $row = mysql_fetch_array( $sql ) ) {
 	$identificador = explode(',',$row[identificador]);
 	$identificador = $identificador[0];
 	$titulo = remplacetas('form_datos','id',$identificador,'contenido',"") ;
-	$contenido  .= "<li><a href='#' onclick= \"xajax_contenido_mostrar('$row[form_id]','$row[control]','contenedor'); \">$titulo[0] </a> </li>"; 
+	$contenido  .= "<li><a href='#$row[control]'  >$titulo[0] </a> </li>"; 
 														}
  	$contenido .= "</ul>";
 										}
@@ -490,10 +563,12 @@ if (mysql_num_rows($sql)!='0'){
 $impresion = formulario_imprimir("$id","$control","c3p"); 
 
 										}
-
+if($div !="") {
 		$respuesta->addAssign("$div","innerHTML","$impresion");
 		return $respuesta;
-			
+			}else{
+return $impresion;			
+			}
 
 
 
@@ -1306,9 +1381,9 @@ $td .= "<td>$imagen</td>";
 		//$control = $contenido[0];
 		$contenido = $contenido[3];		
 		$campo_nombre =  remplacetas('form_campos','id',$row[id_campo],'campo_nombre');
-		$campo_nombre[0] ="[$row[id_campo]] $campo_nombre[0]";
+		$campo_nombre[0] =" $campo_nombre[0]";
 		if($tipo=="titulos") {
-			$contenido = "<b>$campo_nombre[0]</b>";
+			$contenido = "$campo_nombre[0] <!-- <small>$row[id_campo]</small> -->";
 									}
 		elseif($tipo=="titulos_csv"){
 		$csv .= '"'.$campo_nombre[0].'";';
@@ -1362,9 +1437,11 @@ $td .= "<td>$imagen</td>";
 			}
 
 
-	
+	if($tipo=="titulos") {
+$td .= "<th> $contenido </th>";	
+	}else{
 	$td .= "<td> $contenido </td>";
-	
+	}
 															}
 
 	
@@ -1380,7 +1457,32 @@ return $csv;
 							}
 	return $resultado;
 }
-	
+
+function mostrar_coincidencias($id_form,$filtro,$valor) {
+$md5_valor = $valor;
+if($filtro !='' ){$w_filtro ="AND md5(binary contenido) = '$md5_valor'";}
+$consulta= "SELECT * FROM form_datos WHERE form_id= '$id_form' AND id_campo = '$filtro' $w_filtro ";
+$link=Conectarse(); 
+mysql_query("SET NAMES 'utf8'");
+//mysql_real_escape_string($consulta);
+$sql=mysql_query($consulta,$link);
+
+if (mysql_num_rows($sql)!=0){
+mysql_data_seek($sql, 0);
+while( $row = mysql_fetch_array( $sql ) ) 
+							{
+		$depliegue = formulario_imprimir_linea($row[form_id],$row[control]);
+		$titulo = formulario_imprimir_linea($row[form_id],$row[control],'titulos');
+			$campos .= "<tr title =''> $depliegue </tr>";
+							
+							}
+							$resultado = "<div class='table-responsive'><table class='table table-hover '>$titulo $campos </table></table>";
+									}
+$respuesta = new xajaxResponse('utf-8');
+$respuesta->addAssign("mostrar_resultado","innerHTML",$resultado);
+			return $respuesta;
+} 
+$xajax->registerFunction("mostrar_coincidencias");
 	
 function matriz_formulario($formulario,$div,$registros,$pagina,$formato){
 	$respuesta = new xajaxResponse('utf-8');
@@ -1620,7 +1722,7 @@ return $respuesta;
 $xajax->registerFunction("formulario_campos_select");
 
 
-function formulario_campos_filtro($perfil,$campo,$div){
+function formulario_campos_filtro($perfil,$campo,$div,$onchange){
 	$respuesta = new xajaxResponse('utf-8');
 $link=Conectarse(); 
 mysql_query("SET NAMES 'utf8'");
@@ -1635,7 +1737,7 @@ $consulta = "
 $sql=mysql_query($consulta,$link);
 if (mysql_num_rows($sql)!='0'){
 $resultado = "<label for='id_campo'>Filtro</label>
-						<select class='form-control' name='campo_filtro' id='campo_filtro' >
+						<select class='form-control' name='campo_filtro' id='campo_filtro' onchange=\"$onchange\"  >
 							<option value=''>Todos</option>";
 while( $row = mysql_fetch_array( $sql ) ) {
 $resultado .= "		<option value='$row[md5_contenido]' title=''>$row[contenido]</option>";
@@ -2371,7 +2473,7 @@ $respuesta = new xajaxResponse('utf-8');
 
 $link=Conectarse(); 
 mysql_query("SET NAMES 'utf8'");
-$consulta = "SELECT * FROM form_id WHERE id_empresa ='$_SESSION[id_empresa]'  ORDER BY id DESC";
+$consulta = "SELECT * FROM form_id WHERE id_empresa ='$_SESSION[id_empresa]'  ORDER BY orden ASC";
 $sql=mysql_query($consulta,$link);
 $divider = 3;
 			$nuevo_formulario = "<a class='btn btn-primary ' href='#' onclick=\"xajax_formulario_nuevo('','contenido'); \">
@@ -2414,6 +2516,7 @@ if (mysql_num_rows($sql)!='0' ){
 		if($ultimo[0] !='') {$ultimo = "<tr><td>Último registro: <a onclick=\"xajax_formulario_modal('$id','','$ultimo[1]'); \"><b>".date ( "Y-m-d h:i:s" , $ultimo[0])."</b></a></td></tr>";}else{$ultimo='';}
 		
 		$nombre = editar_campo("form_id","$row[id]","nombre","");
+		$orden = editar_campo("form_id","$row[id]","orden","");
 		$descripcion = editar_campo("form_id","$row[id]","descripcion","");
 		$geo = buscar_campo_tipo($id,"14");
 		if($geo[0] !='') { $mapa= "<tr><td><a href='geo.php?id=$id' target='mapa'><i class='fa fa-globe'></i> Mapa</a></td></tr>";}else {$mapa='';}
@@ -2428,10 +2531,11 @@ if (mysql_num_rows($sql)!='0' ){
 								}
 			$i++;
 $resultado .=  "<div class='col-sm-4' style=';'>
-						<div class='panel panel-default' style=''>
+						<div class='panel panel-default' style='' id= 'panel_$row[id]'>
 							 <div class='panel-heading'>
 							    <h3>$nombre <span class='badge pull-right'>ID $row[id]</span></h3>
 							    <p>$descripcion</p>
+							    Orden $orden
 							 </div>
 							 <div class='panel-body'>
 								<table class='table' >
@@ -2443,8 +2547,18 @@ $resultado .=  "<div class='col-sm-4' style=';'>
 									$mapa $estado $modificable
 									<tr><td><div class='btn btn-block btn-default' onclick=\"xajax_agregar_campos('consultar_campos','contenido','$row[id]')\">Modificar campos</div></td></tr>
 								
-									<tr><td><a class='btn btn-primary btn-block' href='#' onclick=\"xajax_formulario_modal('$row[id]'); \">Llenar</a></td></tr>
-									<TR><TD><a class='btn btn-danger btn-block' href='#' onclick=\"xajax_formulario_parametrizacion($row[id],'','contenido'); \">Parametrización</a></TD></TR>							</table>	
+									<tr>
+										<td>
+											<div class='col-xs-6'>
+												<a class='btn btn-primary btn-block' href='#' onclick=\"xajax_formulario_modal('$row[id]'); \">Llenar</a>
+											</div>
+											<div class='col-xs-6'>
+												<a class='btn btn-warning btn-block' href='#' onclick=\"xajax_formulario_parametrizacion($row[id],'','contenido'); \">Parametrización</a>
+											</div>
+										</td>
+									</TR>								
+									<TR><TD><div id='eliminar_$row[id]'> <a class='btn btn-danger btn-block' href='#' onclick=\"xajax_formulario_eliminar($row[id],''); \"><i class='fa fa-trash-o'></i> Eliminar</a></div></TD></TR>							
+									</table>	
 								
 							</div>
 							<div class='panel-footer'>
@@ -2471,6 +2585,35 @@ $respuesta->addAssign($div,"innerHTML",$resultado);
 
 return $respuesta;
 }$xajax->registerFunction("formulario_listado");
+
+function formulario_eliminar($id,$tipo) {
+	$respuesta = new xajaxResponse('utf-8');	
+			$nombre = 	remplacetas('form_id','id',$id,'nombre',"") ;
+			$nombre_form =  $nombre[0];
+	if($tipo =='') {
+$resultado ="<div class='alert alert-danger'>
+					<h1>Se eliminará el formulario <b>$nombre_form</b> ($id) </h1>
+						<a class='btn btn-success ' href='#' onclick=\"xajax_formulario_eliminar('$id','eliminar'); \"><i class='fa fa-trash-o'></i> Aceptar</a>							
+						 <a class='btn btn-danger ' href='#' onclick=\"xajax_formulario_eliminar('$id','cancelar'); \"><i class='fa fa-times-circle'></i> Cancelar</a>							
+				</div> ";	
+}elseif($tipo=='cancelar') {
+	$resultado ="<a class='btn btn-danger btn-block' href='#' onclick=\"xajax_formulario_eliminar('$id',''); \"><i class='fa fa-trash-o'></i> Eliminar</a>";
+}elseif($tipo =='eliminar'){
+$consulta = "DELETE FROM form_id WHERE form_id.id = '$id' ";
+$link=Conectarse(); 
+	$sql=mysql_query($consulta,$link);
+	if($sql) {
+		$respuesta->addAlert("Se eliminó el formulario \" $nombre_form \" ");
+		$respuesta->addAssign("panel_$id","innerHTML","");
+		return $respuesta;
+		
+	}
+}
+else {}
+$respuesta->addAssign("eliminar_$id","innerHTML",$resultado);
+
+return $respuesta;
+}$xajax->registerFunction("formulario_eliminar");
 
 
 function campo_multiple($id_campo,$id_form,$control,$item){
@@ -2715,6 +2858,8 @@ return $existe;
 function formulario_grabar($formulario) {
 	$respuesta = new xajaxResponse('utf-8');
 	//$formulario	= mysql_seguridad($formulario);
+	$ip =  obtener_ip();
+				$graba_ip = "INET_ATON('".$ip."') ";
 	$consulta_grabada ='0';
 	$control = $formulario[control]; // 
 	$form_id = $formulario[form_id]; // 
@@ -2806,19 +2951,30 @@ if($campo_obligatorio[0] =='1'){
 								
 $md5 = md5($V);
 $igual = formulario_valor_campo("$form_id","$c","$md5","$formulario[control]","$C");
+$existe = formulario_valor_campo("$form_id","$c","","$formulario[control]","$C");
+//$valor_anterior .=  $existe[3]."| ";
+if(!is_null($existe) AND $tipo =='edit' AND $V =='') {
+				$consulta_vacio ="
+				INSERT INTO `form_datos` (`id`, `id_campo`,`orden`,`form_id`, `id_usuario`, `contenido`, `timestamp`, `control`, ip , id_empresa) 
+										VALUES (NULL, '$c','$C', '$formulario[form_id]', '$_SESSION[id]', '', UNIX_TIMESTAMP(), '$formulario[control]',$graba_ip,'$id_empresa');";
+										
+				$sql=mysql_query($consulta_vacio,$link);
+				if($sql) { 
+		$consulta_grabada ='1';
+				}
+}
 if(is_null($igual) ){$repetido = 0;}else{
 $repetido = 1;
 }
 
 //$debug .= " (c= $c md5 = $md5 , igual = $igual, repetid =$repetido  <!--, V= $V -->)<br>";
-//$respuesta->addAssign("respuesta_$control","innerHTML","$debug");
+//$respuesta->addAssign("respuesta_$control","innerHTML","$valor_anterior");
 //return $respuesta;
 //$respuesta->addAlert("$debug");
 //return $respuesta;
 
-if(($V !='') && (is_numeric($c)) AND $repetido !=1 ) {					
-$ip =  obtener_ip();
-				$graba_ip = "INET_ATON('".$ip."') ";
+if(($V !='' ) && (is_numeric($c)) AND $repetido !=1 ) {					
+
 				$V = mysql_real_escape_string($V);
 				$consulta ="
 				INSERT INTO `form_datos` (`id`, `id_campo`,`orden`,`form_id`, `id_usuario`, `contenido`, `timestamp`, `control`, ip , id_empresa) 
