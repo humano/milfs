@@ -5,7 +5,7 @@ function json($datos){
 	$datos = mysql_seguridad($datos);
 	$link=Conectarse();
 	if($datos[id] !=''){
-	$consulta = "SELECT form_datos.id as id_dato, form_datos.form_id AS id_formulario, nombre as formulario,  campo_nombre, form_campos.id AS id_campo , contenido ,timestamp, control as identificador , form_datos.orden
+	$consulta = "SELECT form_datos.id as id_dato, form_datos.form_id AS id_formulario, nombre as formulario,  campo_nombre, contenido ,timestamp, control as identificador , form_datos.orden
 											FROM `form_datos` , `form_campos` ,form_id
 											WHERE  form_datos.id_campo = `form_campos`.id 
 											AND   form_datos.form_id = `form_id`.id 
@@ -14,7 +14,7 @@ function json($datos){
 											ORDER BY  form_datos.control  ,form_datos.timestamp ";
 	}
 	elseif($datos[identificador] !=''){
-	$consulta = "SELECT form_datos.id as id_dato, form_datos.form_id AS id_formulario, nombre as formulario,  campo_nombre, form_campos.id AS id_campo ,contenido ,timestamp, control as identificador , form_datos.orden
+	$consulta = "SELECT form_datos.id as id_dato, form_datos.form_id AS id_formulario, nombre as formulario,  campo_nombre, contenido ,timestamp, control as identificador , form_datos.orden
 											FROM `form_datos` , `form_campos` ,form_id
 											WHERE  form_datos.id_campo = `form_campos`.id 
 											AND   form_datos.form_id = `form_id`.id 
@@ -23,7 +23,7 @@ function json($datos){
 											";
 	}
 	elseif($datos[dato] !=''){
-	$consulta = "SELECT  form_datos.id as id_dato,  form_datos.form_id AS id_formulario, nombre as formulario,  nombre as formulario,  campo_nombre, form_campos.id AS id_campo ,contenido ,timestamp, control as identificador, form_datos.orden
+	$consulta = "SELECT  form_datos.id as id_dato,  form_datos.form_id AS id_formulario, nombre as formulario,  nombre as formulario,  campo_nombre, contenido ,timestamp, control as identificador, form_datos.orden
 											FROM `form_datos` , `form_campos` ,form_id
 											WHERE  form_datos.id_campo = `form_campos`.id 
 											AND   form_datos.form_id = `form_id`.id 
@@ -312,13 +312,13 @@ function imprime_geojson($id,$id2){
 	  
 $link=Conectarse();
 
-						$consulta = "SELECT  form_id as id, control, GROUP_CONCAT(contenido  ORDER by timestamp desc ) as data
-FROM `form_datos` 
-WHERE (form_id = '$id_form' $w_id2 )
-AND ( id_campo ='$id_campo' $or_2 )
-group by  control  
-ORDER BY  orden  desc";
-//return $consulta;
+						$consulta = "SELECT  form_id as id, control, GROUP_CONCAT(contenido  ORDER by timestamp desc ) as data  
+											FROM `form_datos` 
+											WHERE (form_id = '$id_form' $w_id2 )
+											AND ( id_campo ='$id_campo' $or_2 )
+											group by  control  
+											ORDER BY  orden  desc";
+
 
 	mysql_query("SET NAMES 'UTF8'");
 	$sql = mysql_query($consulta,$link) or die("error al ejecutar consulta  ");
@@ -421,17 +421,10 @@ while( $row = mysql_fetch_array( $sql ) ) {
 
 $nombre = strtoupper("$row[nombre]");
 $contenido_listado = contenido_listado("$row[id]");
-if($row[nombre] =='Agenda') {
-$resultado_nav .= "<li class='dropdown' >
-							<a href='#' onclick=\"xajax_contenido_timeline('$row[id]');\" class='dropdown-toggle' data-toggle=''> $nombre </a>
-							$contenido_listado
-							";
-										}else{
 $resultado_nav .= "<li class='dropdown' >
 							<a href='#' onclick=\"xajax_contenido_parallax('$row[id]');\" class='dropdown-toggle' data-toggle=''> $nombre </a>
 							$contenido_listado
 							";
-						}
 
 $resultado_nav .="</li>";
 $resultado .= "<li  class='list-group-item'><span class='badge alert-success'>$row[id]</span>$categoria  $row[nombre] $mapa";
@@ -474,26 +467,25 @@ while( $row = mysql_fetch_array( $sql ) ) {
 
 	$titulo = remplacetas('form_datos','id',$identificador,'contenido',"") ;
 		$nav_li .="<li><a href='#$row[control]'>$titulo[0]</a></li>";
-		$style .=" a[id= '$row[control]']:target ~ #main_$id article.article 
+	$contenido  .= "<style type='text/css'>
+								a[id= '$row[control]']:target ~ #main_$row[form_id] article.article 
 								{
-							    -webkit-transform: translateY(-$orden"."px);
-							    transform: translateY( -$orden"."px );
-						    	} ";
-		$links .= " <a id='$row[control]'></a>";
-	$contenido  .= "
-  
+							    -webkit-transform: translateY(- $orden px);
+							    transform: translateY( - $orden px );
+						    	}
+						    	
+					    </style>
+   <a id='$row[control]'></a>
 							$contenido_desplegado 
-
+<!-- 							<a href='#' onclick= \"xajax_contenido_mostrar('$row[form_id]','$row[control]','contenedor'); \">$titulo[0] </a> -->
 						 "; 
-						$orden = $orden +800;
+						$orden = $orden +600;
 														}
  	$contenido = "
- 	
  	<style type='text/css'>
-	$style
  	.article {
     width: 100%;
-    height: 800px;
+    height: 500px;
     z-index:0; 
     -webkit-transform: translateZ( 0 );
     transform: translateZ( 0 );
@@ -503,15 +495,12 @@ while( $row = mysql_fetch_array( $sql ) ) {
     backface-visibility: hidden;
 }
  	</style>
- 	 $links
-<header class='nav' style='position: fixed;z-index: 10;' >
-	<nav class='navbar navbar-default'>
-	   
-	       
-	     <ul class='nav navbar-nav'>   $nav_li </ul>
-	       
-	   
-	</nav>
+ 	<header class='nav' style='position: fixed;z-index: 10;' >
+    <div class='navbar navbar-default'>
+        <ul class='nav navbar-nav'>
+        $nav_li
+        </ul>
+    </div>
 </header>
         <section id='main_$id'>$contenido</section>";
 										}
@@ -522,65 +511,6 @@ while( $row = mysql_fetch_array( $sql ) ) {
 
 }
 $xajax->registerFunction("contenido_parallax");
-
-function contenido_timeline($id){
-$div = "contenedor";
-	$respuesta = new xajaxResponse('utf-8');
-	
-	$campo_titulo = remplacetas('parametrizacion','campo',$id,'descripcion'," tabla='form_id' and  opcion = 'titulo'") ;
-if($campo_titulo[0] !='') {$w_campo = "AND id_campo = '$campo_titulo[0]'";}
-$campo_titulo = $campo_titulo[0];
-$consulta ="SELECT *,GROUP_CONCAT(id  ORDER by timestamp desc ) as identificador FROM  form_datos WHERE form_id = '$id' $w_campo GROUP BY control order by contenido";
-$link=Conectarse(); 
-$sql=mysql_query($consulta,$link);
-if (mysql_num_rows($sql)!='0'){
-	$control = mysql_result($sql,0,control);
-	//$contenido = "<ul class='dropdown-menu' role='menu'>";
-		mysql_data_seek($sql, 0);
-				$contenido = " 
-
-";
-
-while( $row = mysql_fetch_array( $sql ) ) {
-	//$orden = $orden+500;
-	$identificador = explode(',',$row[identificador]);
-	$identificador = $identificador[0];
-	$contenido_desplegado = contenido_mostrar("$row[form_id]","$row[control]",'');
-
-	$titulo = remplacetas('form_datos','id',$identificador,'contenido',"") ;
-		$nav_li .="<li><a href='#$row[control]'>$titulo[0]</a></li>";
-	$contenido  .= "$contenido_desplegado "; 
-
-														}
- 	$contenido = "
-	<ul id='dates'>
-		$nav_li
-	</ul>
-    <div  id='timeline'>
-        
-     	  <ul id='issues'>
-        	$contenido
-        	</ul>
-      <div id='grad_left'></div>
-		<div id='grad_right'></div>
-		<a href='#' id='next'>+</a>
-		<a href='#' id='prev'>-</a>
-	</div>
-
-      ";
-										}
-
-//return " $contenido";
-		$respuesta->addAssign("$div","innerHTML","$contenido");
-		$respuesta->addscript("		$(function(){
-			$().timelinr({
-				arrowKeys: 'true'
-			})
-		});");	
-		return $respuesta;
-
-}
-$xajax->registerFunction("contenido_timeline");
 
 function contenido_listado($id){
 
@@ -975,13 +905,12 @@ $xajax->registerFunction("editar_campo");
 
 
 function formulario_imprimir($id,$control,$tipo) {
-//include ('includes/markdown.php');
-/*if (function_exists("Markdown")) {
+include ('includes/markdown.php');
+if (function_exists("Markdown")) {
 
 }else{
-//require_once ('milfs/includes/markdown.php');
+require_once ('milfs/includes/markdown.php');
   }
-  */
   //  include_once ('milfs/includes/markdown.php');
 	$id = mysql_seguridad($id);
 		$publico = remplacetas('form_id','id',$id,'publico') ;
@@ -1065,7 +994,7 @@ if (mysql_num_rows($sql)!='0'){
 //	$html = convertTables($html);
 //	$html = simpleText($html);
 	$contenido = nl2br($html);
-			//$contenido = Markdown($contenido);
+			$contenido = Markdown($contenido);
 			}
 	$campo_nombre =  remplacetas('form_campos','id',$row[id_campo],'campo_nombre');
 	$nombre[$row[id_campo]] = $campo_nombre[0] ;
@@ -1151,7 +1080,7 @@ if (mysql_num_rows($sql)!='0'){
 
 }
 	$resultado .="</table></div>";	
-}else{$resultado ="problema";}
+}else{$resultado ="";}
 return $resultado;
 }
 
@@ -3304,8 +3233,8 @@ $respuesta->addAssign("muestra_form","innerHTML","$muestra_form");
 $respuesta->addAssign("titulo_modal","innerHTML","$cabecera");
 $respuesta->addAssign("pie_modal","innerHTML","$pie");
 $respuesta->addscript("$('#muestraInfo').modal('toggle')");	
-$respuesta->addscript("$('textarea').markdown({autofocus:false,savable:false})");	
-//$respuesta->addscript("$(document).ready(function () { $(\"#24[0]\").cleditor(); })");	
+//$respuesta->addscript("$('textarea').markdown({autofocus:false,savable:false})");	
+$respuesta->addscript("$(document).ready(function () { $('textarea').cleditor(); })");	
 //$(document).ready(function () { $("#input").cleditor(); });
 
 
