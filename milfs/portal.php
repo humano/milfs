@@ -1,11 +1,13 @@
 <?php
+///este archivo debe estar un nivel superior al directorio milfs 
 session_start();
 //ini_set('display_errors', 'On');
-require ('xajax/xajax.inc.php');
+require ('milfs/xajax/xajax.inc.php');
 $xajax = new xajax();
-require ('funciones/funciones.php');
-require ('funciones/convert.php');
-require ('funciones/login.php');
+require ('milfs/funciones/funciones.php');
+//require ('milfs/funciones/convert.php');
+require ('milfs/funciones/login.php');
+require_once ('milfs/includes/markdown.php');
 $xajax->processRequests(); 
 $logo = remplacetas('empresa','id','1','imagen') ;
 ?>
@@ -17,38 +19,39 @@ $logo = remplacetas('empresa','id','1','imagen') ;
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
-    <meta name="author" content="fredyrivera" >
-     <?php $xajax->printJavascript("xajax/");  ?>
+     <meta name="author" content="fredyrivera" >
+     <?php $xajax->printJavascript("milfs/xajax/");  ?>
     <link rel="shortcut icon" href="favicon-152.png">
 	<link rel="apple-touch-icon-precomposed" href="favicon-152.png">
-	<link href="css/font-awesome/css/font-awesome.css" rel="stylesheet">
+	<link href="milfs/css/font-awesome/css/font-awesome.css" rel="stylesheet">
+		<link rel="stylesheet" href="milfs/css/style.css" media="screen" />
 <!--  <link href="http://getbootstrap.com/examples/sticky-footer-navbar/sticky-footer-navbar.css" rel="stylesheet"> -->
 
 <!-- <script src="http://cdn.leafletjs.com/leaflet-0.7/leaflet.js"></script> -->
 
 <!-- <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7/leaflet.css" /> -->
-<link href="css/bootstrap.min.css" rel="stylesheet">
-<link href="css/estilos.php" rel="stylesheet">
-  <style type="text/css">
-  body {  padding: 0; margin: 0;  }
-  html, body, #cupcake-map { z-index: 10; position:absolute; top:0; bottom:0px; width:100%;  }
-  .leaflet-popup-content {
-     width:600px !important; 
-}
-  </style>
-
-<!--   <script src="http://code.jquery.com/jquery-2.1.0.min.js"></script> -->
-<!--   <link rel="points" type="application/json" href="json.php?id=<?php echo $_REQUEST["id"] ?>"> -->
+<link href="milfs/css/bootstrap.min.css" rel="stylesheet">
+<link href="milfs/css/estilos.php" rel="stylesheet"> 
+	<script src="milfs/js/jquery.min.js"></script>
+<script src="milfs/js/jquery.timelinr-0.9.54.js"></script>
+      	<script>
+		
+	</script>
 </head>
-<body>
-  <body>
-
-	<div class="">
-
+<body >
       <!-- Static navbar -->
-      <img  style="max-height:50px;" src="images/secure/?file=150/<?php echo $logo[0] ?>" >
-      <div class="navbar navbar-default " role="navigation">
-        <div class="container-fluid">
+
+      <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+      <div class='col-sx-12 ' id='logo_cabecera' style='width:90%;left:40px; background-color: white; '>
+      <br>
+      <img  style="max-height:38px;" src="milfs/images/100x100.png"  width='40px'>
+      <img  style="max-height:38px;" src="milfs/images/secure/?file=150/<?php echo $logo[0] ?>" >
+      <img  style="max-height:38px;" src="milfs/images/100x100.png"  width='40px'>
+      <div class='pull-right'>Follow us<br>
+      	<a target="_facebook" href="https://www.facebook.com/casa3patios"><span style='font-size:30px; color:black'><i class='fa fa-facebook-square'></i></span></a>
+      	<a target="_facebook" href="https://twitter.com/CasaTresPatios"><span style='font-size:30px; color:black'<i class='fa fa-twitter'></i></span></a></div>
+      </div>
+       <!--  <div class="container-fluid"> -->
           <div class="navbar-header">
             <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
               <span class="sr-only">Toggle navigation</span>
@@ -60,20 +63,21 @@ $logo = remplacetas('empresa','id','1','imagen') ;
           </div>
           <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
-					<?php echo aplicaciones_listado("","nav"); ?>
+					<?php echo aplicaciones_listado("$_REQUEST[id]","nav"); ?>
               
             </ul>
 
           </div><!--/.nav-collapse -->
-        </div><!--/.container-fluid -->
+      <!--   </div> --><!--/.container-fluid -->
       </div>
-	</div><!-- /container -->
-	<div id ='contenedor' style='  margin-top:-10px; ' class="">
-	<?php echo contenido_aleatorio("6"); ?>
+<!-- /container -->
+	<div id ='contenedor' style=' top: 100px; position:absolute; width:100%' class="">
+	<?php echo contenido_aleatorio("7"); ?>
 	</div>
   <div  class="center-block" style="  z-index:10000; bottom:10px;">
   <div role='row' class='row center-block' style="width:95% ; "><?php //echo aplicacion_datos("$_REQUEST[id]");?></div>
   </div>
+ 
   <!-- Modal -->
 
 <div class='modal fade ' id='muestraInfo' tabindex='-1' role='dialog' aria-labelledby='myModalLabel' aria-hidden='true'>
@@ -94,11 +98,18 @@ $logo = remplacetas('empresa','id','1','imagen') ;
     </div>
   </div>
 </div>
+       <div style="position:fixed;
+    bottom:5px;">
+	       <div class="container">
+        <a href='http://QWERTY.co/milfs'>Powered by: &copy; MILFS </a> 
+        	</div> 
+      </div>
+
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-     <script src="js/jquery.min.js"></script> 
-    <script src="js/bootstrap.min.js"></script>
-    <script src="js/scripts.js"></script>
+<!--      <script src="milfs/js/jquery.min.js"></script>  -->
+    <script src="milfs/js/bootstrap.min.js"></script> 
+    <script src="milfs/js/scripts.js"></script> 
 </body>
 </html>

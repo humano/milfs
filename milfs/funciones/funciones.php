@@ -504,7 +504,7 @@ while( $row = mysql_fetch_array( $sql ) ) {
 }
  	</style>
  	 $links
-<header class='nav' style='position: fixed;z-index: 10;' >
+<header class='nav' style='left:40px;  position: fixed;z-index: 10;' >
 	<nav class='navbar navbar-default'>
 	   
 	       
