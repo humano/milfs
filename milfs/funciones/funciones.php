@@ -421,6 +421,8 @@ while( $row = mysql_fetch_array( $sql ) ) {
 
 $nombre = strtoupper("$row[nombre]");
 $contenido_listado = contenido_listado("$row[id]");
+if($row[nombre] =="Portada") {
+$nombre = '<i class="fa fa-home"></i>';}
 if($row[nombre] =='Agenda') {
 $resultado_nav .= "<li class='dropdown' >
 							<a href='#' onclick=\"xajax_contenido_timeline('$row[id]');\" class='dropdown-toggle' data-toggle=''> $nombre </a>
