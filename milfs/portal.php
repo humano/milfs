@@ -72,7 +72,7 @@ $logo = remplacetas('empresa','id','1','imagen') ;
       </div>
 <!-- /container -->
 	<div id ='contenedor' style=' top: 100px; position:absolute; width:100%' class="">
-	<?php echo contenido_aleatorio("7"); ?>
+	<?php echo contenido_aleatorio("9"); ?>
 	</div>
   <div  class="center-block" style="  z-index:10000; bottom:10px;">
   <div role='row' class='row center-block' style="width:95% ; "><?php //echo aplicacion_datos("$_REQUEST[id]");?></div>
