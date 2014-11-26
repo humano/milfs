@@ -419,7 +419,8 @@ while( $row = mysql_fetch_array( $sql ) ) {
 		$geo = buscar_campo_tipo($row[id],"14");
 		if($geo[0] !='') { $mapa= "<tr><td><a href='geo.php?id=$row[id]' target='mapa'><i class='fa fa-globe'></i></a></td></tr>";}else {$mapa='';}
 
-$nombre = strtoupper("$row[nombre]");
+//$nombre = strtoupper("$row[nombre]");
+$nombre = $row[nombre];
 $contenido_listado = contenido_listado("$row[id]");
 if($row[nombre] =="Portada") {
 $nombre = '<i class="fa fa-home"></i>';
