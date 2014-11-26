@@ -78,12 +78,10 @@ $email = remplacetas('empresa','id','1','email') ;
       <!--   </div> --><!--/.container-fluid -->
       </div>
 <!-- /container -->
-	<div id ='contenedor' style=' top: 100px; position:absolute; width:100%' class="">
+	<div id ='contenedor' style=' top: 110px; position:fixed; width:100%' class="">
 	<?php echo contenido_aleatorio("9"); ?>
 	</div>
-  <div  class="center-block" style="  z-index:10000; bottom:10px;">
-  <div role='row' class='row center-block' style="width:95% ; "><?php //echo aplicacion_datos("$_REQUEST[id]");?></div>
-  </div>
+
  
   <!-- Modal -->
 
@@ -105,13 +103,17 @@ $email = remplacetas('empresa','id','1','email') ;
     </div>
   </div>
 </div>
-       <div style="position:fixed;
-    bottom:5px;">
-	       <div class="container">
-	       <address style="padding:5px;background-color:white"><?php echo "$direccion[0] $telefono[0] $email[0]"; ?></address>
+
+	       <div class='pie' style=" position: fixed;
+  bottom: 0;
+  width: 100%;
+  /* Set the fixed height of the footer here */
+  height: 50px;
+  background-color: white;">
+	      <p class='text-center'> <?php echo "$direccion[0] $telefono[0] $email[0]"; ?></p>
         <a class='pull-right' href='http://QWERTY.co/milfs'>Powered by: &copy; MILFS </a> 
         	</div> 
-      </div>
+
 
     <!-- Bootstrap core JavaScript
     ================================================== -->

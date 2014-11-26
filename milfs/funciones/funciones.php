@@ -422,13 +422,20 @@ while( $row = mysql_fetch_array( $sql ) ) {
 $nombre = strtoupper("$row[nombre]");
 $contenido_listado = contenido_listado("$row[id]");
 if($row[nombre] =="Portada") {
-$nombre = '<i class="fa fa-home"></i>';}
-if($row[nombre] =='Agenda') {
+$nombre = '<i class="fa fa-home"></i>';
+$resultado_nav .= "<li class='dropdown' >
+<a href='#' onclick=\"xajax_contenido_parallax('$row[id]');\" class='dropdown-toggle' data-toggle=''> $nombre </a>
+							$contenido_listado
+							";
+}
+
+elseif($row[nombre] =='Agenda') {
 $resultado_nav .= "<li class='dropdown' >
 							<a href='#' onclick=\"xajax_contenido_timeline('$row[id]');\" class='dropdown-toggle' data-toggle=''> $nombre </a>
 							$contenido_listado
 							";
-										}else{
+										}										
+										else{
 $resultado_nav .= "<li class='dropdown' >
 							<a href='#' onclick=\"xajax_contenido_parallax('$row[id]');\" class='dropdown-toggle' data-toggle=''> $nombre </a>
 							$contenido_listado
@@ -438,7 +445,9 @@ $resultado_nav .= "<li class='dropdown' >
 $resultado_nav .="</li>";
 $resultado .= "<li  class='list-group-item'><span class='badge alert-success'>$row[id]</span>$categoria  $row[nombre] $mapa";
 $campos = formulario_campos_select("$row[id]","");
+if($row[nombre] !="Portada") {
 $resultado .= "<ul  class='list-group'>$campos</ul></li>";
+}
 															}
 															
 	$resultado .="</ul>";
