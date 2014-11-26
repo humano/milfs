@@ -10,6 +10,9 @@ require ('milfs/funciones/login.php');
 require_once ('milfs/includes/markdown.php');
 $xajax->processRequests(); 
 $logo = remplacetas('empresa','id','1','imagen') ;
+$direccion = remplacetas('empresa','id','1','direccion') ;
+$telefono = remplacetas('empresa','id','1','telefono') ;
+$email = remplacetas('empresa','id','1','email') ;
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -42,14 +45,18 @@ $logo = remplacetas('empresa','id','1','imagen') ;
       <!-- Static navbar -->
 
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
-      <div class='col-sx-12 ' id='logo_cabecera' style='width:90%;left:40px; background-color: white; '>
+      <div class='col-sx-12 ' id='logo_cabecera' style='width:100%;left:40px; background-color: white; '>
       <br>
       <img  style="max-height:38px;" src="milfs/images/100x100.png"  width='40px'>
       <img  style="max-height:38px;" src="milfs/images/secure/?file=150/<?php echo $logo[0] ?>" >
       <img  style="max-height:38px;" src="milfs/images/100x100.png"  width='40px'>
-      <div class='pull-right'>Follow us<br>
+      <div class='pull-right' >
+      	<div style="">Follow us<br>
       	<a target="_facebook" href="https://www.facebook.com/casa3patios"><span style='font-size:30px; color:black'><i class='fa fa-facebook-square'></i></span></a>
-      	<a target="_facebook" href="https://twitter.com/CasaTresPatios"><span style='font-size:30px; color:black'<i class='fa fa-twitter'></i></span></a></div>
+      	<a target="_facebook" href="https://twitter.com/CasaTresPatios"><span style='font-size:30px; color:black'<i class='fa fa-twitter'></i></span></a>
+      	<img  style="max-height:38px;" src="milfs/images/100x100.png"  width='40px'></div>
+      	
+      </div>
       </div>
        <!--  <div class="container-fluid"> -->
           <div class="navbar-header">
@@ -101,7 +108,8 @@ $logo = remplacetas('empresa','id','1','imagen') ;
        <div style="position:fixed;
     bottom:5px;">
 	       <div class="container">
-        <a href='http://QWERTY.co/milfs'>Powered by: &copy; MILFS </a> 
+	       <address style="padding:5px;background-color:white"><?php echo "$direccion[0] $telefono[0] $email[0]"; ?></address>
+        <a class='pull-right' href='http://QWERTY.co/milfs'>Powered by: &copy; MILFS </a> 
         	</div> 
       </div>
 
