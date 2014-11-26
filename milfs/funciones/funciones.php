@@ -1076,7 +1076,7 @@ if (mysql_num_rows($sql)!='0'){
 										}
 			}
 		elseif($campo_tipo=='4'){ $contenido = "<a href='$contenido'>$contenido</a>";}
-		elseif($campo_tipo=='5' AND $contenido !=""){ $contenido = "<iframe  class= 'iframe-media' src=\"$contenido\" frameborder='0' allowFullScreen ></iframe>";}
+		elseif($campo_tipo=='5' AND $contenido !=""){ $contenido = "<iframe  width='100%' height='100%'  class= 'iframe-media' src=\"$contenido\" frameborder='0' allowFullScreen ></iframe>";}
 		else {
 	$html ="$contenido";
 //	$html = html_entity_decode($html);
