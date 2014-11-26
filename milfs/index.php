@@ -62,9 +62,14 @@ $xajax->processRequests();
 					//	}
 					//($id,$form_respuesta,$control,$tipo)
 					if($_REQUEST[id] !='' OR $_REQUEST[c]){$onload ="<script type=\"text/javascript\"> xajax_formulario_modal('$_REQUEST[id]','','$_REQUEST[c]','$_REQUEST[t]')</script>";}
+					
 ?>
 </head>
 <body  >
+<?php if($_REQUEST[form] !='') { echo formulario_embebido("$_REQUEST[form]"); echo "Hola mundo";
+}else{
+
+ ?>
 <?php echo $onload; ?>
 <?php if(isset($_REQUEST[f])){
 form_publico("$_REQUEST[f]");
@@ -174,7 +179,7 @@ if($_REQUEST[id] !=''){$onload ="<script type=\"text/javascript\"> xajax_formula
         <a target="_blank" href='http://qwerty.co/faq/category/19/privacidad-y-protecci%C3%B3n-de-datos.html'>Políticas de privacidad y protección de datos.</a> 
         	</div> 
       </div>
-      
+      <?php } ?>
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->

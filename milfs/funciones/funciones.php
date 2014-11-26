@@ -1,4 +1,15 @@
 <?php
+function formulario_embebido($id){
+			$impresion = formulario_modal("$id",$form_respuesta,$control,"embebido");
+
+			$formulario_nombre = remplacetas('form_id','id',$id,'nombre') ;
+			$formulario_descripcion = remplacetas('form_id','id',$id,'descripcion') ;
+
+			$muestra_form = "<div class='container-fluid' id='contenedor_datos' > <h1 class='formulario_nombre'>$formulario_nombre[0]</h1>
+			<h2 class='formulario_descripcion'>$formulario_descripcion[0]</h2> $impresion</div>";
+			return $muestra_form ;
+}
+
 function json($datos){
 		if ( !isset ( $_SESSION['id_empresa'] ) ) {	$publico = "AND form_id.publico = '1'  ";	$w_publico = "WHERE form_id.publico = '1'  "; }
 		else {	$publico = "AND form_id.id_empresa = '$_SESSION[id_empresa]'  ";	$w_publico = "WHERE form_id.id_empresa = '$_SESSION[id_empresa]' "; }
@@ -517,10 +528,10 @@ while( $row = mysql_fetch_array( $sql ) ) {
  	</style>
  	 $links
 <header class='nav' style='left:40px;  position: fixed;z-index: 10;' >
-	<nav class='navbar navbar-default'>
+	<nav class='navbar navbar-default submenu'>
 	   
 	       
-	     <ul class='nav navbar-nav'>   $nav_li </ul>
+	     <ul class='nav navbar-nav '>   $nav_li </ul>
 	       
 	   
 	</nav>
@@ -3311,7 +3322,9 @@ $muestra_form .="
 		</form>
 		</div>";
 
-
+if($tipo=='embebido') {
+	return $muestra_form;
+}
 $respuesta->addAssign("muestra_form","innerHTML","$muestra_form");
 $respuesta->addAssign("titulo_modal","innerHTML","$cabecera");
 $respuesta->addAssign("pie_modal","innerHTML","$pie");
