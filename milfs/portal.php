@@ -11,7 +11,7 @@ require_once ('milfs/includes/markdown.php');
 $xajax->processRequests(); 
 $logo = remplacetas('empresa','id','1','imagen') ;
 $direccion = remplacetas('empresa','id','1','direccion') ;
-$telefono = remplacetas('empresa','id','1','telefono') ;
+$telefono = remplacetas('empresa','id','1','telefono_1') ;
 $email = remplacetas('empresa','id','1','email') ;
 ?>
 <!DOCTYPE html>
@@ -78,7 +78,7 @@ $email = remplacetas('empresa','id','1','email') ;
       <!--   </div> --><!--/.container-fluid -->
       </div>
 <!-- /container -->
-	<div id ='contenedor' style=' top: 110px; position:fixed; width:100%' class="">
+	<div id ='contenedor' style=' top: 110px; position:absolute; width:100%;  ' class="">
 	<?php echo contenido_aleatorio("9"); ?>
 	</div>
 
