@@ -6,7 +6,7 @@ function formulario_embebido($id){
 			$formulario_descripcion = remplacetas('form_id','id',$id,'descripcion') ;
 
 			$muestra_form = "<div class='container-fluid' id='contenedor_datos' > <h1 class='formulario_nombre'>$formulario_nombre[0]</h1>
-			<h2 class='formulario_descripcion'>$formulario_descripcion[0]</h2> $impresion</div>";
+			<h2 class='formulario_descripcion'>$formulario_descripcion[0]</h2>$impresion</div>";
 			return $muestra_form ;
 }
 
@@ -3102,7 +3102,7 @@ if(($V !='' ) && (is_numeric($c)) AND $repetido !=1 ) {
 
 
 if($consulta_grabada =='1') {
-										
+if($tipo != "embebido") {
 		$exito ="
 	<div class='alert alert-success'><h2><i class='fa fa-check-square-o'></i>
 		 Gracias por llenar el formulario $formulario[form_nombre] </h2>
@@ -3117,10 +3117,15 @@ if($consulta_grabada =='1') {
 			 		Ver los datos grabados
 			 	</a>
 			 </div>
-		 </div>
-		
-				 
+		</div>
 	</div>";
+	}else {
+		$exito ="
+	<div class='alert alert-success'><h2><i class='fa fa-check-square-o'></i>
+		 Gracias por llenar el formulario $formulario[form_nombre] </h2>
+
+	</div>";
+	}
 			$propietario = 	remplacetas('form_id','id',$formulario[form_id],'propietario',"") ;
 			$propietario = 	remplacetas('usuarios','id',$propietario[0],'email',"") ;
 			$id_empresa = 	remplacetas('form_id','id',$formulario[form_id],'id_empresa',"") ;
@@ -3284,7 +3289,9 @@ if (mysql_num_rows($sql)!='0'){
   <input  onclick=\"this.select(); \"  type='text' class='form-control' placeholder='http://$_SERVER[HTTP_HOST]/milfs?id=$id' value='http://$_SERVER[HTTP_HOST]/milfs?id=$id'>
 </div>	
 </div>";
+if ($tipo != "embebido") {
 $subir_imagen = subir_imagen('');	
+	}
 	$muestra_form = "
 	<div id ='div_$control' style='' >
 	$subir_imagen 

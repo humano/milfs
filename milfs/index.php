@@ -66,7 +66,7 @@ $xajax->processRequests();
 ?>
 </head>
 <body  >
-<?php if($_REQUEST[form] !='') { echo formulario_embebido("$_REQUEST[form]"); echo "Hola mundo";
+<?php if($_REQUEST[form] !='') { echo formulario_embebido("$_REQUEST[form]");
 }else{
 
  ?>
