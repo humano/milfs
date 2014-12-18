@@ -2799,7 +2799,7 @@ $consulta ="
 			$render = "$limite /
 					
 			<span id='aviso_".$id_campo."[".$item."]' class='alert-info'></span> 
-				<textarea onkeyup= \"xajax_limite('".$id_campo."[".$item."]',(this.value));\" cols='50' rows='$rows' id='".$id_campo."[".$item."]' name='".$id_campo."[".$item."]' class='form-control' placeholder='$campo_descripcion' >$value</textarea> 
+				<textarea onkeyup= \"xajax_limite('".$id_campo."[".$item."]',(this.value));\" cols='50' rows='$rows' id='".$id_campo."[".$item."]' name='".$id_campo."[".$item."]' class='form-control' placeholder='$campo_descripcion' > $value</textarea>
 			";
 			
 				}
@@ -3465,8 +3465,9 @@ if (mysql_num_rows($sql)!='0'){
 			$limite=mysql_result($sql,0,"campo_valor");
 	
 										}else{}
+$respuesta = new xajaxResponse('utf-8');
 if($contenido !='') {
-	$respuesta = new xajaxResponse('utf-8');
+
 			$size= strlen($contenido);
 			$restante = ($limite - $size);
 			$div_input = "input_$id_campo";
