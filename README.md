@@ -68,6 +68,14 @@ INSTALACION
 11. La instalación básica de MILFS tiene algunos campos creados y 
     un formulario de muestra llamado contacto.
 
+
+SOLUCIÓN DE PROBLEMAS 
+
+Si tiene problemas para visualizar imagenes en una conexión segura prueba editar el archivo 
+ https://github.com/humano/milfs/blob/master/milfs/images/secure/index.php
+Linea 22 cambiando HTTP por HTTPS 
+
+
 DISFRUTALO.
 
 <pre>
