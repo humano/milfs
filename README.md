@@ -71,9 +71,24 @@ INSTALACION
 
 SOLUCIÓN DE PROBLEMAS 
 
+Milfs HTTPS:
+
+Es necesario modificar el archivo 
+https://github.com/humano/milfs/blob/master/milfs/index.php 
+
+Buscar la linea (Linea 5):
+$xajax = new xajax();
+
+Y cambiar la por
+$xajax = new xajax("https://URLSITE/milfs/index.php");
+
+- O el lugar para en donde este instalado su instancia de MILFS
+
 Si tiene problemas para visualizar imagenes en una conexión segura prueba editar el archivo 
- https://github.com/humano/milfs/blob/master/milfs/images/secure/index.php
+https://github.com/humano/milfs/blob/master/milfs/images/secure/index.php
 Linea 22 cambiando HTTP por HTTPS 
+
+
 
 
 DISFRUTALO.
