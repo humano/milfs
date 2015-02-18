@@ -6,7 +6,7 @@ function formulario_embebido($id){
 			$formulario_descripcion = remplacetas('form_id','id',$id,'descripcion') ;
 
 			$muestra_form = "<div class='container-fluid' id='contenedor_datos' > <h1 class='formulario_nombre'>$formulario_nombre[0]</h1>
-			<h2 class='formulario_descripcion'>$formulario_descripcion[0]</h2>$impresion</div>";
+			<h2 class='formulario_descripcion'>$formulario_descripcion[0] </h2>$impresion</div>Poweredy by <a href='https://github.com/humano/milfs' target='milfs'><img width='30px' src='http://qwerty.co/demo/images/logo.png'> MILFS</a>";
 			return $muestra_form ;
 }
 
@@ -21,7 +21,7 @@ function json($datos){
 											WHERE  form_datos.id_campo = `form_campos`.id 
 											AND   form_datos.form_id = `form_id`.id 
 											AND (form_id = '$datos[id]'  )
-											$publico
+												$publico
 											ORDER BY  form_datos.control  ,form_datos.timestamp ";
 	}
 	elseif($datos[identificador] !=''){
@@ -63,11 +63,13 @@ function json($datos){
  if (mysql_num_rows($sql)!='0'){
 	$id = 1;
 	$features = array();
+	
 	while($row = mysql_fetch_array( $sql ))
     {
         $features[] = $row;
         $i++;
     }
+    
 /*
 while( $row = mysql_fetch_array( $sql ) ) {
 	$marcador = array();
@@ -870,8 +872,8 @@ $xajax->registerFunction("cambiar_imagen");
 
 
 function limpiar_caracteres($valor){
-$b=array("{","}","]","/","[",";","Â¡","!","Â¿","?","'",'"',"'" );
-$c=array(" "," "," "," "," "," "," "," "," "," "," ","");
+$b=array("{","}","]","[",";","Â¡","!","Â¿","?","'",'"' );
+$c=array(" "," "," "," "," "," "," "," ","'"," ");
 $resultado=str_replace($b,$c,$valor);
 return $resultado ;
 }
@@ -1178,19 +1180,23 @@ if (mysql_num_rows($sql)!='0'){
 return $resultado;
 }
 
-function subir_imagen($respuesta){
+function subir_imagen($respuesta,$id){
 
 ///vinculado con la funcion de javascript resultadoUpload(estado, file)  que esta en librerias/scripts.js
-
+//this.form.taget= 'ventana'; this.form.action = 'destinoEspecial.html'; this.form.submit()" 
 $javascript="includes/upload.php";
+if ($id ==''){$id='imagen';}
 $resultado .="
+
 <form method='post' class='' enctype='multipart/form-data'
 action=  $javascript 
-target='iframeUpload' class='form-horizontal'>
-<input class='form-control'  name='fileUpload' type='file' onchange=\"submit()\" />
+target='iframeUpload' class='form-horizontal' name='subir_imagen_$id' id='subir_imagen_$id'>
+<input type='hidden' id='id_imagen' name='id_imagen' value='$id'>
+<input class='form-control'  name='fileUpload' type='file' onchange=\"this.form.taget= 'iframeUpload'; this.form.action = '$javascript';this.form.submit();\" />
 <iframe name='iframeUpload' style='display:none' ></iframe>
 <div class='alert alert-info text-center' id='formUpload'>La imagen debe estar en formato .jpg y de tamaño m&aacute;ximo 4MB </div>
-</form> ";
+</form>
+";
 return $resultado;
  
 }
@@ -2787,19 +2793,24 @@ $consulta ="
 																			<input value='$value' type='email' id='".$id_campo."[".$item."]' name='".$id_campo."[".$item."]' class='form-control' placeholder='$campo_descripcion' > ";}
 		elseif($campo_tipo_accion == 'textarea'){
 			$render = "		<textarea cols='50' data-provide=\"markdown\"   rows='15' id='".$id_campo."[".$item."]' name='".$id_campo."[".$item."]' class='form-control' placeholder='$campo_descripcion' >$value</textarea> ";
-																}		
+																}
+																//$subir_imagen = subir_imagen('');		
+		elseif($campo_tipo_accion == 'imagen'){
+		$render= "<input value='$value' type='hidden' id='".$id_campo."[".$item."]' name='".$id_campo."[".$item."]' class='form-control' placeholder='$campo_descripcion' > "; //subir_imagen('',$id_campo[$item]);
+		}
+		
 		elseif($campo_tipo_accion == 'html'){
 			$render = "
 			   
 					<textarea cols='50'  rows='15' id='".$id_campo."[".$item."]' name='".$id_campo."[".$item."]' class='form-control' placeholder='$campo_descripcion' >$value</textarea> ";
 																}
 		elseif($campo_tipo_accion == 'limit'){
-			$limite = limite("".$id_campo."[".$item."]",'');
+			$limite = limite("".$id_campo."[".$item."]",'','limite');
 			$rows = ceil($limite / 50 )+1; 
 			$render = "$limite /
 					
 			<span id='aviso_".$id_campo."[".$item."]' class='alert-info'></span> 
-				<textarea onkeyup= \"xajax_limite('".$id_campo."[".$item."]',(this.value));\" cols='50' rows='$rows' id='".$id_campo."[".$item."]' name='".$id_campo."[".$item."]' class='form-control' placeholder='$campo_descripcion' >$value</textarea> 
+				<textarea onkeyup= \"xajax_limite('".$id_campo."[".$item."]',(this.value));\" cols='50' rows='$rows' id='".$id_campo."[".$item."]' name='".$id_campo."[".$item."]' class='form-control' placeholder='$campo_descripcion' >$value</textarea>
 			";
 			
 				}
@@ -2811,7 +2822,9 @@ $consulta ="
 		elseif($campo_tipo_accion == 'number'){$render = "<code>(Este campo solo acepta números)</code>
 															<input value='$value' type='number' id='".$id_campo."[".$item."]' name='".$id_campo."[".$item."]' class=' has-warning form-control' placeholder='$campo_descripcion' > ";}
 		else{$render = "<input value='$value' type='text' id='".$id_campo."[".$item."]' name='".$id_campo."[".$item."]' class='form-control' placeholder='$campo_descripcion' > ";}
-		if($multiple =='1'){		
+		if($multiple =='1'){	
+
+			
 		$campo_multiple  = "
 	<div id='id_campo_$id_campo"."_".$item."'>
 		<div id='boton_$id_campo' style='display:inline'>
@@ -2824,6 +2837,10 @@ $consulta ="
 }
 	if($item == 0) { $label = "<label class='control-label ' for='$id_campo"."_".$item."'><span class='label label-default'> $id_campo</span> $campo_nombre </label>";}
 				else {$label = "<label class=' sr-only' for='$id_campo"."_".$item."'>$campo_nombre</label>";}
+				///// CAMPOS QUE NO SE MOSTRARAN		
+				if($campo_tipo_accion == 'imagen'){
+		$label="";
+		}
 		$input = "
 		
 		<div class='form-group' id='input_".$id_campo."[".$item."]' >
@@ -3020,7 +3037,7 @@ $datos .= "<p>$$c =  \$formulario['$c'][$C]; // <b>$V</b>  /$campo_tipo[0] </p>"
 											}
 																					 																					 
 			if($campo_tipo[0]=='17') {
-			$limite = limite("$c",'');
+			$limite = limite("$c",'','limite');
 			$size= strlen($V);
 			$restante = ($limite - $size);
 			if( $restante < 0) {
@@ -3289,20 +3306,37 @@ if (mysql_num_rows($sql)!='0'){
   <input  onclick=\"this.select(); \"  type='text' class='form-control' placeholder='http://$_SERVER[HTTP_HOST]/milfs?id=$id' value='http://$_SERVER[HTTP_HOST]/milfs?id=$id'>
 </div>	
 </div>";
-if ($tipo != "embebido") {
-$subir_imagen = subir_imagen('');	
+
+$campo_imagen = buscar_campo_tipo($id,"15");
+$campo_imagen_nombre = $campo_imagen[1];
+$campo_imagen = $campo_imagen[0];
+	
+	
+if ($campo_imagen[0] != "") {
+$subir_imagen = subir_imagen('',"$campo_imagen"."[0]");	
 	}
 	$muestra_form = "
-	<div id ='div_$control' style='' >
-	$subir_imagen 
+	<div id ='div_$control'  >
+		<div class=''>
+			<div class='form-group' id='input_".$campo_imagen."[0]' >
+			<label for='UploadFile'>$campo_imagen_nombre</label>
+			<div class='col-lg-12'>
+			 $subir_imagen  
+			</div>
+			
+		</div>
+	  
+	
+		</div>
 		<form role='form' id='$control'  name='$control' class='form-horizontal'   >
 			<input type='hidden' id='control' name='control' value='$control'>
 			<input type='hidden'  id= 'form_id'  name= 'form_id' value='$id' >
 			<input type='hidden'  id= 'form_nombre'  name= 'form_nombre' value='$nombre' >
 			<input type='hidden'  id= 'tipo'  name= 'tipo' value='$tipo' >
-				<input class='form-control'   class='sr-only' type='hidden' id='imagen' name='imagen' >
+				<!-- <input class='form-control'   class='sr-only' type='' id='imagen' name='imagen' > -->
 	";
 	if($tipo=="edit") {$control_edit = "$control";}else {$control_edit = "";}
+
 			mysql_data_seek($sql, 0);
 	while( $row = mysql_fetch_array( $sql ) ) {
 		if($row[multiple] ==='1' AND $tipo =='edit'){
@@ -3454,7 +3488,7 @@ $resultado="<div class='input-group'>
 return $resultado;
 }
 
-function limite($id_campo,$contenido){
+function limite($id_campo,$contenido,$tipo){
 $link=Conectarse(); 
 mysql_query("SET NAMES 'utf8'");
 
@@ -3465,8 +3499,10 @@ if (mysql_num_rows($sql)!='0'){
 			$limite=mysql_result($sql,0,"campo_valor");
 	
 										}else{}
+										if($tipo =='limite') { return $limite;}
+$respuesta = new xajaxResponse('utf-8');
 if($contenido !='') {
-	$respuesta = new xajaxResponse('utf-8');
+
 			$size= strlen($contenido);
 			$restante = ($limite - $size);
 			$div_input = "input_$id_campo";
@@ -3485,7 +3521,9 @@ $respuesta->addAssign("$div_input","className","has-success ");
 			
 			return $respuesta;	
 		}
-		return $limite;
+		$respuesta->addAssign("aviso_$id_campo","innerHTML","$limite");
+		return $respuesta;
+		//return $limite;
 }
 $xajax->registerFunction("limite");
  
