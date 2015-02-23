@@ -426,9 +426,11 @@ $sql=mysql_query($consulta,$link);
 if (mysql_num_rows($sql)!='0'){
 	mysql_data_seek($sql, 0);
 	$resultado_li .= "<ul class='list-group'>";
-	//$resultado_nav .= "<ul class='nav navbar-nav ' >";
+	$resultado_grid .= "<div id='row_aplicacion' class='row centered' style=''>";
+ 	//$resultado_nav .= "<ul class='nav navbar-nav ' >";
 $fila=0;
 while( $row = mysql_fetch_array( $sql ) ) {
+	$descripcion_corta = substr($row[descripcion],0, $length = 100);
 		$geo = buscar_campo_tipo($row[id],"14");
 		if($geo[0] !='') { $mapa= "<tr><td><a href='geo.php?id=$row[id]' target='mapa'><i class='fa fa-globe'></i></a></td></tr>";}else {$mapa='';}
 
@@ -462,16 +464,84 @@ $campos = formulario_campos_select("$row[id]","");
 if($row[nombre] !="Portada") {
 $resultado .= "<ul  class='list-group'>$campos</ul></li>";
 }
+
+$campo_imagen = buscar_campo_tipo($row[id],"15");
+/*if($tipo =='grid' AND $id_form !='') {
+$resultado_grid .= contenido_aplicacion($row[id]);
+}else {
+	*/
+$imagen = ultimo_campo($row[id],"$campo_imagen[0]");
+if($imagen[0] !='' ) { $bg ="background-image : url(\"milfs/images/secure/?file=300/$imagen[0]\"); 
+										background-repeat: no-repeat; 
+										background-size :cover;
+										background-position: center; ";}
+else { $color_aleatorio = sprintf("%02X", mt_rand(0, 0xFFFFFF)); $bg = "background-color: #$color_aleatorio ;"; }
+	$resultado_grid .= "<div class='col-sm-4 div_aplicacion' style ='height:300px; $bg '>  <h2 style='text-shadow:  1px 1px 1px rgba(255,255,255,0.8) ;';>$row[nombre] </h2>
+	<div class='round' style=' padding:5px; background-image : url(\"milfs/images/transparente40.png\");'><h3>$descripcion_corta</h3></div>
+	 $contenido <br><a class='badge pull-right' href='?id=$row[id]'>Leer</a>
+							</div>";
 															}
-															
+		$resultado_grid .= "</div>";
+											//	}			
 	$resultado .="</ul>";
 										}else {$resultado_li = "";}
 
 if($tipo =='li') { return $resultado_li.$resultado;}
 elseif($tipo =='nav') { return $resultado_nav;}
+elseif($tipo =='grid') { return $resultado_grid;}
 else {return $resultado;}
 }
 $xajax->registerFunction("aplicaciones_listado");
+
+
+function contenido_aplicacion($id){
+$div = "contenedor";
+	$respuesta = new xajaxResponse('utf-8');
+	
+	$campo_titulo = remplacetas('parametrizacion','campo',$id,'descripcion'," tabla='form_id' and  opcion = 'titulo'") ;
+if($campo_titulo[0] !='') {$w_campo = "AND id_campo = '$campo_titulo[0]'";}
+$campo_titulo = $campo_titulo[0];
+$consulta ="SELECT *,GROUP_CONCAT(id  ORDER by timestamp desc ) as identificador FROM  form_datos WHERE form_id = '$id' $w_campo GROUP BY control order by contenido";
+$link=Conectarse(); 
+$sql=mysql_query($consulta,$link);
+if (mysql_num_rows($sql)!='0'){
+	$control = mysql_result($sql,0,control);
+	//$contenido = "<ul class='dropdown-menu' role='menu'>";
+		mysql_data_seek($sql, 0);
+				$contenido = " 
+
+";
+				$orden = 0;
+while( $row = mysql_fetch_array( $sql ) ) {
+	//$orden = $orden+500;
+	$identificador = explode(',',$row[identificador]);
+	$identificador = $identificador[0];
+	$contenido_desplegado = contenido_mostrar("$row[form_id]","$row[control]",'');
+
+	$titulo = remplacetas('form_datos','id',$identificador,'contenido',"") ;
+
+	$contenido  .= "
+  
+							$contenido_desplegado 
+
+						 "; 
+
+														}
+ 	$contenido = "
+ 	
+ 	
+ 	 $links
+
+        <section id=''>$contenido</section>";
+										}
+
+//return " $contenido";
+//		$respuesta->addAssign("$div","innerHTML","$contenido");
+		return $contenido;
+
+}
+
+
 
 function contenido_parallax($id){
 $div = "contenedor";
@@ -635,6 +705,21 @@ return " $contenido";
 }
 $xajax->registerFunction("contenido_listado");
 
+function ultimo_campo($id,$id_campo) {
+$link=Conectarse(); 
+$sql=mysql_query($consulta,$link);
+$consulta ="SELECT * FROM  form_datos WHERE form_id = '$id' AND id_campo ='$id_campo' ORDER BY id DESC limit 1 ";
+$sql=mysql_query($consulta,$link);
+if (mysql_num_rows($sql)!='0'){
+	$control = mysql_result($sql,0,"control");
+	$contenido = mysql_result($sql,0,"contenido");
+$resultado[0]=$contenido;
+$resultado[1]=$control;
+$resultado[2]=$consulta;
+}
+return $resultado;
+
+}
 
 function contenido_aleatorio($id) {
 $link=Conectarse(); 
@@ -784,6 +869,8 @@ return $link;
 		$empresa_telefono = editar_campo("empresa","$_SESSION[id_empresa]","telefono_1","");
 		$empresa_web = editar_campo("empresa","$_SESSION[id_empresa]","web","");
 		$empresa_email = editar_campo("empresa","$_SESSION[id_empresa]","email","");
+		$empresa_twitter = editar_campo("empresa","$_SESSION[id_empresa]","twitter","");
+		$empresa_facebook = editar_campo("empresa","$_SESSION[id_empresa]","facebook","");
 			$background =  remplacetas("empresa","id",$_SESSION[id_empresa],"imagen","");
 			$background_imagen = "images/secure/?file=600/$background[0]"; 
 		$nombre = editar_campo("usuarios","$_SESSION[id]","p_nombre","");
@@ -825,6 +912,8 @@ return $link;
 							<li>$empresa_telefono</li>
 							<li>$empresa_web</li>
 							<li>$empresa_email</li>
+							<li>$empresa_twitter</li>
+							<li>$empresa_facebook</li>
 							
 						
 					</div>
@@ -1045,7 +1134,7 @@ if (mysql_num_rows($sql)!='0'){
 		$resultado .= "
 			<div class='row' id='contenedor_imagen'>
 				<div class='col-lg-12 '>
-					<img class='img-thumbnail responsive' src='images/secure/?file=300/$imagen'>
+					<img class='img-thumbnail responsive' src='http://$_SERVER[HTTP_HOST]/milfs/images/secure/?file=300/$imagen'>
 				</div>
 			</div>";
 			$imagen_ancho = '100%';
@@ -1063,7 +1152,7 @@ if (mysql_num_rows($sql)!='0'){
 		$contenido = $contenido[3];
 		//$contenido = Markdown($contenido);
 		
-		if($campo_tipo=='15'){if($contenido !=""){$contenido = "<img class='img-thumbnail responsive' src='images/secure/?file=150/$contenido'>"; }else{$contenido="";}}
+		if($campo_tipo=='15'){if($contenido !=""){$contenido = "<img class='img-thumbnail responsive' src='http://$_SERVER[HTTP_HOST]/milfs/images/secure/?file=300/$contenido'>"; }else{$contenido="";}}
 				
 		elseif($campo_tipo=='14'){
 			if($contenido !='') {
@@ -1119,10 +1208,10 @@ if (mysql_num_rows($sql)!='0'){
 
 	$resultado .= "
 	<div class='row' id='contenedor_$row[id_campo]'>
-		<div class='col-lg-3 '>
-			<span class='campo_nombre' id='nombre_$row[id_campo]'>$campo_nombre[0]</span>
+		<div class='col-lg-1 ' >
+			<span class='campo_titulo campo_nombre' id='nombre_$row[id_campo]'>$campo_nombre[0]</span>
 		</div>
-		<div class='col-lg-9'>
+		<div class='col-lg-11'>
 			<span class='campo_contenido' id='contenido_$row[id_campo]'>$contenido</span>
 		</div>
 	</div>";

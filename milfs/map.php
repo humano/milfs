@@ -4,6 +4,7 @@ require ('xajax/xajax.inc.php');
 $xajax = new xajax();
 //require ('json.lab.php');
 require ('funciones/funciones.php');
+//require_once ('milfs/includes/markdown.php');
 //require ('funciones/convert.php');
 $xajax->processRequests(); 
 if($_REQUEST[id2] =='') {$agregar= $_REQUEST[id];}else {$agregar = $_REQUEST[id2];}
@@ -55,13 +56,13 @@ $agregar_nombre = remplacetas('form_id','id',$agregar,'nombre') ;
   </style>
 
   <script src="http://code.jquery.com/jquery-2.1.0.min.js"></script>
-<!--   <link rel="points" type="application/json" href="json.php?id=<?php echo $_REQUEST["id"] ?>"> -->
+<!-- <link rel="points" type="application/json" href="json.php?id=<?php echo $_REQUEST["id"] ?>">  -->
 </head>
 <body>
 <div id='map'></div>
 <script>
 L.mapbox.accessToken = 'pk.eyJ1IjoiaHVtYW5vIiwiYSI6IlgyRTFNdFEifQ.OmQBXmcVg_zq-vMpr8P5vQ';
-var map = L.mapbox.map('map', 'humano.jki5hno0')
+var map = L.mapbox.map('map', 'examples.map-i86nkdio')
     .setView([40, -74.50], 8);
 
 var geoJson = [ <?php echo imprime_geojson("$_REQUEST[id]","$_REQUEST[id2]");?> ];
