@@ -7,7 +7,7 @@ session_start();
  header("Location: ../nodisponible.jpg");
 // echo "hola mundo2";
 }*/
-if(!isset($_GET['file'])){
+if(!isset($_GET['file']) ){
 	 header("Location: ../sinimagen.jpg");
 	 
 	}
@@ -26,6 +26,11 @@ if (strpos($ref,'http://')===0 || strpos($ref,'http')!==0){
     'mid'=>'audio/x-midi',
     'wav'=>'audio/x-wav'
   );
+  if($mime[substr($file,-3)] =='') {
+    header('Location: ../pixel.png');
+   
+  exit();
+  }
   $stat=stat($file);
   header('Content-Type: '.$mime[substr($file,-3)]);
   header('Content-Length: '.$stat[7]);

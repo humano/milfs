@@ -6,6 +6,7 @@ if ( !isset ( $_SESSION['id'] ) ) {
  //header("Location: ../../../includes/error.php");
 // echo "hola mundo2";
 }
+$imagen= $_REQUEST[id_imagen];
 if($_REQUEST[u] == "escritorio") {$respuesta = "escritorio/";}
 // Script Que copia el archivo temporal subido al servidor en un directorio.
 $tipo = $_FILES['fileUpload']['type'];
@@ -22,7 +23,7 @@ if (isset($_FILES['fileUpload']['tmp_name'])) {
 //	$nombre =MD5(time()).".jpg";
 // (2) - Comprobamos que se trata de un archivo de imágen
 //if ($tipo == 'image/jpeg' AND $size  <= 4000000 ) {
-if (($tipo == 'image/jpeg' or $tipo =='image/png') AND $size  <= 4000000 ) {
+if (($tipo == 'image/jpeg' or $tipo =='image/png') AND $size  <= 10000000 ) {
 // (3) Por ultimo se intenta copiar el archivo al servidor.
 $name = MD5(time())."$ext";
 $nombre= "../../../images_secure/full/".$name;
@@ -37,14 +38,14 @@ else{
 	echo generar_miniatura_alto($name,"150");
 	echo generar_miniatura_alto($name,"300");
 	echo generar_miniatura_alto($name,"600");
-echo "<script>parent.resultadoUpload(0, '$name','$respuesta');</script> ";
+echo "<script>parent.resultadoUpload(0, '$name','$respuesta','$imagen');</script> ";
 }
 }
-else echo "<script>parent.resultadoUpload(2,'','$respuesta');</script> ";
+else echo "<script>parent.resultadoUpload(2,'','$respuesta','$imagen');</script> ";
 
 }
 else{
-echo '<script>parent.resultadoUpload(3, "");</script> ';
+echo "<script>parent.resultadoUpload(3,'','".$imagen."');</script>";
 }
 
 function generar_miniatura($file,$width) {//$archivo = $file;

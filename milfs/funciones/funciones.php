@@ -494,7 +494,7 @@ else {return $resultado;}
 $xajax->registerFunction("aplicaciones_listado");
 
 
-function contenido_aplicacion($id){
+function contenido_aplicacion($id,$plantilla){
 $div = "contenedor";
 	$respuesta = new xajaxResponse('utf-8');
 	
@@ -506,37 +506,53 @@ $link=Conectarse();
 $sql=mysql_query($consulta,$link);
 if (mysql_num_rows($sql)!='0'){
 	$control = mysql_result($sql,0,control);
-	//$contenido = "<ul class='dropdown-menu' role='menu'>";
-		mysql_data_seek($sql, 0);
-				$contenido = " 
 
-";
+		mysql_data_seek($sql, 0);
+				$contenido = " ";
 				$orden = 0;
 while( $row = mysql_fetch_array( $sql ) ) {
-	//$orden = $orden+500;
+
 	$identificador = explode(',',$row[identificador]);
 	$identificador = $identificador[0];
-	$contenido_desplegado = contenido_mostrar("$row[form_id]","$row[control]",'');
-
+	$contenido_desplegado = contenido_mostrar("$row[form_id]","$row[control]",'',"$plantilla");
 	$titulo = remplacetas('form_datos','id',$identificador,'contenido',"") ;
-
-	$contenido  .= "
-  
-							$contenido_desplegado 
-
-						 "; 
-
+	$contenido  .= "$contenido_desplegado "; 
 														}
- 	$contenido = "
- 	
- 	
- 	 $links
-
-        <section id=''>$contenido</section>";
+ 	$contenido = " $links <section id=''>$contenido</section>";
 										}
 
-//return " $contenido";
-//		$respuesta->addAssign("$div","innerHTML","$contenido");
+		return $contenido;
+
+}
+
+function contenido_aplicacion_nombre($nombre,$plantilla){
+	$id = remplacetas('form_id','nombre',$nombre,'id',"") ;
+	$id = $id[0];
+	if($id[0] =="") {$aviso = "<div class='alert-danger'><h2>No se ha definido una aplicación con el nombre <strong>$nombre</strong></h2> </div>";
+	return $aviso;}
+	$campo_titulo = remplacetas('parametrizacion','campo',$id,'descripcion'," tabla='form_id' and  opcion = 'titulo'") ;
+if($campo_titulo[0] !='') {$w_campo = "AND id_campo = '$campo_titulo[0]'";}
+$campo_titulo = $campo_titulo[0];
+$consulta ="SELECT *,GROUP_CONCAT(id  ORDER by timestamp desc ) as identificador FROM  form_datos WHERE form_id = '$id' $w_campo GROUP BY control order by contenido";
+$link=Conectarse(); 
+$sql=mysql_query($consulta,$link);
+if (mysql_num_rows($sql)!='0'){
+	$control = mysql_result($sql,0,control);
+
+		mysql_data_seek($sql, 0);
+				$contenido = " ";
+				$orden = 0;
+while( $row = mysql_fetch_array( $sql ) ) {
+
+	$identificador = explode(',',$row[identificador]);
+	$identificador = $identificador[0];
+	$contenido_desplegado = contenido_mostrar("$row[form_id]","$row[control]",'',"$plantilla");
+	$titulo = remplacetas('form_datos','id',$identificador,'contenido',"") ;
+	$contenido  .= "$contenido_desplegado "; 
+														}
+ 	$contenido = " $links <section id=''>$contenido</section>";
+										}
+
 		return $contenido;
 
 }
@@ -733,14 +749,14 @@ if (mysql_num_rows($sql)!='0'){
 return $contenido.$control;
 
 }
-function contenido_mostrar($id,$control,$div){
+function contenido_mostrar($id,$control,$div,$plantilla){
 
 	$respuesta = new xajaxResponse('utf-8');
 $link=Conectarse(); 
 $sql=mysql_query($consulta,$link);
 if (mysql_num_rows($sql)!='0'){
 
-$impresion = formulario_imprimir("$id","$control","c3p"); 
+$impresion = formulario_imprimir("$id","$control","$plantilla"); 
 
 										}
 if($div !="") {
@@ -1128,7 +1144,7 @@ if (mysql_num_rows($sql)!='0'){
 
 	mysql_data_seek($sql, 0);
 	//$resultado ="<div class='row' >";
-		$imagen = formulario_valor_campo("$id","0","","$control");
+	/*	$imagen = formulario_valor_campo("$id","0","","$control");
 		$imagen = $imagen[3];
 		if($imagen[3] != "") {
 		$resultado .= "
@@ -1143,6 +1159,7 @@ if (mysql_num_rows($sql)!='0'){
 		$imagen =  remplacetas("empresa","id",$id_empresa[0],"imagen","");	
 		$campo[0] = "http://$_SERVER[HTTP_HOST]/milfs/images/100x100.png";
 	}
+	*/
 	while( $row = mysql_fetch_array( $sql ) ) {
 		$multiple ="$row[multiple]";
 		$campo_tipo =  remplacetas('form_campos','id',$row[id_campo],'campo_tipo');
@@ -1152,7 +1169,7 @@ if (mysql_num_rows($sql)!='0'){
 		$contenido = $contenido[3];
 		//$contenido = Markdown($contenido);
 		
-		if($campo_tipo=='15'){if($contenido !=""){$contenido = "<img class='img-thumbnail responsive' src='http://$_SERVER[HTTP_HOST]/milfs/images/secure/?file=300/$contenido'>"; }else{$contenido="";}}
+		if($campo_tipo=='15' AND $tipo==""){if($contenido !=""){$contenido = "<img class='img-thumbnail responsive' src='http://$_SERVER[HTTP_HOST]/milfs/images/secure/?file=300/$contenido'>"; }else{$contenido="";}}
 				
 		elseif($campo_tipo=='14'){
 			if($contenido !='') {
