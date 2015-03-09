@@ -1,4 +1,79 @@
 <?php
+
+
+function aplicacion_carrusel($nombre,$id,$plantilla){
+	if($id =='') {
+		$id = remplacetas('form_id','nombre',$nombre,'id',"") ;
+		$id = $id[0];
+	}
+	if($nombre =='') {
+		$nombre = remplacetas('form_id','id',$id,'nombre',"") ;
+		$nombre = $nombre[0];
+	}
+		$descripcion = remplacetas('form_id','id',$id,'descripcion',"") ;
+		$descripcion = $descripcion[0];
+
+		$campo_titulo = remplacetas('parametrizacion','campo',$id,'descripcion'," tabla='form_id' and  opcion = 'titulo'") ;
+	if($campo_titulo[0] !='') {$w_campo = "AND id_campo = '$campo_titulo[0]'";}
+		$campo_titulo = $campo_titulo[0];
+	$consulta ="SELECT *,GROUP_CONCAT(id  ORDER by timestamp desc ) as identificador FROM  form_datos WHERE form_id = '$id' $w_campo GROUP BY control order by contenido";
+	$link=Conectarse(); 
+	$sql=mysql_query($consulta,$link);
+	if (mysql_num_rows($sql)!='0'){
+		$control = mysql_result($sql,0,control);
+		$nombre = remplacetas('form_id','id',$id,'nombre',"") ;
+		$descripcion = remplacetas('form_id','id',$id,'descripcion',"") ;
+
+		mysql_data_seek($sql, 0);
+//				$contenido = " <h1 class='titulo_aplicacion'>$nombre[0]</h1>";
+//				$contenido .= " <h2 class='descripcion_aplicacion'>$descripcion[0]</h2>";
+
+				$orden = 0;
+while( $row = mysql_fetch_array( $sql ) ) {
+
+	$identificador = explode(',',$row[identificador]);
+	$identificador = $identificador[0];
+	if($orden === 0) {$activo = "active";}else{$activo="";}
+	$contenido_desplegado = contenido_mostrar("$row[form_id]","$row[control]",'',"$plantilla");
+	$items .= " <div class='item $activo'>
+
+							$contenido_desplegado
+							
+					</div>";
+	$indicador .= "<li data-target=\"#myCarousel\" data-slide-to='$orden' class='$activo'></li>";
+	$titulo = remplacetas('form_datos','id',$identificador,'contenido',"") ;
+	//$contenido  .= "$contenido_desplegado "; 
+	$orden = ($orden +1 );
+														}
+$contenido .= "
+    <!-- Carousel 
+    ================================================== -->
+    <div id='myCarousel' class='carousel slide' data-ride='carousel'>
+      <!-- Indicators --> 
+      	<ol class='carousel-indicators'>
+      	$indicador
+      	</ol>
+      	<div class='carousel-inner' role='listbox'>
+      	$items
+      	</div>
+      <a class='left carousel-control' href='#myCarousel' role='button' data-slide='prev'>
+        <span class='glyphicon glyphicon-chevron-left' aria-hidden='true'></span>
+        <span class='sr-only'>Previous</span>
+      </a>
+      <a class='right carousel-control' href='#myCarousel' role='button' data-slide='next'>
+        <span class='glyphicon glyphicon-chevron-right' aria-hidden='true'></span>
+        <span class='sr-only'>Next</span>
+      </a>
+    </div>
+    <!-- /.carousel -->";
+ //$contenido = " $links <section id=''>$contenido</section>";
+										}
+										
+
+return $contenido; 
+}
+
+ 
 function formulario_embebido($id){
 			$impresion = formulario_modal("$id",$form_respuesta,$control,"embebido");
 
@@ -427,9 +502,15 @@ if (mysql_num_rows($sql)!='0'){
 	mysql_data_seek($sql, 0);
 	$resultado_li .= "<ul class='list-group'>";
 	$resultado_grid .= "<div id='row_aplicacion' class='row centered' style=''>";
+	if($tipo == "banner") { $divider = 1;
+	$resultado_banner .= "<div id='row_aplicacion' class='row centered' style=''>";
+									}
+	$i=0;
  	//$resultado_nav .= "<ul class='nav navbar-nav ' >";
 $fila=0;
 while( $row = mysql_fetch_array( $sql ) ) {
+			if($i % $divider==0) {$resultado_inicial = "<div class='row '  id='grid' style=''>";}
+			$i++;
 	$descripcion_corta = substr($row[descripcion],0, $length = 100);
 		$geo = buscar_campo_tipo($row[id],"14");
 		if($geo[0] !='') { $mapa= "<tr><td><a href='geo.php?id=$row[id]' target='mapa'><i class='fa fa-globe'></i></a></td></tr>";}else {$mapa='';}
@@ -476,12 +557,32 @@ if($imagen[0] !='' ) { $bg ="background-image : url(\"milfs/images/secure/?file=
 										background-size :cover;
 										background-position: center; ";}
 else { $color_aleatorio = sprintf("%02X", mt_rand(0, 0xFFFFFF)); $bg = "background-color: #$color_aleatorio ;"; }
-	$resultado_grid .= "<div class='col-sm-4 div_aplicacion' style ='height:300px; $bg '>  <h2 style='text-shadow:  1px 1px 1px rgba(255,255,255,0.8) ;';>$row[nombre] </h2>
-	<div class='round' style=' padding:5px; background-image : url(\"milfs/images/transparente40.png\");'><h3>$descripcion_corta</h3></div>
-	 $contenido <br><a class='badge pull-right' href='?id=$row[id]'>Leer</a>
+	$resultado_grid .= "
+	<div class='col-sm-4 div_aplicacion' id='div_aplicacion_$row[id]' style ='height:300px; $bg '>
+		
+			<h2 style='text-shadow:  1px 1px 1px rgba(255,255,255,0.8) ;';>$row[nombre] </h2>
+			<div class='round' style=' padding:5px; background-image : url(\"milfs/images/transparente40.png\");'>
+				<h3>$descripcion_corta</h3>
+			</div>
+	 		$contenido <br>
+	 		<a class='btn btn-default btn-block ' href='?id=$row[id]'>Leer</a>
 							</div>";
+		$resultado_banner .= "
+	<div class='col-sm-12 div_aplicacion' id='div_aplicacion_$row[id]' style ='height:300px; $bg '>
+		
+			<h2 style='text-shadow:  1px 1px 1px rgba(255,255,255,0.8) ;';>$row[nombre] </h2>
+			<div class='round' style=' padding:5px; background-image : url(\"milfs/images/transparente40.png\");'>
+				<h3>$descripcion_corta</h3>
+			</div>
+	 		$contenido <br>
+	 		<a class='btn btn-default btn-block ' href='?id=$row[id]'>Visitar</a>
+							</div>";
+			if($i % $divider==0) { $resultado_final = "</div>	"; }
 															}
+
 		$resultado_grid .= "</div>";
+		$resultado_banner .= "</div><div class='col-sm-1'></div>";
+		$resultado_banner = "$resultado_inicial $resultado_banner $resultado_final";
 											//	}			
 	$resultado .="</ul>";
 										}else {$resultado_li = "";}
@@ -489,6 +590,7 @@ else { $color_aleatorio = sprintf("%02X", mt_rand(0, 0xFFFFFF)); $bg = "backgrou
 if($tipo =='li') { return $resultado_li.$resultado;}
 elseif($tipo =='nav') { return $resultado_nav;}
 elseif($tipo =='grid') { return $resultado_grid;}
+elseif($tipo =='banner') { return $resultado_banner;}
 else {return $resultado;}
 }
 $xajax->registerFunction("aplicaciones_listado");
@@ -506,9 +608,12 @@ $link=Conectarse();
 $sql=mysql_query($consulta,$link);
 if (mysql_num_rows($sql)!='0'){
 	$control = mysql_result($sql,0,control);
+	$nombre = remplacetas('form_id','id',$id,'nombre',"") ;
+	$descripcion = remplacetas('form_id','id',$id,'descripcion',"") ;
 
 		mysql_data_seek($sql, 0);
-				$contenido = " ";
+				$contenido = " <h1 class='titulo_aplicacion'>$nombre[0]</h1>";
+				$contenido .= " <h2 class='descripcion_aplicacion'>$descripcion[0]</h2>";
 				$orden = 0;
 while( $row = mysql_fetch_array( $sql ) ) {
 
@@ -1169,7 +1274,7 @@ if (mysql_num_rows($sql)!='0'){
 		$contenido = $contenido[3];
 		//$contenido = Markdown($contenido);
 		
-		if($campo_tipo=='15' AND $tipo==""){if($contenido !=""){$contenido = "<img class='img-thumbnail responsive' src='http://$_SERVER[HTTP_HOST]/milfs/images/secure/?file=300/$contenido'>"; }else{$contenido="";}}
+		if($campo_tipo=='15' AND $tipo==""){if($contenido !=""){$contenido = "<img class='responsive' src='http://$_SERVER[HTTP_HOST]/milfs/images/secure/?file=300/$contenido'>"; }else{$contenido="";}}
 				
 		elseif($campo_tipo=='14'){
 			if($contenido !='') {
@@ -1179,7 +1284,7 @@ if (mysql_num_rows($sql)!='0'){
 														$zoom = $campos[2];			
 			$contenido = "
 
-			<img class='img-thumbnail '  src='http://api.tiles.mapbox.com/v4/examples.map-zr0njcqy/url-http%3A%2F%2Fqwerty.co%2Fdemo%2Fimages%2Fpin.png($lat,$lon,$zoom)/$lat,$lon,$zoom/350x150.png?access_token=pk.eyJ1IjoiaHVtYW5vIiwiYSI6IlgyRTFNdFEifQ.OmQBXmcVg_zq-vMpr8P5vQ' >
+			<img class=' '  src='http://api.tiles.mapbox.com/v4/examples.map-zr0njcqy/url-http%3A%2F%2Fqwerty.co%2Fdemo%2Fimages%2Fpin.png($lat,$lon,$zoom)/$lat,$lon,$zoom/350x150.png?access_token=pk.eyJ1IjoiaHVtYW5vIiwiYSI6IlgyRTFNdFEifQ.OmQBXmcVg_zq-vMpr8P5vQ' >
 			"; 
 										}
 			}
@@ -1238,15 +1343,11 @@ if (mysql_num_rows($sql)!='0'){
 }else {$resultado ="No hay datos ";}
 //if($id=="6" OR $id=="10") {
 	
-/*	$cadena = 'taza';
-$nombre = 'café';
-$str = 'Esto es una $cadena con mi $nombre en ella.';
- $str. "\n";
-eval("\$str = \"$str\";");
- $str. "\n";
-*/
+////Usa una plantilla apra cada id 
+//$plantilla = remplacetas('parametrizacion','campo',$id,'descripcion'," tabla='form_id' and  opcion = 'plantilla:$tipo'") ;
 
-$plantilla = remplacetas('parametrizacion','campo',$id,'descripcion'," tabla='form_id' and  opcion = 'plantilla:$tipo'") ;
+///Usa una plantilla generica por nombre
+$plantilla = remplacetas('parametrizacion','opcion',"plantilla:$tipo",'descripcion',"") ;
 $plantilla= $plantilla[0];
 if($plantilla != ""){
 eval("\$plantilla = \"$plantilla \";");

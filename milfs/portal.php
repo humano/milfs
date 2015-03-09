@@ -17,6 +17,7 @@ $sigla = remplacetas('empresa','id','1','sigla') ;
 $facebook = remplacetas('empresa','id','1','facebook') ;
 $twitter = remplacetas('empresa','id','1','twitter') ;
 $slogan = remplacetas('empresa','id','1','slogan') ;
+$web = remplacetas('empresa','id','1','web') ;
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -29,6 +30,7 @@ $slogan = remplacetas('empresa','id','1','slogan') ;
     <meta name="author" content="fredyrivera" >
      <?php $xajax->printJavascript("milfs/xajax/");  ?>
     <link rel="shortcut icon" href="favicon-152.png">
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,700italic,400,700,300' rel='stylesheet' type='text/css'>
 	<link rel="apple-touch-icon-precomposed" href="favicon-152.png">
 	<link href="milfs/css/font-awesome/css/font-awesome.css" rel="stylesheet">
 <!--  <link href="http://getbootstrap.com/examples/sticky-footer-navbar/sticky-footer-navbar.css" rel="stylesheet"> -->
@@ -41,13 +43,38 @@ $slogan = remplacetas('empresa','id','1','slogan') ;
 
 <!--   <script src="http://code.jquery.com/jquery-2.1.0.min.js"></script> -->
 <!--   <link rel="points" type="application/json" href="json.php?id=<?php echo $_REQUEST["id"] ?>"> -->
+<link href="milfs/css/carousel.css" rel="stylesheet">
 <style type="text/css">
+body {
+    background: url("") no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    color: gray;
+    background-color: black;}
+.alert-info{
+color: #341208;
+border-color:  #341208;
+background-image: url("");
+}
 
 .jumbotron {
-background-image: url("milfs/images/secure/?file=600/<?php echo $logo[0];?>");
+/* background-image: url("milfs/images/secure/?file=full/<?php echo $logo[0];?>"); */
 background-size: cover;
-background-position: center;}
+background-position: center;
+/* text-shadow:  1px 1px 1px rgba(255,255,255,0.8) ; */
+background-color: black;
 
+}
+
+.navbar-header > p { font-size:20px; color: white; font-family: "Open Sans",sans-serif; font-weight: normal;display:inline }
+.navbar-header > strong{ font-size:20px; color: #802a2a; font-weight: normal; font-family: "Open Sans",sans-serif; ;display:inline}
+.navbar-header {width: 50%;}
+
+.div_aplicacion {
+background-color: #f0eee1 !important;
+}
 .div_aplicacion:hover {
    -webkit-animation: animatedBackground 1s ease-out 1;
         -moz-animation: animatedBackground 1s ease-out 1;
@@ -111,50 +138,71 @@ background-position: center;}
 
     }
 </style>
+<?php if($_REQUEST[id] !='' AND $_REQUEST[c]){$onload ="<script type=\"text/javascript\"> xajax_formulario_modal('$_REQUEST[id]','','$_REQUEST[c]','$_REQUEST[t]')</script>";} ?>
 </head>
 <body>
   <body>
+<?php echo $onload; ?>
 
-      <div class='col-sx-12 ' id='logo_cabecera' style='width:100%;left:40px; background-color: white; '>
-      
-      <div class='pull-right' >
-      	<div style="">
-      	<a target="_redes" href="mailto:<?php echo $email[0];?>"><span style='font-size:30px; color:black'><i class='fa fa-envelope'></i></span></a>
-      	<a target="_redes" href="<?php echo $facebook[0];?>"><span style='font-size:30px; color:black'><i class='fa fa-facebook-square'></i></span></a>
-      	<a target="_redes" href="https://twitter.com/<?php echo $twitter[0];?>"><span style='font-size:30px; color:black'<i class='fa fa-twitter'></i></span></a>
-      	<img  style="max-height:38px;" src="milfs/images/100x100.png"  width='40px'>
-      	</div>
-      	
-      </div>
-      </div>
-          <div class="navbar-header">
+      <nav class="navbar navbar-inverse" role="navigation">
+      	<div class="container-fluid">
+      	  <div class='col-sx-12 ' id='logo_cabecera' style='width:100%;left:40px; background-color: white; '>
+      	 
+		      <div class='pull-right' >
+		      	<div style="">
+		      	<a title="Email" target="_redes" href="mailto:<?php echo $email[0];?>"><span style='font-size:20px; color:#E6E6E6'><i class='fa fa-envelope'></i></span></a>
+		      	<a title="Facebook" target="_redes" href="<?php echo $facebook[0];?>"><span style='font-size:20px; color:#E6E6E6'><i class='fa fa-facebook-square'></i></span></a>
+		      	<a title="Twitter" target="_redes" href="https://twitter.com/<?php echo $twitter[0];?>"><span style='font-size:20px; color:#E6E6E6'><i class='fa fa-twitter'></i></span></a>
+		      	<a title="Inicio" target="" href="?"><span style='font-size:20px; color:#E6E6E6'><i class='fa fa-home'></i></span></a>
+		      	
+		      	</div>
+		      	
+		      </div>
+	      </div>
+          <div class="navbar-header" style="  ">
             <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
               <span class="sr-only">Toggle navigation</span>
               <span class="icon-bar"></span>
               <span class="icon-bar"></span>
               <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#"></a>
+            
+            	<p>|<?php echo $razon_social[0];?>|</p>
+	<strong><?php echo $slogan[0];?></strong>
+				
           </div>
           <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
             
-					<li><a target="" href="?"><span style='font-size:30px; color:black'><i class='fa fa-home'></i></span></a></li>
+					<li></li>
               
             </ul>
 
           </div><!--/.nav-collapse -->
+		</div>
+      </nav>
 
-      </div>
-<div class="jumbotron">
-    <h1><?php echo $razon_social[0]; ?></h1>
-    <p><?php echo $slogan[0]; ?></p>
-  </div>
-    <div class="container">
+  			<?php echo aplicacion_carrusel("","8","galeria") ;	 ?>
+  
+    <div class="container-fluid">
+		<div class="row">
+			<div class="col-sm-8">
+
+			</div>
+			<div class="col-sm-4">
+			</div>
+		</div>
 	<?php  
-	if(isset($_REQUEST[id])){ echo contenido_aplicacion("$_REQUEST[id]"); }
-	else{	echo aplicaciones_listado("","grid");} ?>
-
+	if(isset($_REQUEST[id])){ echo contenido_aplicacion("$_REQUEST[id]","contenido"); }
+	else{	
+	
+	//echo contenido_aplicacion_nombre("Portada","banner") ;
+	//echo aplicaciones_listado("","grid");} ?>
+	<div class="container" style="width:80%">
+	<?php echo aplicaciones_listado("","banner");} 
+	?>
+	</div>
+<br></br>
 	</div>
   <div  class="center-block" style="  z-index:10000; bottom:10px;">
   <div role='row' class='row center-block' style="width:95% ; "><?php //echo aplicacion_datos("$_REQUEST[id]");?></div>
@@ -179,13 +227,15 @@ background-position: center;}
     </div>
   </div>
 </div>
-	       <div class='pie' style=" position: fixed;
+	       <div class='pie' style=" position: fixed; z-index: 10000;
   bottom: 0;
   width: 100%;
   /* Set the fixed height of the footer here */
   height: 50px;
-  background-color: white;">
-	      <p class='text-center'> <?php echo "$direccion[0] $telefono[0] $email[0]"; ?></p>
+  background-color: white;
+background-image: url('milfs/images/menosmicos/background.jpg');
+">
+	      <p class='text-center'> <?php echo "$razon_social[0] $slogan[0] $direccion[0] $telefono[0] <a href ='$web[0]'>$web[0]</a>";  ?></p>
         <a class='pull-right' href='http://QWERTY.co/milfs'>Powered by: &copy; MILFS </a> 
         	</div> 
     <!-- Bootstrap core JavaScript
