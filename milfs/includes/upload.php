@@ -35,9 +35,13 @@ if (!move_uploaded_file($_FILES['fileUpload']['tmp_name'],$nombre))
 
 echo '<script>parent.resultadoUpload(1, " '.$size.'");</script> ';
 else{
-	echo generar_miniatura_alto($name,"150");
+/*	echo generar_miniatura_alto($name,"150");
 	echo generar_miniatura_alto($name,"300");
 	echo generar_miniatura_alto($name,"600");
+	*/
+	echo generar_miniatura($name,"150");
+	echo generar_miniatura($name,"300");
+	echo generar_miniatura($name,"600");
 echo "<script>parent.resultadoUpload(0, '$name','$respuesta','$imagen');</script> ";
 }
 }
