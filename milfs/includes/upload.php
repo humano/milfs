@@ -26,7 +26,7 @@ if (isset($_FILES['fileUpload']['tmp_name'])) {
 if (($tipo == 'image/jpeg' or $tipo =='image/png') AND $size  <= 10000000 ) {
 // (3) Por ultimo se intenta copiar el archivo al servidor.
 $name = MD5(time())."$ext";
-$nombre= "../../../images_secure/full/".$name;
+$nombre= "$_SESSION[path_images_secure]/full/".$name;
 
 //if (!copy($_FILES['fileUpload']['tmp_name'],"$nombre"))
 if (!move_uploaded_file($_FILES['fileUpload']['tmp_name'],$nombre))
@@ -42,10 +42,10 @@ else{
 	echo generar_miniatura($name,"150");
 	echo generar_miniatura($name,"300");
 	echo generar_miniatura($name,"600");
-echo "<script>parent.resultadoUpload(0, '$name','$respuesta','$imagen');</script> ";
+echo "<script>parent.resultadoUpload(0, '$name','$_SESSION[url]/','$imagen');</script> ";
 }
 }
-else echo "<script>parent.resultadoUpload(2,'','$respuesta','$imagen');</script> ";
+else echo "<script>parent.resultadoUpload(2,'','$_SESSION[url]/','$imagen');</script> ";
 
 }
 else{
@@ -53,12 +53,12 @@ echo "<script>parent.resultadoUpload(3,'','".$imagen."');</script>";
 }
 
 function generar_miniatura($file,$width) {//$archivo = $file;
-$archivo = "../../../images_secure/full/".$file;// Ponemos el . antes del nombre del archivo porque estamos considerando que la ruta está a partir del archivo thumb.php$file_info = getimagesize($archivo);// Obtenemos la relación de aspecto$ratio = $file_info[0] / $file_info[1];// Calculamos las nuevas dimensiones$newwidth = $width;$newheight = round($newwidth / $ratio);// Sacamos la extensión del archivo$ext = explode(".", $file);$ext = strtolower($ext[count($ext) - 1]);if ($ext == "jpeg") $ext = "jpg";// Dependiendo de la extensión llamamos a distintas funcionesswitch ($ext) {        case "jpg":                $img = imagecreatefromjpeg($archivo);        break;        case "png":                $img = imagecreatefrompng($archivo);        break;        case "gif":                $img = imagecreatefromgif($archivo);        break;}// Creamos la miniatura$thumb = imagecreatetruecolor($newwidth, $newheight);// La redimensionamosimagecopyresampled($thumb, $img, 0, 0, 0, 0, $newwidth, $newheight, $file_info[0], $file_info[1]);// La mostramos como jpg//header("Content-type: image/jpeg");imagejpeg($thumb,"../../../images_secure/".$width."/$file", 80);
+$archivo = "$_SESSION[path_images_secure]/full/".$file;// Ponemos el . antes del nombre del archivo porque estamos considerando que la ruta está a partir del archivo thumb.php$file_info = getimagesize($archivo);// Obtenemos la relación de aspecto$ratio = $file_info[0] / $file_info[1];// Calculamos las nuevas dimensiones$newwidth = $width;$newheight = round($newwidth / $ratio);// Sacamos la extensión del archivo$ext = explode(".", $file);$ext = strtolower($ext[count($ext) - 1]);if ($ext == "jpeg") $ext = "jpg";// Dependiendo de la extensión llamamos a distintas funcionesswitch ($ext) {        case "jpg":                $img = imagecreatefromjpeg($archivo);        break;        case "png":                $img = imagecreatefrompng($archivo);        break;        case "gif":                $img = imagecreatefromgif($archivo);        break;}// Creamos la miniatura$thumb = imagecreatetruecolor($newwidth, $newheight);// La redimensionamosimagecopyresampled($thumb, $img, 0, 0, 0, 0, $newwidth, $newheight, $file_info[0], $file_info[1]);// La mostramos como jpg//header("Content-type: image/jpeg");imagejpeg($thumb,"$_SESSION[path_images_secure]/".$width."/$file", 80);
 //imagejpeg($thumb,null, 80);
 }
 function generar_miniatura_alto($file,$alto) {//$archivo = $file;
-$archivo = "../../../images_secure/full/".$file;// Ponemos el . antes del nombre del archivo porque estamos considerando que la ruta está a partir del archivo thumb.php$file_info = getimagesize($archivo);// Obtenemos la relación de aspecto$ratio =   $file_info[1]/$file_info[0];// Calculamos las nuevas dimensiones
-$newheight = $alto;$newwidth = round($newheight / $ratio);// Sacamos la extensión del archivo$ext = explode(".", $file);$ext = strtolower($ext[count($ext) - 1]);if ($ext == "jpeg") $ext = "jpg";// Dependiendo de la extensión llamamos a distintas funcionesswitch ($ext) {        case "jpg":                $img = imagecreatefromjpeg($archivo);        break;        case "png":                $img = imagecreatefrompng($archivo);        break;        case "gif":                $img = imagecreatefromgif($archivo);        break;}// Creamos la miniatura$thumb = imagecreatetruecolor($newwidth, $newheight);// La redimensionamosimagecopyresampled($thumb, $img, 0, 0, 0, 0, $newwidth, $newheight, $file_info[0], $file_info[1]);// La mostramos como jpg//header("Content-type: image/jpeg");imagejpeg($thumb,"../../../images_secure/".$alto."/$file", 80);
+$archivo = "$_SESSION[path_images_secure]/full/".$file;// Ponemos el . antes del nombre del archivo porque estamos considerando que la ruta está a partir del archivo thumb.php$file_info = getimagesize($archivo);// Obtenemos la relación de aspecto$ratio =   $file_info[1]/$file_info[0];// Calculamos las nuevas dimensiones
+$newheight = $alto;$newwidth = round($newheight / $ratio);// Sacamos la extensión del archivo$ext = explode(".", $file);$ext = strtolower($ext[count($ext) - 1]);if ($ext == "jpeg") $ext = "jpg";// Dependiendo de la extensión llamamos a distintas funcionesswitch ($ext) {        case "jpg":                $img = imagecreatefromjpeg($archivo);        break;        case "png":                $img = imagecreatefrompng($archivo);        break;        case "gif":                $img = imagecreatefromgif($archivo);        break;}// Creamos la miniatura$thumb = imagecreatetruecolor($newwidth, $newheight);// La redimensionamosimagecopyresampled($thumb, $img, 0, 0, 0, 0, $newwidth, $newheight, $file_info[0], $file_info[1]);// La mostramos como jpg//header("Content-type: image/jpeg");imagejpeg($thumb,"$_SESSION[path_images_secure]/".$alto."/$file", 80);
 //imagejpeg($thumb,null, 80);
 }
 ?>

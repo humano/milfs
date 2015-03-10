@@ -509,6 +509,9 @@ if (mysql_num_rows($sql)!='0'){
  	//$resultado_nav .= "<ul class='nav navbar-nav ' >";
 $fila=0;
 while( $row = mysql_fetch_array( $sql ) ) {
+	 if ( isset ( $_SESSION['id'] ) ) {	
+	$botonera ="<a style ='font-size:20px;'  title='Agregar contenido' class='link '  onclick=\"xajax_formulario_modal('$row[id]'); \"><i class='fa fa-plus-circle '></i> </a>" ;
+												}else {$botonera='';}
 			if($i % $divider==0) {$resultado_inicial = "<div class='row '  id='grid' style=''>";}
 			$i++;
 	$descripcion_corta = substr($row[descripcion],0, $length = 100);
@@ -576,12 +579,12 @@ else { $color_aleatorio = sprintf("%02X", mt_rand(0, 0xFFFFFF)); $bg = "backgrou
 			</div>
 	 		$contenido <br>
 	 		<a class='btn btn-default btn-block ' href='?id=$row[id]'>Visitar</a>
-							</div>";
-			if($i % $divider==0) { $resultado_final = "</div>	"; }
+							$botonera</div>";
+			if($i % $divider==0) { $resultado_final = " </div>	"; }
 															}
 
 		$resultado_grid .= "</div>";
-		$resultado_banner .= "</div><div class='col-sm-1'></div>";
+		$resultado_banner .= "</div>";
 		$resultado_banner = "$resultado_inicial $resultado_banner $resultado_final";
 											//	}			
 	$resultado .="</ul>";
@@ -954,7 +957,7 @@ function empresa_datos($id_empresa,$tipo) {
 $resultado ="
 <div class='datos_empresa row' role='row'>
 	<div class='col-sm-2'>
-		<img id='logo_empresa' class='img-responsive' src='images/secure/?file=600/$imagen[0]'>
+		<img id='logo_empresa' class='img-responsive' src='http://$_SERVER[HTTP_HOST]/milfs/images/secure/?file=600/$imagen[0]'>
 	</div>
 	<div class='col-sm-10'>
 		<div class='caption'>
@@ -1391,8 +1394,9 @@ function subir_imagen($respuesta,$id){
 
 ///vinculado con la funcion de javascript resultadoUpload(estado, file)  que esta en librerias/scripts.js
 //this.form.taget= 'ventana'; this.form.action = 'destinoEspecial.html'; this.form.submit()" 
-$javascript="includes/upload.php";
+$javascript="$_SESSION[url]/includes/upload.php";
 if ($id ==''){$id='imagen';}
+$size = ($_SESSION[upload_size]*1024*1024)." bytes";
 $resultado .="
 
 <form method='post' class='' enctype='multipart/form-data'
@@ -1401,7 +1405,7 @@ target='iframeUpload' class='form-horizontal' name='subir_imagen_$id' id='subir_
 <input type='hidden' id='id_imagen' name='id_imagen' value='$id'>
 <input class='form-control'  name='fileUpload' type='file' onchange=\"this.form.taget= 'iframeUpload'; this.form.action = '$javascript';this.form.submit();\" />
 <iframe name='iframeUpload' style='display:none' ></iframe>
-<div class='alert alert-info text-center' id='formUpload'>La imagen debe estar en formato .jpg y de tamaño m&aacute;ximo 4MB </div>
+<div class='alert alert-info text-center' id='formUpload'>La imagen debe estar en formato .jpg y de tamaño m&aacute;ximo  $_SESSION[upload_size] MB</div>
 </form>
 ";
 return $resultado;
@@ -2826,7 +2830,7 @@ if (mysql_num_rows($sql)!='0' ){
 		$orden = editar_campo("form_id","$row[id]","orden","");
 		$descripcion = editar_campo("form_id","$row[id]","descripcion","");
 		$geo = buscar_campo_tipo($id,"14");
-		if($geo[0] !='') { $mapa= "<tr><td><a href='geo.php?id=$id' target='mapa'><i class='fa fa-globe'></i> Mapa</a></td></tr>";}else {$mapa='';}
+		if($geo[0] !='') { $mapa= "<tr><td><a href='$_SESSION[url]/geo.php?id=$id' target='mapa'><i class='fa fa-globe'></i> Mapa</a></td></tr>";}else {$mapa='';}
 		
 		if($i % $divider==0) {
 
@@ -2871,7 +2875,7 @@ $resultado .=  "<div class='col-sm-4' style=';'>
 							<div class='panel-footer'>
 								<div class='input-group '>
 									<span class='input-group-addon'>Link</span>
-									<input  onclick=\"this.select(); \"  type='text' class='form-control' placeholder='http://$_SERVER[HTTP_HOST]/milfs?id=$id' value='http://$_SERVER[HTTP_HOST]/milfs?id=$id'>
+									<input  onclick=\"this.select(); \"  type='text' class='form-control' placeholder='$_SESSION[url]/?id=$id' value='$_SESSION[url]/?id=$id'>
 								</div>
 							</div>
 						</div>
@@ -2990,7 +2994,7 @@ $consulta ="
 														$zoom = $campos[2];	
 									$render = "
 																		
-																		<iframe src='mapa.php?lat=$lat&lon=$lon&zoom=$zoom&id=".$id_campo."[".$item."]' width='100%' height='300px'></iframe>
+																		<iframe src='$_SESSION[url]/mapa.php?lat=$lat&lon=$lon&zoom=$zoom&id=".$id_campo."[".$item."]' width='100%' height='300px'></iframe>
 																		<input   value='$value' type='text' id='".$id_campo."[".$item."]' name='".$id_campo."[".$item."]' class='form-control' placeholder='coordenadas' readonly >
 																		
 																				 ";}
@@ -3606,7 +3610,10 @@ function Conectarse(){
       exit();
    }
    
-
+	$_SESSION[path]= $path_instalacion;
+	$_SESSION[path_images_secure]= $path_images_secure;
+	$_SESSION[url]= $url;
+	$_SESSION[upload_size]= $upload_size;
    return $link;
    }
 }
