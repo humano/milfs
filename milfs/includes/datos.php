@@ -6,5 +6,6 @@ $db="milfs";
 $path_instalacion ="/var/www/html/milfs";
 $path_images_secure ="/var/www/images_secure";
 $url = "http://localhost/milfs";
+/// Depende de la variable http://php.net/upload-max-filesize o en el .htaccess
 $upload_size = 6 ; 	// Tamaño permitido para las imagenes en MB
 ?>

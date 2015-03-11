@@ -23,7 +23,8 @@ if (isset($_FILES['fileUpload']['tmp_name'])) {
 //	$nombre =MD5(time()).".jpg";
 // (2) - Comprobamos que se trata de un archivo de imágen
 //if ($tipo == 'image/jpeg' AND $size  <= 4000000 ) {
-if (($tipo == 'image/jpeg' or $tipo =='image/png') AND $size  <= 10000000 ) {
+	$upload_size = ($_SESSION[upload_size]*1024*1024);
+if (($tipo == 'image/jpeg' or $tipo =='image/png') AND $size  <= $upload_size ) {
 // (3) Por ultimo se intenta copiar el archivo al servidor.
 $name = MD5(time())."$ext";
 $nombre= "$_SESSION[path_images_secure]/full/".$name;
