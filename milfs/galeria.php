@@ -183,7 +183,7 @@ background-color: #f0eee1 !important;
 		</div>
       </nav>
 
-  		<!-- 	<?php echo aplicacion_carrusel("","2","galeria") ;	 ?> -->
+  	
   
     <div class="container-fluid">
 		<div class="row">
