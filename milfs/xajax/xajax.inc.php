@@ -86,10 +86,10 @@ class xajax
 		$this->aFunctionIncludeFiles = array();
 		$this->sRequestURI = $sRequestURI;
 		if ($this->sRequestURI == "")
-			$this->sRequestURI = $this->_detectURI();
+		$this->sRequestURI = $this->_detectURI();
 		$this->sWrapperPrefix = $sWrapperPrefix;
 		$this->setCharEncoding($sEncoding);
-		$this->bDebug = false;
+		$this->bDebug = $bDebug;
 		$this->bWaitCursor = true;
 		$this->bExitAllowed = true;
 		$this->bErrorHandler = false;

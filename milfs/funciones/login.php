@@ -7,7 +7,7 @@ function login_boton($formulario){
 			return $respuesta;
 									}
 								
-	if(isset($_SESSION[id])){
+	if(isset($_SESSION['id'])){
 
 $accion = "<li><a class=' btn  '  onclick=\"xajax_login_boton('x') \"><i class='fa fa-sign-out fa-fw'></i>$_SESSION[username]</a></li>";
 	}else{
@@ -392,7 +392,7 @@ $resultado = "
 				<div id='login_info'></div>
 				</div>
 	";
-if(!isset($_SESSION[id])){ print $resultado; }else {
+if(!isset($_SESSION['id'])){ print $resultado; }else {
 $nuevo = "<div class='btn btn-primary  btn-block' onclick=\"xajax_registro_express(xajax.getFormValues('login'),'nuevo');\">Usuario nuevo</div>";
 print $nuevo ;
 }
