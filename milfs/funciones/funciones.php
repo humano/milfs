@@ -1335,10 +1335,10 @@ if (mysql_num_rows($sql)!='0'){
 
 	$resultado .= "
 	<div class='row' id='contenedor_$row[id_campo]'>
-		<div class='col-lg-1 ' >
+		<div class='col-xs-12 ' >
 			<span class='campo_titulo campo_nombre' id='nombre_$row[id_campo]'>$campo_nombre[0]</span>
 		</div>
-		<div class='col-lg-11'>
+		<div class='col-xs-12'>
 			<span class='campo_contenido' id='contenido_$row[id_campo]'>$contenido</span>
 		</div>
 	</div>";
