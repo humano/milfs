@@ -1279,7 +1279,7 @@ if (mysql_num_rows($sql)!='0'){
 		$contenido = $contenido[3];
 		//$contenido = Markdown($contenido);
 		
-		if($campo_tipo=='15' AND $tipo==""){if($contenido !=""){$contenido = "<img class='responsive' src='http://$_SERVER[HTTP_HOST]/milfs/images/secure/?file=300/$contenido'>"; }else{$contenido="";}}
+		if($campo_tipo=='15' AND $tipo==""){if($contenido !=""){$contenido = "<img class='img-responsive' src='http://$_SERVER[HTTP_HOST]/milfs/images/secure/?file=600/$contenido'>"; }else{$contenido="";}}
 				
 		elseif($campo_tipo=='14'){
 			if($contenido !='') {
@@ -1289,7 +1289,7 @@ if (mysql_num_rows($sql)!='0'){
 														$zoom = $campos[2];			
 			$contenido = "
 
-			<img class=' '  src='http://api.tiles.mapbox.com/v4/examples.map-zr0njcqy/url-http%3A%2F%2Fqwerty.co%2Fdemo%2Fimages%2Fpin.png($lat,$lon,$zoom)/$lat,$lon,$zoom/350x150.png?access_token=pk.eyJ1IjoiaHVtYW5vIiwiYSI6IlgyRTFNdFEifQ.OmQBXmcVg_zq-vMpr8P5vQ' >
+			<img class=' img-responsive'  src='http://api.tiles.mapbox.com/v4/examples.map-zr0njcqy/url-http%3A%2F%2Fqwerty.co%2Fdemo%2Fimages%2Fpin.png($lat,$lon,$zoom)/$lat,$lon,$zoom/600x250.png?access_token=pk.eyJ1IjoiaHVtYW5vIiwiYSI6IlgyRTFNdFEifQ.OmQBXmcVg_zq-vMpr8P5vQ' >
 			"; 
 										}
 			}
