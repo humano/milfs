@@ -198,7 +198,7 @@ $consulta = "INSERT INTO usuarios (username,p_nombre,p_apellido,email,bio,passwd
 	$consulta_localizacion = "INSERT INTO localizacion (id_localizado,telefono,id_grupo) VALUES ('$id','$telefono_express','1')";
 	$consulta_empresa = "INSERT INTO empresa SET razon_social = '$nombre_express $nombre_express', regimen_tributario = 'simplificado' ,id_responsable='$id'";
 	$sql_localizacion=mysql_query($consulta_localizacion,$link);
-	$sql_empresa=mysql_query($consulta_empresa,$link);
+	//$sql_empresa=mysql_query($consulta_empresa,$link);
 	if($sql_empresa) {
 			$id_empresa = mysql_insert_id();
 			$_SESSION[id_empresa] = $id_empresa;
