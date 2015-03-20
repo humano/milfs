@@ -48,7 +48,7 @@ while( $row = mysql_fetch_array( $sql ) ) {
 $contenido .= "
     <!-- Carousel 
     ================================================== -->
-    <div id='myCarousel' class='carousel slide' data-ride='carousel'>
+    <div id='myCarousel_$id' class='carousel slide' data-ride='carousel'>
       <!-- Indicators --> 
       	<ol class='carousel-indicators'>
       	$indicador
@@ -56,11 +56,11 @@ $contenido .= "
       	<div class='carousel-inner' role='listbox'>
       	$items
       	</div>
-      <a class='left carousel-control' href='#myCarousel' role='button' data-slide='prev'>
+      <a class='left carousel-control' href='#myCarousel_$id' role='button' data-slide='prev'>
         <span class='glyphicon glyphicon-chevron-left' aria-hidden='true'></span>
         <span class='sr-only'>Previous</span>
       </a>
-      <a class='right carousel-control' href='#myCarousel' role='button' data-slide='next'>
+      <a class='right carousel-control' href='#myCarousel_$id' role='button' data-slide='next'>
         <span class='glyphicon glyphicon-chevron-right' aria-hidden='true'></span>
         <span class='sr-only'>Next</span>
       </a>
@@ -581,6 +581,7 @@ else { $color_aleatorio = sprintf("%02X", mt_rand(0, 0xFFFFFF)); $bg = "backgrou
 	 		<a class='btn btn-default btn-block ' href='?id=$row[id]'>Visitar</a>
 							$botonera</div>";
 			if($i % $divider==0) { $resultado_final = " </div>	"; }
+			if($tipo =='carrusel') {$resultado_carrusel .= aplicacion_carrusel("","$row[id]","galeria") ;	}
 															}
 
 		$resultado_grid .= "</div>";
@@ -594,6 +595,7 @@ if($tipo =='li') { return $resultado_li.$resultado;}
 elseif($tipo =='nav') { return $resultado_nav;}
 elseif($tipo =='grid') { return $resultado_grid;}
 elseif($tipo =='banner') { return $resultado_banner;}
+elseif($tipo =='carrusel') { return $resultado_carrusel;}
 else {return $resultado;}
 }
 $xajax->registerFunction("aplicaciones_listado");

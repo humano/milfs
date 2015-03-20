@@ -3,7 +3,7 @@
 var scrollDivs=new Array();
 scrollDivs[0]="despacho";
 scrollDivs[1]="";
-
+/*
 function carga()
 {
 	posicion=0;
@@ -15,7 +15,8 @@ function carga()
 
 	registraDivs();
 }
-
+*/
+/*
 function registraDivs()
 {
 	for(divId in scrollDivs)
@@ -24,7 +25,7 @@ function registraDivs()
 		document.getElementById(scrollDivs[divId]).ondblclick=comienzoMovimiento;
 	}
 }
-
+*/
 function evitaEventos(event)
 {
 	// Funcion que evita que se ejecuten eventos adicionales
@@ -91,7 +92,7 @@ function finMovimiento(event)
 	elMovimiento.onmouseup=null;
 }
 
-window.onload=carga;
+//window.onload=carga;
 //// fin drag div
 
 
