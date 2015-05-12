@@ -2194,8 +2194,10 @@ $opciones = explode(",",$opciones);
 
 foreach($opciones as $c=>$v){ 
 
-			if($v !='') {$v = ucfirst(strtolower($v));
-			
+//Uso de mayusculas
+			//if($v !='') {$v = ucfirst(strtolower($v));
+			if($v !='') {$v = $v;
+//Fin uso de mayusculas			
 $grabar_campos_valores .= "($id_form_campo,'$v'),";			
 			}
  								
