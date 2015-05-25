@@ -29,6 +29,23 @@ editado, debería filtrarse por timestamp para conocer su ultima
 versión o vesiones anteriores.
 
 
-http://qwerty.co/demo/api.php?dato=126
+http://datos.labmde.org/api.php?dato=52772
 Consulta la info sobre un dato en concreto pasando  el id del dato
 como parametro.
+
+Para entender el manejo de la api se debe tener en cuenta lo siguiente:
+
+Cuando se crea un formulario MILF le asigna un ID unico a cada formulario que aparece en el JSON como: "form_id": pero esto solo es util si se quiere hacer referencia al fomulario especifico llamando la API sin ningun parametro, asi:
+
+http://datos.labmde.org/api.php
+
+Si se quiere leer los datos en un formulario especifico la api se llama de la siguiente forma:
+
+http://datos.labmde.org/api.php?id=19
+
+De esta forma la API nos entrega todos los datos, para hacer ejercicios de visualizacion de datos lo recomendable es utilizar los ID de los campos, especificado en el JSON asi: "id_campo"
+Cada campo asociado a un formulario se le asigna un ID unico.
+
+
+
+
