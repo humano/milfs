@@ -1,4 +1,4 @@
-API de MILFS
+# API de MILFS
 
 El api consulta a nivel local todos los datos si se ha logueado en el
 sistema a nivel remoto o sin logueo los datos de los formularios que
@@ -46,6 +46,50 @@ http://datos.labmde.org/api.php?id=19
 De esta forma la API nos entrega todos los datos, para hacer ejercicios de visualizacion de datos lo recomendable es utilizar los ID de los campos, especificado en el JSON asi: "id_campo"
 Cada campo asociado a un formulario se le asigna un ID unico.
 
+# Manejo de Imagenes
 
+Milf permite almacenar imagenes para los formularios, las imagenes quedan almacenadas en el sistema de archivos del servidor, y genera de forma automatica 3 tamaños (150px 300px y 600px) y tambien almacena la imagen en el tamaño original.
 
+Lo siguiente es un ejemplo de como la **API** entrega un dato tipo **IMAGEN**:
+~~~
 
+ {
+        "0": 53326,
+        "id_dato": 53326,
+        "1": 21,
+        "id_formulario": 21,
+        "2": "Viaje a pie",
+        "formulario": "Viaje a pie",
+        "3": "imagen",
+        "campo_nombre": "imagen",
+        "4": 0,
+        "id_campo": 0,
+        "5": "7b2deb5cb4580984c8acd71c09e0f1f1.jpg",
+        "contenido": "7b2deb5cb4580984c8acd71c09e0f1f1.jpg",
+        "6": 1432608321,
+        "timestamp": 1432608321,
+        "7": "4b0d9a636567465bed3ada5a2e6f2fa6",
+        "identificador": "4b0d9a636567465bed3ada5a2e6f2fa6",
+        "8": 0,
+        "orden": 0
+    },
+
+~~~
+
+Ahora para usar la imagen se debe completar la URL, como se ve en los siguientes ejemplos:
+
+**Para usar la imagen de 600px**
+
+http://datos.labmde.org/milfs/images/secure/?file=600/7b2deb5cb4580984c8acd71c09e0f1f1.jpg
+
+**Para usar la imagen de 300px**
+
+http://datos.labmde.org/milfs/images/secure/?file=300/7b2deb5cb4580984c8acd71c09e0f1f1.jpg
+
+**Para usar la imagen de 150px**
+
+http://datos.labmde.org/milfs/images/secure/?file=150/7b2deb5cb4580984c8acd71c09e0f1f1.jpg
+
+**Para usar la imagen FULL o Original**
+
+http://datos.labmde.org/milfs/images/secure/?file=full/7b2deb5cb4580984c8acd71c09e0f1f1.jpg
