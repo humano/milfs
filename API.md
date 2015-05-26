@@ -93,3 +93,11 @@ http://datos.labmde.org/milfs/images/secure/?file=150/7b2deb5cb4580984c8acd71c09
 **Para usar la imagen FULL o Original**
 
 http://datos.labmde.org/milfs/images/secure/?file=full/7b2deb5cb4580984c8acd71c09e0f1f1.jpg
+
+**Nota:** Es importante que observe que el JSON entrega el dato de la siguiente forma: 
+~~~
+"5": "7b2deb5cb4580984c8acd71c09e0f1f1.jpg",
+~~~
+
+Cada imagen queda codificada de la siguiente forma: 7b2deb5cb4580984c8acd71c09e0f1f1.jpg que sera el nombre de la imagen asignada por el sistema.
+
