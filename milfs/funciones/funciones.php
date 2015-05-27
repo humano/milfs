@@ -746,6 +746,8 @@ $xajax->registerFunction("contenido_parallax");
 
 function contenido_timeline($id){
 $div = "contenedor";
+	$descripcion = remplacetas('form_id','id',$id,'descripcion') ;
+	$nombre = remplacetas('form_id','id',$id,'nombre') ;
 	$respuesta = new xajaxResponse('utf-8');
 	
 	$campo_titulo = remplacetas('parametrizacion','campo',$id,'descripcion'," tabla='form_id' and  opcion = 'titulo'") ;
@@ -766,7 +768,7 @@ while( $row = mysql_fetch_array( $sql ) ) {
 	//$orden = $orden+500;
 	$identificador = explode(',',$row[identificador]);
 	$identificador = $identificador[0];
-	$contenido_desplegado = contenido_mostrar("$row[form_id]","$row[control]",'');
+	$contenido_desplegado = contenido_mostrar("$row[form_id]","$row[control]",'','timeline');
 
 	$titulo = remplacetas('form_datos','id',$identificador,'contenido',"") ;
 		$nav_li .="<li><a href='#$row[control]'>$titulo[0]</a></li>";
@@ -774,19 +776,25 @@ while( $row = mysql_fetch_array( $sql ) ) {
 
 														}
  	$contenido = "
+ 	<h1 id='titulo_timeline'>$nombre[0]</h1>
+ 	
+ 	<div  id='timeline'>
 	<ul id='dates'>
 		$nav_li
 	</ul>
-    <div  id='timeline'>
+    
         
      	  <ul id='issues'>
         	$contenido
+        	<li></li>
         	</ul>
       <div id='grad_left'></div>
 		<div id='grad_right'></div>
 		<a href='#' id='next'>+</a>
 		<a href='#' id='prev'>-</a>
+		<h2 id='descripcion_timeline'>$descripcion[0]</h2>
 	</div>
+	
 
       ";
 										}
@@ -1289,7 +1297,7 @@ if (mysql_num_rows($sql)!='0'){
 														$zoom = $campos[2];			
 			$contenido = "
 
-			<img class=' img-responsive'  src='http://api.tiles.mapbox.com/v4/examples.map-zr0njcqy/url-http%3A%2F%2Fqwerty.co%2Fdemo%2Fimages%2Fpin.png($lat,$lon,$zoom)/$lat,$lon,$zoom/600x250.png?access_token=pk.eyJ1IjoiaHVtYW5vIiwiYSI6IlgyRTFNdFEifQ.OmQBXmcVg_zq-vMpr8P5vQ' >
+			<img class=' img-responsive'  src='http://api.tiles.mapbox.com/v4/examples.map-zr0njcqy/url-http%3A%2F%2F$_SERVER[HTTP_HOST]%2Fmilfs%2Fimages%2Ficonos%2Fnaranja.png($lat,$lon,$zoom)/$lat,$lon,$zoom/600x250.png?access_token=pk.eyJ1IjoiaHVtYW5vIiwiYSI6IlgyRTFNdFEifQ.OmQBXmcVg_zq-vMpr8P5vQ' >
 			"; 
 										}
 			}
@@ -1352,8 +1360,12 @@ if (mysql_num_rows($sql)!='0'){
 //$plantilla = remplacetas('parametrizacion','campo',$id,'descripcion'," tabla='form_id' and  opcion = 'plantilla:$tipo'") ;
 
 ///Usa una plantilla generica por nombre
+$plantilla = remplacetas('parametrizacion','opcion',"plantilla:$tipo",'descripcion',"campo = '$id' ") ;
+if($plantilla[0] !='') { $plantilla = $plantilla[0] ;}
+else {
 $plantilla = remplacetas('parametrizacion','opcion',"plantilla:$tipo",'descripcion',"") ;
 $plantilla= $plantilla[0];
+		}
 if($plantilla != ""){
 eval("\$plantilla = \"$plantilla \";");
 	$full =" $plantilla	";
@@ -1744,7 +1756,7 @@ $td .= "<td>$imagen</td>";
 														$zoom = $campos[2];			
 			$contenido = "
 			<!-- <img class='img-round'  src='http://dev.openstreetmap.de/staticmap/staticmap.php?center=$lon,$lat&zoom=$zoom&size=350x100&maptype=mapnik&markers=$lon,$lat,red-pushpin' > -->
-						<img class='img-round '  src='http://api.tiles.mapbox.com/v4/examples.map-zr0njcqy/url-http%3A%2F%2Fqwerty.co%2Fdemo%2Fimages%2Fpin.png($lat,$lon,$zoom)/$lat,$lon,$zoom/350x100.png?access_token=pk.eyJ1IjoiaHVtYW5vIiwiYSI6IlgyRTFNdFEifQ.OmQBXmcVg_zq-vMpr8P5vQ' >";
+						<img class='img-round '  src='http://api.tiles.mapbox.com/v4/examples.map-zr0njcqy/url-http%3A%2F%2F$_SERVER[HTTP_HOST]%2Fmilfs%2Fimages%2Ficonos%2Fnaranja.png($lat,$lon,$zoom)/$lat,$lon,$zoom/350x100.png?access_token=pk.eyJ1IjoiaHVtYW5vIiwiYSI6IlgyRTFNdFEifQ.OmQBXmcVg_zq-vMpr8P5vQ' >";
 											} else { $contenido ='';}
 			}
 			}
@@ -1770,10 +1782,35 @@ return $csv;
 							}
 	return $resultado;
 }
+//	$contenido_desplegado = contenido_mostrar("$row[form_id]","$row[control]",'',"$plantilla");
+function mostrar_coincidencias_plantilla($id_form,$filtro,$valor,$plantilla) {
 
-function mostrar_coincidencias($id_form,$filtro,$valor) {
+	if($valor !=""){
 $md5_valor = $valor;
 if($filtro !='' ){$w_filtro ="AND md5(binary contenido) = '$md5_valor'";}
+}
+$consulta= "SELECT * FROM form_datos WHERE form_id= '$id_form' AND id_campo = '$filtro' $w_filtro ";
+$link=Conectarse(); 
+mysql_query("SET NAMES 'utf8'");
+//mysql_real_escape_string($consulta);
+$sql=mysql_query($consulta,$link);
+$control=mysql_result($sql,0,"control");
+if (mysql_num_rows($sql)!=0){
+mysql_data_seek($sql, 0);
+$resultado = contenido_mostrar("$id_form","$control",'',"$plantilla");
+									}
+$respuesta = new xajaxResponse('utf-8');
+$respuesta->addAssign("mostrar_resultado","innerHTML",$resultado);
+			return $respuesta;
+} 
+$xajax->registerFunction("mostrar_coincidencias_plantilla");
+	
+
+function mostrar_coincidencias($id_form,$filtro,$valor) {
+	if($valor !=""){
+$md5_valor = $valor;
+if($filtro !='' ){$w_filtro ="AND md5(binary contenido) = '$md5_valor'";}
+}
 $consulta= "SELECT * FROM form_datos WHERE form_id= '$id_form' AND id_campo = '$filtro' $w_filtro ";
 $link=Conectarse(); 
 mysql_query("SET NAMES 'utf8'");
@@ -1797,6 +1834,7 @@ $respuesta->addAssign("mostrar_resultado","innerHTML",$resultado);
 } 
 $xajax->registerFunction("mostrar_coincidencias");
 	
+
 function matriz_formulario($formulario,$div,$registros,$pagina,$formato){
 	$respuesta = new xajaxResponse('utf-8');
 if ( !isset ( $_SESSION['id_empresa'] ) ) {	
@@ -2051,7 +2089,7 @@ $sql=mysql_query($consulta,$link);
 if (mysql_num_rows($sql)!='0'){
 $resultado = "<label for='id_campo'>Filtro</label>
 						<select class='form-control' name='campo_filtro' id='campo_filtro' onchange=\"$onchange\"  >
-							<option value=''>Todos</option>";
+							<option value=''>Seleccione</option>";
 while( $row = mysql_fetch_array( $sql ) ) {
 $resultado .= "		<option value='$row[md5_contenido]' title=''>$row[contenido]</option>";
 															}
