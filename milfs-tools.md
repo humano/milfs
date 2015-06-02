@@ -13,6 +13,33 @@ INSERT INTO `parametrizacion` (`id`, `tabla`, `campo`, `opcion`, `descripcion`, 
 
 #Formularios Embebidos
 
+Esta herramienta permite generar una página con el formulario basta con pasar a la URL del MILF el paramentro: 
 
+/?form=ID_FORM
+
+** Ejemplo: **
+
+http://datos.labmde.org/?form=20
+
+Esta herramienta es útil si queremos embeber un formulario en una página web, utilizando un iframe o algo parecido.
 
 #Visualizacion de Mapas
+
+Otra opcion de visualización es la de un mapa, todos los formularios que tengan datos georeferenciado pueden verse en un mapa, usando la funcion: 
+
+geo.php?id=ID_FORM
+
+** Ejemplo: **
+
+http://datos.labmde.org/geo.php?id=21
+
+#Portal
+
+** Ejemplo: **
+http://datos.labmde.org/galeria.php
+
+#Galeria
+
+
+** Ejemplo: **
+http://datos.labmde.org/galeria.php
