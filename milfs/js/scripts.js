@@ -96,7 +96,7 @@ function finMovimiento(event)
 //// fin drag div
 
 
-function resultadoUpload(estado, file,respuesta,id) {
+function resultadoUpload(estado, file,respuesta,id,coordenadas) {
 var link = '<br />';
 if (estado == 0)
 var mensaje = '<img class=" img-thumbnail responsive" src="'+respuesta+'images/secure/?file=600/' + file + '" >' + link;
@@ -111,6 +111,10 @@ if (estado == 3)
 var mensaje = 'Error ! - No se pudo copiar Archivo. Posible problema de permisos en server' + link;
 document.getElementById('formUpload').innerHTML=mensaje;
 document.getElementById(id).value=file;
+if (coordenadas != '') {
+ document.getElementById('mapita').contentWindow.document.location.href=coordenadas;
+}
+
 }
 
 function resultadoUploadArchivo(estado,file,div) {

@@ -1,5 +1,57 @@
 <?php
 
+function combo_select($id_campo,$form_id,$valor,$name,$control,$control_combo){
+$link=Conectarse(); 
+mysql_query("SET NAMES 'utf8'");
+if($control_combo !="") {
+	$div ="combo_$name";
+$and ="AND campo_valor LIKE '$control_combo:%%'";
+}else{
+$onchange ="xajax_combo_select('$id_campo','$valor','$valor','$name','$control',(this.value)) ";
+$div ="combo_$name";
+$name ="primario_$name";
+}
+$consulta = "SELECT *  FROM form_campos_valores WHERE id_form_campo ='$id_campo' $and ";
+$sql=mysql_query($consulta,$link);
+//	$value = remplacetas("form_datos","control","$control","contenido","id_campo ='$id_campo' ");
+if (mysql_num_rows($sql)!='0'){
+
+$resultado=" $valor<SELECT class='form-control' NAME='$name' id='$name' onchange=\"$onchange\"  >
+<option value=''>Seleccione </option>
+				" ;
+	//			$resultado = array_unique($entrada);
+while( $row = mysql_fetch_array( $sql ) ) {
+		$campos = explode(':',$row[campo_valor]);
+		
+		IF($control_combo ==""){
+			$campo_primario[]=$campos[0];
+			$campo_primario = array_unique($campo_primario);
+								}
+		else {
+		$campo_primario[] = "$campos[0] $campos[1]";
+		}
+	//$identificador = $identificador[0];
+//if($row[campo_valor] ==="$valor"){$selected="selected";}else{$selected ="";}
+//$resultado .= "<option value='$row[campo_valor]' $selected > $campos[0]</option>";
+															}
+															
+foreach($campo_primario as $C=>$V){
+$resultado .= "<option value='$V' $selected >$V </option>";
+}
+$resultado .= "</select>
+		<div id='$div'></div>";
+										}else{$resultado = "<div class='alert alert-warning'><i class='fa fa-exclamation-triangle'></i> No hay resultados</div>";}
+if($control_combo =='') {
+	return $resultado;
+						}
+else{
+			$respuesta = new xajaxResponse('utf-8');
+			$respuesta->addAssign("$div","innerHTML","$resultado");
+			return $respuesta;
+}
+}
+$xajax->registerFunction("combo_select");
+
 
 function aplicacion_carrusel($nombre,$id,$plantilla){
 	if($id =='') {
@@ -1320,6 +1372,8 @@ if (mysql_num_rows($sql)!='0'){
 	$nombre[$row[id_campo]] = $campo_nombre[0] ;
 	$campo[$row[id_campo]]=$contenido;
 	$campo_400[$row[id_campo]] = substr($contenido,0, $length = 400)."... ";//$contenido;
+	$campo_80[$row[id_campo]] = substr($contenido,0, $length = 80);//$contenido;
+	$campo_55[$row[id_campo]] = substr($contenido,0, $length = 55);//$contenido;
 	$campo["md5_".$row[id_campo]]=$md5_contenido;
 
 				if($row[id_campo] == $categoria_campo){
@@ -2232,7 +2286,8 @@ $opciones = explode(",",$opciones);
 
 foreach($opciones as $c=>$v){ 
 
-			if($v !='') {$v = ucfirst(strtolower($v));
+			//if($v !='') {$v = ucfirst(strtolower($v));
+			if($v !='') {$v = $v;
 			
 $grabar_campos_valores .= "($id_form_campo,'$v'),";			
 			}
@@ -2283,13 +2338,18 @@ while( $row = mysql_fetch_array( $sql ) ) {
 if($tipo =='8'){
 $resultado = "	<textarea class='form-control'  id='opciones' name='opciones' title='Escriba las opciones separadas por coma y en orden' placeholder='Escriba las opciones separadas por coma y en orden ej: Casa,Carro,Beca,Mascota,Computador'>$valores</textarea>";
 					}
-if($tipo =='16'){
+elseif($tipo =='9'){
+$resultado = "	<textarea class='form-control'  id='opciones' name='opciones' title='Escriba las opciones separadas por coma y en orden y los campos separados por dos puntos ej. Amazonas:Puerto santander,Amazonas:La chorrera,Amazonas:La pedrera' placeholder='Escriba las opciones separadas por coma y en orden y los campos separados por dos puntos ej. Amazonas:Puerto santander,Amazonas:La chorrera,Amazonas:La pedrera'>$valores</textarea>";
+					}
+elseif($tipo =='16'){
 	if($valores =='') {$valores = "1,10";}
 $resultado = "	<textarea class='form-control'  id='opciones' name='opciones' title='Valor mínimo y máximo' placeholder='Escriba Valor mínimo y máximo separadas por coma 1,10'>$valores</textarea>";
 					}
-if($tipo =='17'){
+elseif($tipo =='17'){
 	$resultado ="<input class='form-control' type='number'  id='opciones' name='opciones' value='$valores' placeholder='Limite' title='Escriba un limite de caracteres para este campo' > ";
-
+}
+else{
+$resultado = "	<textarea class='form-control'  id='opciones' name='opciones' title='Predefinido' placeholder='Valores predefinido'>$valores</textarea>";
 }
 $respuesta->addAssign("$div","innerHTML",$resultado);
 return $respuesta;
@@ -3033,9 +3093,18 @@ $consulta ="
 														$lat = $campos[0];
 														$lon = $campos[1];
 														$zoom = $campos[2];	
-									$render = "
+			if($lat =="") {
+			$localizacion = 	remplacetas('form_campos_valores','id_form_campo',$id_campo,'campo_valor',"") ;
+			//$render= $localizacion[0];
+						$campos = explode(" ",$localizacion[0]);
+														$lat = $campos[0];
+														$lon = $campos[1];
+														$zoom = $campos[2];	
+
+								}
+									$render .= "
 																		
-																		<iframe src='$_SESSION[url]/mapa.php?lat=$lat&lon=$lon&zoom=$zoom&id=".$id_campo."[".$item."]' width='100%' height='300px'></iframe>
+																		<iframe id='mapita' src='$_SESSION[url]/mapa.php?lat=$lat&lon=$lon&zoom=$zoom&id=".$id_campo."[".$item."]' width='100%' height='300px'></iframe>
 																		<input   value='$value' type='text' id='".$id_campo."[".$item."]' name='".$id_campo."[".$item."]' class='form-control' placeholder='coordenadas' readonly >
 																		
 																				 ";}
@@ -3048,6 +3117,7 @@ $consulta ="
 																}
 																//$subir_imagen = subir_imagen('');		
 		elseif($campo_tipo_accion == 'imagen'){
+		//	$gps = leer_exif($file);
 		$render= "<input value='$value' type='hidden' id='".$id_campo."[".$item."]' name='".$id_campo."[".$item."]' class='form-control' placeholder='$campo_descripcion' > "; //subir_imagen('',$id_campo[$item]);
 		}
 		
@@ -3070,6 +3140,11 @@ $consulta ="
 			
 			//$select = select('form_campos_valores','campo_valor','campo_valor','',"id_form_campo = $id_campo",$id_campo."[".$item."]");
 			$select = select_edit($id_campo,$id_form,$value,$id_campo."[".$item."]",$control);
+			$render = "$select ";}
+		elseif($campo_tipo_accion == 'combo'){
+			
+			//$select = select('form_campos_valores','campo_valor','campo_valor','',"id_form_campo = $id_campo",$id_campo."[".$item."]");
+			$select = combo_select($id_campo,$id_form,$value,$id_campo."[".$item."]",$control,"");
 			$render = "$select ";}
 		elseif($campo_tipo_accion == 'number'){$render = "<code>(Este campo solo acepta números)</code>
 															<input value='$value' type='number' id='".$id_campo."[".$item."]' name='".$id_campo."[".$item."]' class=' has-warning form-control' placeholder='$campo_descripcion' > ";}
