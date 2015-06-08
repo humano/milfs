@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Jun 03, 2015 at 05:22 PM
+-- Generation Time: Jun 08, 2015 at 11:52 AM
 -- Server version: 5.5.42-1
 -- PHP Version: 5.6.9-1
 
@@ -138,7 +138,7 @@ CREATE TABLE IF NOT EXISTS `form_campos` (
   `identificador` varchar(32) NOT NULL,
   `bloqueo` int(1) NOT NULL DEFAULT '0',
   `tipo_contenido` set('1','a','s') NOT NULL COMMENT '''1 numerico'',''alfanumerico'',''simbolos'''
-) ENGINE=InnoDB AUTO_INCREMENT=72 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=73 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `form_campos`
@@ -205,7 +205,8 @@ INSERT INTO `form_campos` (`id`, `id_especialista`, `id_empresa`, `campo_nombre`
 (68, 0, 1, 'Dc:uri', 'Direcci√≥n del recurso', 4, 0, 0, 1, 'abc6b46aef3462e8dc0bb9034bbe6c3b', 0, ''),
 (69, 0, 1, 'Dc:media', 'Campo para embeber la uri de un medio, se har√° el reder en un iframe', 5, 0, 0, 1, '0ba1df8291582e7b93cbe8a9cd1ba685', 0, ''),
 (70, 0, 1, 'Dc:imagen', 'Cuando el recurso es una imagen', 15, 0, 0, 1, '9311f72e48bc310eaae4f6fb20e72123', 0, ''),
-(71, 0, 1, 'Municipios Colombia', 'Combo select de los municipios de Colombia', 9, 0, 0, 1, '659f1f0dd0b16b94df7095523fd0c631', 0, '');
+(71, 0, 1, 'Municipios Colombia', 'Combo select de los municipios de Colombia', 9, 0, 0, 1, '659f1f0dd0b16b94df7095523fd0c631', 0, ''),
+(72, 0, 1, 'Referido', 'Selecciona un contacto que ya est√© incrito', 10, 0, 0, 1, '930227d7199cae1e3e305faa37655029', 0, '');
 
 -- --------------------------------------------------------
 
@@ -218,7 +219,7 @@ CREATE TABLE IF NOT EXISTS `form_campos_valores` (
   `id_form_campo` int(11) NOT NULL,
   `campo_valor` char(200) COLLATE utf8_spanish2_ci NOT NULL,
   `predeterminado` set('0','1') COLLATE utf8_spanish2_ci NOT NULL DEFAULT '0'
-) ENGINE=InnoDB AUTO_INCREMENT=2362 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2366 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
 
 --
 -- Dumping data for table `form_campos_valores`
@@ -1669,55 +1670,1294 @@ INSERT INTO `form_campos_valores` (`id`, `id_form_campo`, `campo_valor`, `predet
 (1465, 71, 'Bolivar:Talaigua nuevo', '0'),
 (1466, 71, 'Bolivar:Mompos', '0'),
 (1467, 71, 'Bolivar:San fernando', '0'),
-(1468, 71, 'Bolivar:Pinillos', '0')ã      ≈}Mw‹F≤Âﬁø¢¶7îﬂ°§¬7†~~Û(äîÈ!)6Ii∆}Ê*d°á ®›‘øyÀYÃjv≥ıõ†
-Öô§>ÿ›cÀ2•∫H$ÓçååàLdÌˇÃÒ√d9˚ìΩ◊uY‹©Ê’œj]îe=…ı§¨SµGM˜~‹gl4ÿ£r≤‘U]»†+UM™YïµMW¿_´¶QUfÔÄ'¿Â∫^≤ú4ıJ5Eh_¢≥€ Å \Íyë◊`Bâ)Í…]°?·≠"Å∫.~kãïËO,˚”ËJï ëjú’ç*ıjåâ•
-L'ï’∫Ó®»Tõm±î‰¨Æ÷:kä’:K-ÆäE± b© ›|≠:ˆª{ØZ`/ñp_ó*-ÒæRáCntÆJìRíU©9q®ù˜*SØ€T5àà‚∂Xe
-9NÚ∂-2µ5Û?ˇpr~uty=99ø~7˘8´õ≈M¶Àzusß ∫—´èìgã¸„˛Ñ~øŸ}Œ—˝–„¯èÀFÁz≠õEQ©º˛¯„‰√¡È˚£+ÓC2≈>\∑kı$qÒãÆÙJU@Z‚"Êº’wı$´Kµâá∞3˙Mÿf‚H—®Y˜∏Ä
-u°≤[uW¨±„°†óö◊2û*≤Î%y&D≈R'µ÷øµ0BÀ+‚q≠+†2ò
-≤k20ÍzÅ(A8˘?ΩZ¿x0u%ı(≈Ü<£ﬂdÍ¨0ò
-∆{O∫÷x;A¯ÎZ“L›Wµ ìÏ÷h$ñ4ÆTFL”≠n»'•›ü∆@g*∑)2x*«ëèæ¶!_’ÕZÃïOñ’ÿm«≥5Ñn*pL¢◊™¬vª˛Ã3N9Å#ò~≠K9“;›ÕçBì…uMÉ “¶y
-®Wöª¥T4ÊJ”&≤Öıªé|∏bâ ¡Ûõñ∫Ω@à ˙Z≠PRWê|]œ€ ÅEÖÌ‘Bs.π…[4ÿ^ÎÇÂê`úÊ>ûõ	¬è;øÜñ‰
-Œﬂëâd∑@µgxëFNﬂÅ'∏~›ÆR%Ù≥^+£œûÙ!j°E3ÇÒãbÖn»å4ôJ[îÕ•m‹cë¸º≈ë„	nØãT≠HT¿nœÎ˛T>,çàJjÌ;íˇE*‹òÔJ+\R§√c∞ÆÍŒæúÎjﬁ"¬∞gˆÑÄ0Û\-ÍÔGÊPÔ"(i›§Ë ¸ÿ“-fæ‡˙∫≠ZŸı¿{¿ÁÇË<1wªæGI¡˜1Y1eÏÉ@pNnëÏ≠9mò Åúin—8Eí˜ñΩY√&0cZL™s˙=áÅ¨ØçY8ê˛ÉBJDÑÇıø¥‰Ü—ÀÜé4_úYCA˜	ra^S,¡:BÈ3ÙJ‹A˙åﬂx.®ppÑ°°’ù|X9™2«'4GıI°1R»ÜêH˙‰÷ò""GC¥®Hêz÷~säLè1YÛñÚ!+çFÇ·K”µGÅTπã$Ωî	kã"ŸßÖ‡.íAFA‰’"â9h"Œ÷uÉz«Ç‰◊-eewÖòAcœÿßX0}X/5∏∑XP}°>ë	CƒÇ‡ﬂFDP±†¯≤Æråfc]a¨L5?ËäÁi“;G\,_;/ 	¶ Êpf23¬f!≤ù@ÊÑ<€‚|,3¬øjKp!ÛA6iù∑™…Åjôæ7Ê[ôæ¶ ô^À‹L¶ÇáúBﬂRŒ,fJôí”©/,≥¡Ér°ê+îπ‡UΩ`„Ä∞(î© ep˜Ë·BôˆÅÕ3¬ÃπÔjP°Ã/î˛üF¢'Çb [≥:kÔcâ3 ∂‡Í⁄dÆƒ lêÇàOxÀ-œΩ_uY¨(œ)ëÈ!‹Ä»ª‰‰»A–yMQÍ
-9Ú¿ÜΩ]ÖÒ‡|Y‡Ú¡tt·ên0î7àÂÉ◊´6É41≤¿m+∫ZÂùòE√!‹¿h∂¶Ù[4_µKl√ùJfJ≈≈&¿ÜèãRÂ∫úâñ«],ÙπågÙ∏-)X¬Ü|DNl≠Jqø@¬Ëvï¬zSË
-∫™ylH≤Õ)ŸZrKÒe∫∫íÎM“=∆xÇnˆAŸ≠∏ó'¯~≠KUfÍ≥ÇQÔ	æœ5˙Ë–3»Æ(d∆t3Ùvdw$wΩæ„àx≠7’b	\àK6uQ£	ΩP‡»≠–öi¨€Ü^d‚ñ™˝TîÄääú˘]-—ôyâ vEñ~π`5ac£ŸIß6ıír2k¶?°Ô¸Y›haûæ+0C5∫ßıV	π|O\pP¶rƒ˚R≠3ä é/≈˘† %y÷Ê¬–ó⁄∂M!tÒ•.Wuâ’„–ó¢D»·K9∫⁄Iï·É;V› Ó¨éDtIe’Í;l…ï∏ü…'“|÷‘ü°`ûDíI≠»Õ‡h|	€‘ˆ87¢VHÏUW∏L(1◊ú\"&2ÓYC’.bâ8o+QèÉƒ∏USTŒ‰cThp?û€ó‰1*"√––‚RgzçQIhqx+KPahh¿ÔÁÑ
-ﬁ5û`óÊØU€–˝PÃ– ø[Îj¡Nh•8N.U3«ˆ~≠óhf·NÑ∂œckú££) ˙‚rÆfü\UYêØ¿∏Äì)ˆlÖò˙"`*À#a‰!¢˜„k˝IÑXëè=§8#Ã(¿Y'¨(Øâô?ä —WçLÿ√(Õd
-¥ãﬂ¢UHxåÑ_"≈ ,FÜQãT°såë\s6åë‹ÎÇrÃÈ¬ÿó¶AÛ#ﬁâΩ†§/WÑ ≠4yÆ©ªA^Ø(ñDG«¢#üFê’Ã¡¬DR∫û1AFöπú0◊‰õÑ∞Y]a1:L|aÚ≈j…⁄&ê|•5¶≠aÇî^÷+Ã‰Ûµ*”ÔÅ|rUsı0A>7K÷#D4EJ)•0D#ƒëûc≤“©¢‡ÇÇh*åUSÜDÏ5öz≤±ÕÍ
-Äê`€\Më` |°ÑMë›rò˜¢øøz≈õ%h~§¨Dî2¢!«ÏQóuZä'J ¿Ù‰Öûè•év)fá°ŸáC
-rı˘3t{ógv»◊ıäÏü|ófˆöõ¬ÿhógvê.‘]aè|@êÌ|‚¯ìgî"»év	gá¶|¢)8`«~Ö¯ê´u£…V<Î`ÿ9H8ÖåÌ£¥»A i r<™∏»¯Õ∞Íπé$`^ä<;r])õQŸç\§˙-GY"êÍ∑u≈˘—gÄ øºªáÑ@Áπ°ah˝é& Eà¸œ∏Ää•}dıÇì»∑öW{RëVEÚLy@©ÛvâNfójﬁí;}uê—îÇÓ≤ÃûWãÄ√]ñŸŒ⁄urÔÃÓÛ◊u÷ôÚR/a0Ôí M34kÁ¯<! ~°ËN "ºb‘ò£]π≠±	|LÛm£Hª|±C±H™YÙI¶Z7çü∑D>R|Z
-ÎÚë·_[—<LCn!àÒë€◊j.°xjä‹Dê€kŸ ≤z™8—¶~Ä%¯»Ìy-jØQÄ¥û¨W¢HÂ!◊]ëç …ÑDûÛöÄ‘^·bW µñR]Ú~4kRñ_ﬂQ^ ˆ¿Ö·&áKB£ã3ﬁ“X¨˙]çd)“ªK9RI˚ôû\G≈ıˆÓ—Ó(0DƒñkÁ:KÏÇFﬁ™Äî5⁄eà–YΩ¿imónßµà€£]>84RÎLdóBßs
-U&+^3ïOπK7‘Ö∑LD’"4(ËÚ Õ|^†°î‚êC]úVBıKûÁ∞)I=/È–ÿ¥L0ë‡JÒÏÛK$%8§Ω[$%8•º1Î"õ‰„Jî+2ÿÁYﬁT
-∞ô∞∏rÉiËP™JØç0ä§˜äËàî‡ó1D†I¨ÀíQ,…ø.4Ô€(IWX(yyû264Pµ‰⁄`éÌI	6VI-jC±%ä•}YüwóL∂d◊U∑•°ªÁ⁄êΩ‹ì$‚ë"öwŒ∫K3«¿˜k°Ô.◊√:oY!Èª¥˙ŸäM	—.˚„>ËféÖ∑hóÑéÅÁ‰SÑ[Ÿ%£–«ZÑÃªÑ⁄”ã˜FFâUõc≈{@ƒ~Ñ(±™Û´¢HËN¨∫lÏh• 9NÜâUﬁ„-∂UDâ] 6„ìΩx˙ÄBêV∆S´>«)ÈJ–™œ·}ëèjóÿ¥U(éí∞a´PºÔˆVØ±A´RÑÃ[p¢Ò‘*”©ÊÕTü≈ñŒxj’Í}™÷≥j‘ ñEıl*ûZeÍ¿ÛzyNÏXu≤º¿;V≠€¨≠Z®¥ƒéU,ﬁÒ]Ã™P∑[	;q¨*˝µX;b«*”_hÓ·‰Jœ‹*÷ô)øcÍ∫KÕ“>û»>Œ*”9%JËsb◊>ñÙä´ƒ`&ÆU£+“«ÿ¬ªVïÿJƒìªVùÃ⁄VÏZU:SïhÔ¡Èãˆ±k’ÊZákU¶ﬂ	ö·ÜÂÿµk3≈nïà7◊-{vë‘J™ÈŸ«QWuÅ¢JÏY∫VXç=´>¸ É‹Â{VÖ∏Ïõ!Œ*QóTµ™⁄lpü¨4≤ÂŸ£ázâ(´\
-˘V•ﬁö”≥j‘-¢éaæUün{N™˙y\¶G≠|´VG˝ke% ≠ZΩ.÷Fì©Ö°KÏ€•¬ïæÿ∑
-u≠+x-ˆ≠ –,SbkViŒTﬁ9‡¨⁄‚nƒÿ∑S’•ÅUõ◊∫\7(b`’„ó∂*f£{U®‘Ëˇ´<≥`†ˆ@ÅΩí<0QLåŒ:∞är‹‚KXEy´ÖvI∏:∫Ñu≤8∞ Ú∫¡^ZEπhK¶°Uë≥öÊ&¡t¯ê(ç˛<¥Jr-&á–™«q-ó‚–™«ôŒ—†Ué_tC”æ≠áVI(QQ¯&i>8›–§XW}Qπ{3çó˜‡ èZ÷bDˆâß;[„»™‘•ö)~MVﬂ√JY’Í “•û„Ÿ3ôË°`ª€i
-H{∞MÓ ”Â8z»≥	+à¨í]2–é¥ÖoãHUªàåÌÚò€˙‚ÿ*–πjE¬8~ ¢£ÁàÌSÃM^ØiÊ=Ê`ˆ2¬1èπZµ
-⁄	õı¨ºÄzRl/$¸Ö∑a∂f/$\»π”^H∏§ ß≈c{!Å7G„6ÿÿ^I8/`Ì%∂óék—?{°èEx√#`3k.Fa.gØ%4©.ï@ZÂπã@±Ωê0.B⁄*Œ;~ñc{ŸŸj	iÉÛFbØ$\®ÜFn⁄‚˛„ƒ^Px]œq¸&C=ÅH/hÚL©n[†>J[–pØO¨ ÍhóRË≤Ä’Æd®!la'•è9v-‹aÓ
-ﬁZƒÒ&Ô≤èI‹!ØñCm'Í»˙zv2î¨†Ã7;æd®¸LY(œœ∏ôıÇ˛ÛÉrÕØ7¿£ÖÇrXó¸bB<lE:˙èªü¬Äm "qÂ9ä =Ä77|òˆ-˚…ê˘˜®YúHÜîø\w¬ÿ]Ij”BÅ;që’ÓùÍÓµqëÿ_9∑7ºñsùQg¡(\$˜\≠Òï»ƒEbÆa˚Q‚Ü‚aVb/w‚"≠oã9ØT)Â*AâuîƒMÑz≈(cÄá§Ã≈
-r‚!©˙‡ƒC:ﬂ™+nâÁIÛ^ª.VLvâÁÀ'RÕ\Wb„y‚¢…í:ùñÏ~ &8Ê=Û Àù®~≥†êÊwÀ∫QKÏ≤ÃuOU∂8}$˙à‘ÜG˜ëÁÎBºçë¯HÙUã'[$æg
-Öoy%>“{êÈ;çj˚Å1⁄Â∂ˇƒGZœ5ñ‚ì!SÊ]*≠˙DCÁ’{ﬁNà®ÿDù—#∑8ZáD`≠@∑á$yÑzS§-ÓÌLÜy„ù–rŸ-í‰p3¡°jCä7^QnûeéÉ!IAèÎj•3Ïc`¬F≈%J2xÎ
-\öW–¥∏®Kéì¿"åu√xXƒyﬂ¥,ô%ÅEú—ﬁ¨rBi=ˆ5¥ıZïY˝¿≥Ö≈.ã˙V$p…ê@ü©yŒ))ßÎ¬TvH†w¿É¶[QBÜzáÎC»vì!Åﬁ¡.µ…¸ê?Ô`≈]Ò	™…ê:è¬|ı(gË©Ç]KÃ'ÂÂ≠FÃDCéº√R¯Ã´aC*x«ƒ◊Øò„ èLI.tﬁØôzÙ%Ä9ŒÌë©G˜“∆Uë)«µÆtSÃ¿©D9J‹°îD¶¸ÆN1+≤{f —á@¬G¶≈'RmÛJ/◊çÒ±©lfÌŒ2∞-Œ'±©_˘Y¨Z%±©M]úﬂcS ﬁ,Á⁄ÿ‘gEÔç∂om_´»¯ÿ©F‹>£∑>ò—‚≠ΩdHî;‰&•·QÒµY˜Õlˆ;$ C?Ÿãu»ë«ÕÕ˘≈r`z»êœ˙∑û“ˆ^5ÿê;F\jﬁé∫DÑ7Ft˚Î ;q~[2dƒ„˛îıÚÀ$	[~’XOÄıÉLe"ZIÄl”jíXí◊ÔîÈﬁå•x∂Ü'IÇÙ¨÷›[ÙKÃLÓt:ïÀ]•Ñ∂O)„©†˚Ñ ∂˘Ë&äO4 L∂ª^’ ∂ç
-ÄË3Ω“k— ˙∏›ºbà{ùŸl±·
-ä›µx…•}º1P~¶ñîk/–Ëÿl˜Z»LÚë	‘£	‰
-2ª7ñ±Goó´fº=	a[∆˚“ﬂ´ÿﬁNü¯9Ÿv:∂LBÑà∏`?"[âsPÊJ<QåÂB≠ÅâËo’…5J;dµC∏v›Ú⁄m;›P∫iÌñÛ±ÜºvËO∑/
- Çﬂãz]Ø
-@Üè∫˜6¥
-WêLv±ÆKºì‡¯dïµxDaÀºQ∫s!+EC~éÌ	≤ÕewÍ	Æ9∫∫≠+≥û#AÚïe¬≤O1"Ä†˙_Á Ä ˙öú0rËôDv*4æ;@ëTµ§™Y"Hí≠öî∫Ñn√KLrƒŸîÓ‘ó4ì-‘˝xwÅ√D⁄
-R&¬öØªX∏ö„›’oy£1<ôÔõùÓ^“˘åFè87.›7M;k⁄œ tãÌ“Úñ"SæçiäüÎÕñÆµB√∂mïh¬9≤sM”Í¨ô◊Ë†xÅé0“õtIúE ﬂ“PZ¢ÃAÂH⁄q¨AÌÊöa§ë∑z%∆]êsM∏@3››Æ8uá=
-„¡Ú'íP0}QpéTAzK(¡ıAïµ˜àêéª©Ôä\lÔ%X ›ŒoÊ|JüRW+Hè	èœ^_¶%X,0ûöF¡ˆØäßÅﬂ‡•>w	∂O-v92ò^∂˜"òÓ_ !X>n+—ÑoΩÕ0¿àl÷ºâ÷ñ
-é&@5”ŸOmõWùwØ–¿—√êNw]ƒÑWƒ_q≠k?i™^§Ì;§®ÏªLÑLCVj‘5æàFx˜a|üPî≈ﬂêÕ!Wµ^“¢◊Ô·?|¡œ»Ç32WzÿAº˘∏Óë˚¢=éÂ¯çâ©œmâÉ:~D·É¥—8Qƒè¸öåôÖ{ÚàÃ˝˚Ëô¬†6yDÎ∑lqeç~9y\Ïu!fª‰Q•K|Õû‡èËÃÔ{,)ûƒ0yDÎnÁkÚàƒo⁄∑3¸Ö…"Ùj©<‡îÆyDÂÓÿ.<∆ó.xDËK‚≥∫√%'◊ô>"ÙAì÷•Ü„üËÇGtÊ›œk1!8”GtæPãeY„—5t≈#JˇÃÔúTÄ~TË∂…5ˆˇïÌov–5èHΩ=””™;”GDÕßópÍ!]òÁf1∞˘G‰ﬁP≠;èà}™xÔOÜ¯G¥ÓﬁpÕZƒ?"ı°4V«yl@éÅQπ;»mém?6ñŸJΩ’˜¢]∑ú∂l};˘EÏEÙ 0SE&ƒÍ[Í9⁄∫@t"—Ô¿F◊ Ñ¸∆m›,
-|ˆ°v0‡ÿ–MP◊Ä“|OÎ=†<â:ƒÉÒ	‚[Ó)]∏3TˇÜX@&‡CÇÃ€œ˛Æ!…Yù’H»Vâø¥Eï5Ô>]§8;C1aÍ^„$‡Üz¬∆ªL6C9aãπ‚Í8ä9îÜv
-y^Å<‚#Á™\Ä|‚ ãNf/ŒP[nhîÇú°≤∞≈ÿﬁ$X$`≈'ÖO'72t«ì|p‹ãè6TÜc∑oMäö§3îvHnOÇ"òk¿ñ‚ê≥nuı
-;o‹ƒ0 Í;èãVŒCÖaáékki#∫ô]TÕJãâw(9åG¥(±ˆpw†|¶∞öÍ¶(›q∑ÕºÚ¶(o∫]˜Ó8÷¿Ü´,ZD+Å)ŒÖnƒ?BmµΩ6}?YÓ“„—˚‘p]∞ªn4Qf%]¿Pó∏|,V∑{πnd´ëÁ‚øél®Såö•0áﬁP©∏Ö8…eädªÜñjcüÌË∑EÉ=
-£ıZ§$ŒP∞∏Çxj{à"gÕ-$WNËW˜eónc∂nj√uùµZxß–&[t ’M¥î–‘¶˚é¿ò∫bπòúCSòø*>0ãLqÆäÖE¶*vìçLi‡Îë©”Acv‘‘ÊP/E†ô¢ºU%Œœë)«ô*E∏ô:Úó*âÅôZÿv≥–î„PuÏõjòØzÃT£€⁄édƒ¶gº<ÙQ&˚ß‰ï±Ö} ‹fu#\ll*A,8:±©¿·-.—»TÄ≥déö1è-√ÅO3]ä"îõlÇ∏•î51u¯Ö¢4§ƒTÅ¸üœ$≥ËP≥¡›	ÎML)é8DÜqùXî†µ;JL∆{Úà?∫¬Í§&Û¶⁄ƒÂå˜n£HLE~—JbbkπÎN-Œi8£Äñ°ÿ9TÖo¥ç	Æ7	-‹©}Ú¯TÛõ0 MA.ƒÅ629e	>£/tß¶4}ESÑé,±úÂNMﬁÒó`‡cö:w1¡)CÆÎXu†Ïñc¬æÿP/a¥πé)	ø∞¿ÜM9∫Û∞6˘±\ÅqSq∞a–ÉO™1üÃ‘Öú«¨¿¢ªÎò≤ºÀså›≥ÃÏJÏ†)Lw÷àÏXH›‘‹î·∫¶2º¬œQöpÆk
-¬G ‚DÔ∫¶"Ôä!7’ΩÇ–}vœ‘¬≤1ôp¶∆…ãÑ2UËèÉê%∫%'Zaøl°≠.¿µåç6k†„û›C•7i–¬æﬂ∫@(ì˝∑≠^Ædô±UwŒº_F@ì}^PØEsñò©U¯µ/Ñ2πøËw
-Uù•AJÊz¶øËUªíØd“T¬8_õP¶]`≤Î[çn1a°p£Ü;dÁù†ùduUœP€!7ÔAÔÓ(SØ0dÊ=‡∫.[¯ÿáèoE$Í…xÿÆOûÒ◊<ÆÍ˜ﬂfJò»x™nµ01`˙ÖárÅ~,ÿ˚M`pH∫7'èÒ&rl≠‹∏r|—wûÒP€ïÃ‘»˘‹ 9ø¢y4—⁄bâ´∏nÄDÛ˜n™…‹ÿVÁ&Ÿ˝®üPÍù)7|HÄ\™Br"Ÿñm*nàlü©n<∫Fè˘ı;>D∫ﬂÚ{I*∫°Ö„Rò‚êì°“¸ºŸRÄw
-rXﬂ+1ïŸrP}Æ’Z„˛w»á∑(ﬁíä[˚‹!ﬁ`~;Æ‹!ﬁ ŒT˜M?h≠CºSÚãÀê˛nrÃ…Ó∂#∫π”ÿÑèàÌÄëÙ™í“Â¥(Ò©#I±ZHT2‹H∞‹%∞∆∂e¬	ûO≈jÑ,üj±e≈çÕº5óú‹X∞|&øÅ ÇÊ>-ËÈ0/à€»ÂFcæ4D-ÇÓÀ˙+|nÍ∂îF|Ã•st>q,oDcku«!1‚—4∑hrâ4mç'åB0~í—là;”‹DR.õ'Ñg.F˚â ˙®€˝Ç%Å¥ÿ·¸÷%MèH'“º[‘˜ÄàLYî|ùÑ`Çˆw4c¿ê¬i2_ä˜(DÛëù≥"ìë∏7udØ‰ﬁ^oÍZ∆dÉ.J0˛¶/Dp~!<£7ï∂]o1H0›øjäﬁ⁄õ
-≤÷J¥b8Íe˚Iî^º©`˙¢ﬂ˛Â¢OR>Ç[äªë—o˜æ—Ω!˜Ï!ñI’“Õb~â°|@ôÔM$ HW“Öƒﬂ2ÃÒA7+9ÍΩ!ΩÏ1Ô»˝¢ñCf9<5ÔÖ,±∑	`6ﬂª$ﬁQ£Dd*õ T— 9>4ˆÉz.Rl|π !ê·˜‰xÒs‰ˆ∫]@^J·"<iΩ¨y§â	¿sëW3ÛÙ\$ˆØ™¡`◊s¡E∑˙éYåÁ!ßW˙NlMÒ<§Ùu;Á ¥¯⁄RÇ!Ø◊)>ìÁâñ8˙¶|≠≈—Ê˘¬87œD∑ëdr3\-Ù<d˘∫-[l	~C∂;
-=˘˝µ^◊Ë:<‰◊ñ⁄x˛‘ >vD'p®Á#©äO8˙|dÙmQÒ≤! |cÃÎ2ûHüíÒÇ*ËÎ#ü]V$nÖå˛⁄‚∆hœGBŸÎk—Ç¥X≤±RdÁ^Äî{êΩ Y˝E-Z8§ÑÆîÆ€Ü—/ÂñıDüƒ«;~€•^ÒÀÙJ!ß‘6- BDúÎ?˛/ jπîﬂØ˚.öfÓÉC^∑v/±(ƒê‹mA√˛ú¶Å≥Q\èS8ˆ‡{œ£‡E%éá˙)§y(à'N∞ˇ˘áû?ü<ˇŒ¯bæ˛Z•2“T’f‰ÙdV7›∂x=˘H?.n≤n∑Ië◊7üa±˙»◊˝pxytp}4π>x}z499ûúøªû˝èì´Î´á.õ<˚a2˘X‰'Eµ~Ê8?v◊úø?=›Ô?ËÅ¨Käi‘√ æoˇ©+>§H¶ò+û∞©˝ï^?#˙ˆ˜úΩ'áÔNO˘A⁄ı,æY-iNX›∫7Y1\?yst|˛ÙöÔ⁄Z¥Â∫Xñ˙…’MÆ+£ø‘–ŸŸ—9¡∫œ'ÙÎ∑Vw'PÛ∑ï¸Òüd19or%Æ¯CﬁZ≠®O\9n÷E÷voπÛXÇ¶.?NÓ∫Ø∆nûyÓWÙÛá'GÁoOŒè~:ª?π:8õºø~wsrNäsø~äí·I>∏º:∫˛â€⁄6¸ìl¯œ[C{”.(ÃüOräø“ NŒØé.Ø''Á◊Ô6+∂©˝ëÌÉµÏÔLca§Â˛Vé˝m?N>úæ?∫˙·çGéN˜ã’Î„Ú«^®=Weqûxπ£í–Qi‚‰ëóÕ“(àÇ‹Îá4]ÈöpÆ∏{˛,rfi™fy§3Êi&⁄MfSèÇ√ºkÄ‹!ó≤éFˆ¸»u“$úNS?Œ7Õ¥JÇ–’QËd˘,Ï{¿{fúÀÌM”Yª9›9és/rRMî‰”lÍ´<wf]‰N9Í4z¿
-cJúﬂKU˙ngNê§π£√0ˆfyòt–≥r+Ë∂˘Óe*ù˙Y¨|7ò“dtÔ$•2t√8IT‹µ¿∑-,rI¶c≈;,≤dñÍ»À”(éRw¶º(·öu◊ ±ï‡ı˝∆Û^ÏŒ¥ä¥ßiò;YúÜ°K|$N§¯›”†ªû=∏yû˜¶Y§„(QY‡Ñ≥ ’:I≥@%qî≈é˙™ªû≥«Zp∂-¯]S∫*ˆSœT>’°„©ê"ˆÛÃ√0Ì[ÿÃ≤éÃˆ\è(”âû93E∂ò*˙7˜9©uf≈∂}láSÛ)∏êDO°à0%=g	u∆ç\∫d‹NúÃ"›€"¢≈î¢é≈È,ıÉ< µß2"7L2≤'7H£Ãã˙˘mgp}g!a˘4Ò}á‰ÙuÓ3EÒlñÜQ“õ€Äe,PHSÌêêS≠âÄÃâ£< ¶‘˝0£Ω`£ı‘2y0îÓ4º,&∆í(¥4iH‰Y?òõ2éR'çÈø ù¶âÜÅõÈ$Œ‹Y‚ª~÷è" ËEt«Üÿç•<Î˝öÎÙXÍVY∞”1∂'ñ+∂Ahb9—∞Œf4",ÿxåÌ	Áp$-ÿhåÌÕã‘Åg¡Ücl?9"
-\6c˚°«|éÎè±~èç˙Ai`Ω1∂˜ãÃóüX∞ÓÎˆXÍóo—ÕÎÊÙ∫1_æE7g¨õ”Î∆|˘›∆≤M{Ÿò.ﬂ"€XµiØ≥Â[Tã6ÌEc≤|ãhcÕ¶ΩfÃïo—l,Ÿ∆[2UæE≤±b”^1f ∑(6l∫ô»úﬁ†]ã˚ben‰dIgi S ÕAπÎÁûõÍlÛt•kø‹Ä3Mº,õ©yﬂòf/vÚYúŒ¶S?ç¬¨æ,ïg1ô±≈L{ãa©<õ≈å°õÅN≠∂V«Õ∫}≥ºZËr«|π=_º&ZTp«2∏Ωº6Zƒu«Í∫Ω∫ºLZl∆ç€SŒiOh1Ewlãõ˘â◊MBãÖªcw7›?¥w<r‹~‰bJhêﬁx@z˝Ä‰π0¥»ÊçuÛz›xe%∫mÕI?≈π•4ôG3?Ißû{E*∂‰pñ9µ7‡πaN!ç÷3/Rﬁ4ß CO≥tÊŒfö¶•M6Ÿß€—ˇïìeâ
-f4Íòïß	ø
-O]œI˝VI!ˇW'é=ˆõ≥≈mN2@∫∆∂x¿(ˇ∑o‰itØv’må‰n_ÃOáƒÂ„d≠ˇ∂∆◊≈Ç7/ñõtpjª√ÊCá>l´U1Øtn¢ÜúoH¯ÃºÓ§™Í7Øe^ÁF^WÚ…Œ◊%p#âÕ¨m´©%U€ 4Œ¿Få…‹é«˝1o˚Aeo<¿‹nLmFI¬«†EîhDÆOyÉäbO©
-r?†˘b˙bYÕª¬ı)¨Ôæ.∂£x≤7”©™Ä$ﬂ°Ï¬üÜ≥4–yBYerõÈﬂÌù‹ÚvΩ^Æ^Ω|˘˚Ôøø∏Ø€uõÍYΩx˘ªZg∑ˇıÓß£Éªˇ~ZGæ*}¬ùΩ~∆Å;ˇZœ’‰∞‡Ûpππö¨ã¥{ìpıÑ˘˝,7:R´˚…qqß'◊˝VìÀ¢ﬂ˙Ω∑	˙» nsÃÀ{YÒ«ˇ©&äª¢9™N’1=ûzQ7OQ-Ï∏◊/¸g∑ì˜¸ÓƒZO¯8®Æÿ¸Ω˜à˙¯	Ó±lÍ{ùë0ˇ~«è£´RÕ˛è˜QùaÑdÉ◊˚$}†iò‹ö‰0ôÉ'¥ÆO∫…ä¨Ëæo±,ı∫?¬ãøÇºÂsAª?–ﬂ˝…jÎöËø-˘®ôº€Í‘®…™ù4Zï≈Áç1Â›ƒµ ﬂˆ«fE˘‚)‡ÙÒø∞€≤§NS¨Ù§©π”zÚßÒÄÈ«À§Ô´*ÿ≈≥£-¯q∫‚Ø´´â¶qˆ§ﬁπ}&ÛË®˙{ôß]æÙ≥FÁ˜ì·XÂÔn€ÔS=hõ6œßﬁÛ©ÛîñÉ>·ÑñœÍ;öˇäÖöÎ…≥Ó]}vAΩËæﬂÛ«ß‹1Ï”a∏„á"◊ıKoæ\>•Â®O ˇ?LG\O§s∏Z>IÛ§/]ÿ¸öÆ^¸^¸G±‘y—ôÌK˛”K`7õvÛ‘	â+/°4åÕÌ3r'k∫Ò∏®´U◊Éíﬂ2[È’ÀÙ˛˘JΩt_/≥˙ÂS:‡ÙYt‡†,ü“§€'hËFCtr?¡â)7Û˙Ô!ﬂæl»˚ÆãÏI—	ß∑°ÙpﬂiÚ…7‹˙üìNQ∏¸uπß?è'RUÕkŒª%¢p˙KD›ïπ^eM—Ω\µIiæÓ:E‚ﬁ}Û2\øÙVwGﬁ2ﬂø˙ÊÙY›≤Mih>}9êÇ∑e°◊ò~€“%ªçç€|∆ºﬂ·˚ÀKJ”nÆOŒéÆÆŒ.Àaáòã˙ÜnæÏ^Gµf√ª%«„·>Üv¢ÀnÌëÇï.Î‚-€_ "Ωƒ‚‡÷ﬁÕƒ≤3MVπ1Â}4Õ˝¡‚ˆ—Äˆw6∞è2ö9ÁV†qíj•≤ŒΩÓåÕ¨ﬂˆq®ñm”©'√7ËÓ€≤_lÀKªﬂvÅåˇ|ö<˜¶'yÂGØºxØ_ÔöníÃΩ◊=AÕß£LﬁÛÌ◊!\ÍeΩ*∫UŒIﬁˇıÊõŒ["˚∞π‚7äº<œS/˛g≈Ø ,4Õ1#f≠nÿVùY¡Qsª‚çfìU|@÷\Øö˚Âì€Fœ~ölÊ¡¥Î_J!%ëÛ"≠^dÂÀOΩ}8+J˙pﬁÍÜÉÛõR›liø…ıÕ–±õö|"È|C‚›—±/ñ˘lÚoGúù¯Ø/’ø=Fk|Í>wÉâßØ¶A_oõ˛ì‹˜∫XnñØø“çè.ÿ∫s¯;Îﬂn∂NﬁVx@˝óÿ@[è˝X•ÏK~¡âüT]íîôû 8Ì€ÿÿ∑=˝Œ[‡Hæ÷õ”›ò6•Ì <ﬂº6«O÷¨∂üq)˛º]¸Òø∂ÁÅTÌ"ÌNbs6’ìΩ˜óß¸A€î€øÂ:;ﬂ]w¡B˜«©8õ≤¡ﬁœ◊g›∑Î≈pW≈Ø4çœÓ[¬V€üúM^NhëÚ˜nY›Ôs∂IÍﬁ±ﬁÔò˜_∞ÊlƒΩ£ÖÍ_˙’õúm:◊D.ÏÓèˇ›ıï~*vÕÚ√ùmæïd—ˇﬂŸÊT{']⁄ƒ€üúm˙≥wπ=OµŸ¸‡lÛó^ÅIŸΩ{ﬂovÌ~Ó0ˇaÀâ<P”ï
-»Læ8lÂ_à¬¯6
-˜È`Ñ–€ıÉü◊õ0l ø¯„ó¢5¯¯ÆXfTeûåÅ˛»∞˛GJ≤)≈™¬ÄD€üPª√n¸ÿ=◊¡·ı—ÂÑûn“?ùÖôM4®V´ﬂÛß¥@ûkﬁ¥6Øn[òx0∞4¿› ~J«Tû≥ã¯é ï¿Îv5Ñûv±‰SÌóOÈ#∑–wíÁé⁄ÓFˇ<Ô~M¶”W›Øçx72Í{PN`,æ¨û⁄¿ÚF-uYv´Dﬂ›áom‚!2˚gπŸ÷Z«Õ˘RóqêwxÏ3ûzn¯µ·æz∂ªÉÛ5˝Ì˝⁄6‰ÎÊ˚ØªhF¶w≥R∆Knèöö∏XˇçãLËuùÈW'œ∆÷Ã‡°˚o€Îˇ8¶’\Ò,öÖ¢d$k˘ƒŒæo]„˛c˝2öôÛó‘l„3ö
-é˜æqfîÊ˜-ÃÍu=o‘¨P€ÖÃkô-˚/jPﬂTìÿ^t”ô§πª5ûîì¸≤ÆÊ_◊ˆ∑“˛ùìeú!FMÇõtyòÓˆáik4˝Ip?ÅÏÔ&Ç˝¡≥Ôæ{‰É˜Gu‰˜¡œÌÉÀ⁄7›Œæ≈QÏﬂ2≤˜∞£U‚}Î®Ÿ¡˛÷ò˜¡(˜Gv∂oòœ~o(òA®|—√ßV∫37âT@øT‰{q‚´©ˆU<ufô∑∑-YÓÒ!%∫˛˜ﬂ~◊Õ˙˛EüFlkN0q›WA¸ 6ä∫}∂©msÔÓ®¿º˚ﬁÉM9sQî≥ÓÕñ—”›è‘û˘_˙q0«ì*◊”´Œs2Mù˜π˙a…ç1k›⁄#NŸ3Ù·€ÓÉ…‰‡Õõ…≈Â…Ÿ¡ÂØìˇvÙkoºˆ;o[Âo∆Ÿlu˚¡˜¥⁄Ô=ﬂÌLáñ·√áZﬂﬂ|Ú˛¸‰/Ôè∫>Ú°ÎÆ E∫Ù#s¸_€£õ;’ΩÓ˘hœv†Ô~€}À˝ÿ∑p2Ãåœv[9æÿ≥›Ê≥;õœæMóè‚”ªÄ›Æ§gªüB>fVtMlÎóF√f£g„?}ôÑMï‘dÄ?¯n—EÂ≈l}∞ﬂeyÙÜ∂4nh æ§™êÛ±õ√‰	w›}Ú-F¥I∏ûm~ÿ›ÉÄGΩ¶˙ŒÛÏ›õì„_Ìe—ÙæåL˛¸Â|Ö£}B<ˇÀ]¯Ø¸2‹oÍ 7ª„'tÕı¬ØÓ‹˜{Ôßpó|e˜æ Ö?Ö©‡+;Ú7˙ì˛ |£À›ıË—EÅ/tŒâø‹ªÔÒœﬂ¿◊ó;u>Zﬁr\È˚≤ﬂ{˘/ˇ≈ü:SßÀSá¨ıÜ˛tsxz¬†w˙Ê∆ˆ…‰_^>z˝Â—%{W∂6YZËí¡ìwÁ7áÔŒœè˘«MñO∫Îˇ[T2Ô¬  
+(1468, 71, 'Bolivar:Pinillos', '0'),
+(1469, 71, 'Bolivar:Hatillo de loba', '0'),
+(1470, 71, 'Bolivar:El penon', '0'),
+(1471, 71, 'Bolivar:San martin de loba', '0'),
+(1472, 71, 'Bolivar:Barranco de loba', '0'),
+(1473, 71, 'Bolivar:Altos del rosario', '0'),
+(1474, 71, 'Bolivar:Achi', '0'),
+(1475, 71, 'Bolivar:Regidor', '0'),
+(1476, 71, 'Bolivar:Rio viejo', '0'),
+(1477, 71, 'Bolivar:Tiquisio', '0'),
+(1478, 71, 'Bolivar:Arenal', '0'),
+(1479, 71, 'Bolivar:Morales', '0'),
+(1480, 71, 'Bolivar:San jacinto del cauca', '0'),
+(1481, 71, 'Bolivar:Montecristo', '0'),
+(1482, 71, 'Bolivar:Simiti', '0'),
+(1483, 71, 'Bolivar:Santa rosa del sur', '0'),
+(1484, 71, 'Bolivar:San pablo', '0'),
+(1485, 71, 'Bolivar:Cantagallo', '0'),
+(1486, 71, 'Bolivar:Cartagena', '0'),
+(1487, 71, 'Boyaca:Cubara', '0'),
+(1488, 71, 'Boyaca:Chiscas', '0'),
+(1489, 71, 'Boyaca:Guican', '0');
+INSERT INTO `form_campos_valores` (`id`, `id_form_campo`, `campo_valor`, `predeterminado`) VALUES
+(1490, 71, 'Boyaca:Tutaza', '0'),
+(1491, 71, 'Boyaca:Jenesano', '0'),
+(1492, 71, 'Boyaca:Nuevo colon', '0'),
+(1493, 71, 'Boyaca:Macanal', '0'),
+(1494, 71, 'Boyaca:Miraflores', '0'),
+(1495, 71, 'Boyaca:Pachavita', '0'),
+(1496, 71, 'Boyaca:Garagoa', '0'),
+(1497, 71, 'Boyaca:La capilla', '0'),
+(1498, 71, 'Boyaca:Guateque', '0'),
+(1499, 71, 'Boyaca:Sutatenza', '0'),
+(1500, 71, 'Boyaca:Covarachia', '0'),
+(1501, 71, 'Boyaca:El espino', '0'),
+(1502, 71, 'Boyaca:Panqueba', '0'),
+(1503, 71, 'Boyaca:Guacamayas', '0'),
+(1504, 71, 'Boyaca:San mateo', '0'),
+(1505, 71, 'Boyaca:Boavita', '0'),
+(1506, 71, 'Boyaca:Soata', '0'),
+(1507, 71, 'Boyaca:La uvita', '0'),
+(1508, 71, 'Boyaca:Susacon', '0'),
+(1509, 71, 'Boyaca:Puerto boyaca', '0'),
+(1510, 71, 'Boyaca:Jerico', '0'),
+(1511, 71, 'Boyaca:Sativanorte', '0'),
+(1512, 71, 'Boyaca:Socota', '0'),
+(1513, 71, 'Boyaca:Sativasur', '0'),
+(1514, 71, 'Boyaca:Santana', '0'),
+(1515, 71, 'Boyaca:Paz de rio', '0'),
+(1516, 71, 'Boyaca:Belen', '0'),
+(1517, 71, 'Boyaca:Chitaraque', '0'),
+(1518, 71, 'Boyaca:Socha', '0'),
+(1519, 71, 'Boyaca:San jose de pare', '0'),
+(1520, 71, 'Boyaca:Cerinza', '0'),
+(1521, 71, 'Boyaca:Paipa', '0'),
+(1522, 71, 'Boyaca:Duitama', '0'),
+(1523, 71, 'Boyaca:Tasco', '0'),
+(1524, 71, 'Boyaca:Togui', '0'),
+(1525, 71, 'Boyaca:Santa rosa de viterbo', '0'),
+(1526, 71, 'Boyaca:Beteitiva', '0'),
+(1527, 71, 'Boyaca:Moniquira', '0'),
+(1528, 71, 'Boyaca:Floresta', '0'),
+(1529, 71, 'Boyaca:Otanche', '0'),
+(1530, 71, 'Boyaca:Corrales', '0'),
+(1531, 71, 'Boyaca:Busbanza', '0'),
+(1532, 71, 'Boyaca:Sotaquira', '0'),
+(1533, 71, 'Boyaca:Gameza', '0'),
+(1534, 71, 'Boyaca:Pisba', '0'),
+(1535, 71, 'Boyaca:Arcabuco', '0'),
+(1536, 71, 'Boyaca:Paya', '0'),
+(1537, 71, 'Boyaca:Pauna', '0'),
+(1538, 71, 'Boyaca:Tibasosa', '0'),
+(1539, 71, 'Boyaca:Nobsa', '0'),
+(1540, 71, 'Boyaca:Gachantiva', '0'),
+(1541, 71, 'Boyaca:Combita', '0'),
+(1542, 71, 'Boyaca:Topaga', '0'),
+(1543, 71, 'Boyaca:Santa sofia', '0'),
+(1544, 71, 'Boyaca:Mongua', '0'),
+(1545, 71, 'Boyaca:Saboya', '0'),
+(1546, 71, 'Boyaca:Sogamoso', '0'),
+(1547, 71, 'Boyaca:San pablo de borbur', '0'),
+(1548, 71, 'Boyaca:Mongui', '0'),
+(1549, 71, 'Boyaca:Tunungua', '0'),
+(1550, 71, 'Boyaca:Tuta', '0'),
+(1551, 71, 'Boyaca:Villa de leyva', '0'),
+(1552, 71, 'Boyaca:Firavitoba', '0'),
+(1553, 71, 'Boyaca:Chiquiza', '0'),
+(1554, 71, 'Boyaca:Chiquinquira', '0'),
+(1555, 71, 'Boyaca:Briceno', '0'),
+(1556, 71, 'Boyaca:Sutamarchan', '0'),
+(1557, 71, 'Boyaca:Labranzagrande', '0'),
+(1558, 71, 'Boyaca:Motavita', '0'),
+(1559, 71, 'Boyaca:Oicata', '0'),
+(1560, 71, 'Boyaca:Quipama', '0'),
+(1561, 71, 'Boyaca:Toca', '0'),
+(1562, 71, 'Boyaca:Iza', '0'),
+(1563, 71, 'Boyaca:Maripi', '0'),
+(1564, 71, 'Boyaca:Pesca', '0'),
+(1565, 71, 'Boyaca:Aquitania', '0'),
+(1566, 71, 'Boyaca:Chivata', '0'),
+(1567, 71, 'Boyaca:Caldas', '0'),
+(1568, 71, 'Boyaca:Tinjaca', '0'),
+(1569, 71, 'Boyaca:Sachica', '0'),
+(1570, 71, 'Boyaca:Cuitiva', '0'),
+(1571, 71, 'Boyaca:Sora', '0'),
+(1572, 71, 'Boyaca:Muzo', '0'),
+(1573, 71, 'Boyaca:San miguel de sema', '0'),
+(1574, 71, 'Boyaca:Raquira', '0'),
+(1575, 71, 'Boyaca:Tota', '0'),
+(1576, 71, 'Boyaca:Cucaita', '0'),
+(1577, 71, 'Boyaca:Samaca', '0'),
+(1578, 71, 'Boyaca:Siachoque', '0'),
+(1579, 71, 'Boyaca:La victoria', '0'),
+(1580, 71, 'Boyaca:Buenavista', '0'),
+(1581, 71, 'Boyaca:Soraca', '0'),
+(1582, 71, 'Boyaca:Coper', '0'),
+(1583, 71, 'Boyaca:Pajarito', '0'),
+(1584, 71, 'Boyaca:Viracacha', '0'),
+(1585, 71, 'Boyaca:Rondon', '0'),
+(1586, 71, 'Boyaca:Boyaca', '0'),
+(1587, 71, 'Boyaca:Ventaquemada', '0'),
+(1588, 71, 'Boyaca:Ramiriqui', '0'),
+(1589, 71, 'Boyaca:Cienega', '0'),
+(1590, 71, 'Boyaca:Turmeque', '0'),
+(1591, 71, 'Boyaca:Tibana', '0'),
+(1592, 71, 'Boyaca:Zetaquira', '0'),
+(1593, 71, 'Boyaca:San eduardo', '0'),
+(1594, 71, 'Boyaca:Umbita', '0'),
+(1595, 71, 'Boyaca:Berbeo', '0'),
+(1596, 71, 'Boyaca:Tenza', '0'),
+(1597, 71, 'Boyaca:Campohermoso', '0'),
+(1598, 71, 'Boyaca:Chinavita', '0'),
+(1599, 71, 'Boyaca:Almeida', '0'),
+(1600, 71, 'Boyaca:Somondoco', '0'),
+(1601, 71, 'Boyaca:Guayata', '0'),
+(1602, 71, 'Boyaca:Santa maria', '0'),
+(1603, 71, 'Boyaca:Chivor', '0'),
+(1604, 71, 'Boyaca:Paez', '0'),
+(1605, 71, 'Boyaca:Chita', '0'),
+(1606, 71, 'Boyaca:El cocuy', '0'),
+(1607, 71, 'Boyaca:San luis de gaceno', '0'),
+(1608, 71, 'Boyaca:Tunja', '0'),
+(1609, 71, 'Caldas:Risaralda', '0'),
+(1610, 71, 'Caldas:La dorada', '0'),
+(1611, 71, 'Caldas:Norcasia', '0'),
+(1612, 71, 'Caldas:Samana', '0'),
+(1613, 71, 'Caldas:Aguadas', '0'),
+(1614, 71, 'Caldas:Victoria', '0'),
+(1615, 71, 'Caldas:Pacora', '0'),
+(1616, 71, 'Caldas:Riosucio', '0'),
+(1617, 71, 'Caldas:Pensilvania', '0'),
+(1618, 71, 'Caldas:Marmato', '0'),
+(1619, 71, 'Caldas:Supia', '0'),
+(1620, 71, 'Caldas:Salamina', '0'),
+(1621, 71, 'Caldas:Filadelfia', '0'),
+(1622, 71, 'Caldas:Aranzazu', '0'),
+(1623, 71, 'Caldas:Marulanda', '0'),
+(1624, 71, 'Caldas:Marquetalia', '0'),
+(1625, 71, 'Caldas:Manzanares', '0'),
+(1626, 71, 'Caldas:Anserma', '0'),
+(1627, 71, 'Caldas:Palestina', '0'),
+(1628, 71, 'Caldas:Viterbo', '0'),
+(1629, 71, 'Caldas:San jose', '0'),
+(1630, 71, 'Caldas:Chinchina', '0'),
+(1631, 71, 'Caldas:Belalcazar', '0'),
+(1632, 71, 'Caldas:Neira', '0'),
+(1633, 71, 'Caldas:Manizales', '0'),
+(1634, 71, 'Caqueta:San vicente del caguan', '0'),
+(1635, 71, 'Caqueta:Puerto rico', '0'),
+(1636, 71, 'Caqueta:El doncello', '0'),
+(1637, 71, 'Caqueta:El paujil', '0'),
+(1638, 71, 'Caqueta:La montanita', '0'),
+(1639, 71, 'Caqueta:Belen de los andaquies', '0'),
+(1640, 71, 'Caqueta:San jose del fragua', '0'),
+(1641, 71, 'Caqueta:Morelia', '0'),
+(1642, 71, 'Caqueta:Cartagena del chaira', '0'),
+(1643, 71, 'Caqueta:Albania', '0'),
+(1644, 71, 'Caqueta:Milan', '0'),
+(1645, 71, 'Caqueta:Valparaiso', '0'),
+(1646, 71, 'Caqueta:Curillo', '0'),
+(1647, 71, 'Caqueta:Solano', '0'),
+(1648, 71, 'Caqueta:Solita', '0'),
+(1649, 71, 'Caqueta:Florencia', '0'),
+(1650, 71, 'Casanare:Mani', '0'),
+(1651, 71, 'Casanare:Villanueva', '0'),
+(1652, 71, 'Casanare:Hato corozal', '0'),
+(1653, 71, 'Casanare:La salina', '0'),
+(1654, 71, 'Casanare:Paz de ariporo', '0'),
+(1655, 71, 'Casanare:Sacama', '0'),
+(1656, 71, 'Casanare:Tamara', '0'),
+(1657, 71, 'Casanare:Pore', '0'),
+(1658, 71, 'Casanare:Nunchia', '0'),
+(1659, 71, 'Casanare:Trinidad', '0'),
+(1660, 71, 'Casanare:San luis de palenque', '0'),
+(1661, 71, 'Casanare:Recetor', '0'),
+(1662, 71, 'Casanare:Chameza', '0'),
+(1663, 71, 'Casanare:Aguazul', '0'),
+(1664, 71, 'Casanare:Orocue', '0'),
+(1665, 71, 'Casanare:Tauramena', '0'),
+(1666, 71, 'Casanare:Monterrey', '0'),
+(1667, 71, 'Casanare:Sabanalarga', '0'),
+(1668, 71, 'Casanare:Yopal', '0'),
+(1669, 71, 'Cauca:Caloto', '0'),
+(1670, 71, 'Cauca:Santander de quilichao', '0'),
+(1671, 71, 'Cauca:Buenos aires', '0'),
+(1672, 71, 'Cauca:Padilla', '0'),
+(1673, 71, 'Cauca:Puerto tejada', '0'),
+(1674, 71, 'Cauca:Suarez', '0'),
+(1675, 71, 'Cauca:Belalcazar', '0'),
+(1676, 71, 'Cauca:Miranda', '0'),
+(1677, 71, 'Cauca:Villa rica', '0'),
+(1678, 71, 'Cauca:Micay', '0'),
+(1679, 71, 'Cauca:Corinto', '0'),
+(1680, 71, 'Cauca:Toribio', '0'),
+(1681, 71, 'Cauca:Jambalo', '0'),
+(1682, 71, 'Cauca:Morales', '0'),
+(1683, 71, 'Cauca:Timbiqui', '0'),
+(1684, 71, 'Cauca:Caldono', '0'),
+(1685, 71, 'Cauca:Piendamo', '0'),
+(1686, 71, 'Cauca:El tambo', '0'),
+(1687, 71, 'Cauca:Silvia', '0'),
+(1688, 71, 'Cauca:Cajibio', '0'),
+(1689, 71, 'Cauca:Inza', '0'),
+(1690, 71, 'Cauca:Totoro', '0'),
+(1691, 71, 'Cauca:Argelia', '0'),
+(1692, 71, 'Cauca:Timbio', '0'),
+(1693, 71, 'Cauca:Coconuco', '0'),
+(1694, 71, 'Cauca:Paispamba', '0'),
+(1695, 71, 'Cauca:El bordo', '0'),
+(1696, 71, 'Cauca:Rosas', '0'),
+(1697, 71, 'Cauca:Balboa', '0'),
+(1698, 71, 'Cauca:La vega', '0'),
+(1699, 71, 'Cauca:Bolivar', '0'),
+(1700, 71, 'Cauca:Almaguer', '0'),
+(1701, 71, 'Cauca:San sebastian', '0'),
+(1702, 71, 'Cauca:Mercaderes', '0'),
+(1703, 71, 'Cauca:Santa rosa', '0'),
+(1704, 71, 'Cauca:Florencia', '0'),
+(1705, 71, 'Cauca:Guapi', '0'),
+(1706, 71, 'Cauca:Popayan', '0'),
+(1707, 71, 'Cesar:Tamalameque', '0'),
+(1708, 71, 'Cesar:Robles', '0'),
+(1709, 71, 'Cesar:San diego', '0'),
+(1710, 71, 'Cesar:Agustin codazzi', '0'),
+(1711, 71, 'Cesar:Bosconia', '0'),
+(1712, 71, 'Cesar:Becerril', '0'),
+(1713, 71, 'Cesar:El paso', '0'),
+(1714, 71, 'Cesar:La jagua de ibirico', '0'),
+(1715, 71, 'Cesar:Chiriguana', '0'),
+(1716, 71, 'Cesar:Astrea', '0'),
+(1717, 71, 'Cesar:Chimichagua', '0'),
+(1718, 71, 'Cesar:Curumani', '0'),
+(1719, 71, 'Cesar:Pailitas', '0'),
+(1720, 71, 'Cesar:Pelaya', '0'),
+(1721, 71, 'Cesar:La gloria', '0'),
+(1722, 71, 'Cesar:Aguachica', '0'),
+(1723, 71, 'Cesar:Gamarra', '0'),
+(1724, 71, 'Cesar:Gonzalez', '0'),
+(1725, 71, 'Cesar:Rio de oro', '0'),
+(1726, 71, 'Cesar:San martin', '0'),
+(1727, 71, 'Cesar:San alberto', '0'),
+(1728, 71, 'Cesar:El copey', '0'),
+(1729, 71, 'Cesar:Pueblo bello', '0'),
+(1730, 71, 'Cesar:Valledupar', '0'),
+(1731, 71, 'Choco:Acandi', '0'),
+(1732, 71, 'Choco:Unguia', '0'),
+(1733, 71, 'Choco:Mutis', '0'),
+(1734, 71, 'Choco:Boca de pepe', '0'),
+(1735, 71, 'Choco:Murindo', '0'),
+(1736, 71, 'Choco:Jurado', '0'),
+(1737, 71, 'Choco:Bellavista', '0'),
+(1738, 71, 'Choco:Bete', '0'),
+(1739, 71, 'Choco:Pie de pato', '0'),
+(1740, 71, 'Choco:El carmen de atrato', '0'),
+(1741, 71, 'Choco:Nuqui', '0'),
+(1742, 71, 'Choco:Lloro', '0'),
+(1743, 71, 'Choco:Yuto', '0'),
+(1744, 71, 'Choco:Paimado', '0'),
+(1745, 71, 'Choco:Bagado', '0'),
+(1746, 71, 'Choco:Pizarro', '0'),
+(1747, 71, 'Choco:Tado', '0'),
+(1748, 71, 'Choco:Las animas', '0'),
+(1749, 71, 'Choco:Novita', '0'),
+(1750, 71, 'Choco:Itsmina', '0'),
+(1751, 71, 'Choco:Condoto', '0'),
+(1752, 71, 'Choco:San jose del palmar', '0'),
+(1753, 71, 'Choco:Sipi', '0'),
+(1754, 71, 'Choco:Riosucio', '0'),
+(1755, 71, 'Choco:Santa genoveva de docord', '0'),
+(1756, 71, 'Choco:San francisco de quibdo', '0'),
+(1757, 71, 'Cordoba:San bernardo del viento', '0'),
+(1758, 71, 'Cordoba:San antero', '0'),
+(1759, 71, 'Cordoba:Purisima', '0'),
+(1760, 71, 'Cordoba:Momil', '0'),
+(1761, 71, 'Cordoba:Lorica', '0'),
+(1762, 71, 'Cordoba:Monitos', '0'),
+(1763, 71, 'Cordoba:San andres sotavento', '0'),
+(1764, 71, 'Cordoba:Chima', '0'),
+(1765, 71, 'Cordoba:Chinu', '0'),
+(1766, 71, 'Cordoba:Puerto escondido', '0'),
+(1767, 71, 'Cordoba:Cotorra', '0'),
+(1768, 71, 'Cordoba:San pelayo', '0'),
+(1769, 71, 'Cordoba:Cienaga de oro', '0'),
+(1770, 71, 'Cordoba:Sahagun', '0'),
+(1771, 71, 'Cordoba:Cerete', '0'),
+(1772, 71, 'Cordoba:Los cordobas', '0'),
+(1773, 71, 'Cordoba:San carlos', '0'),
+(1774, 71, 'Cordoba:Canalete', '0'),
+(1775, 71, 'Cordoba:Pueblo nuevo', '0'),
+(1776, 71, 'Cordoba:Planeta rica', '0'),
+(1777, 71, 'Cordoba:Ayapel', '0'),
+(1778, 71, 'Cordoba:Valencia', '0'),
+(1779, 71, 'Cordoba:Buenavista', '0'),
+(1780, 71, 'Cordoba:Tierralta', '0'),
+(1781, 71, 'Cordoba:Montelibano', '0'),
+(1782, 71, 'Cordoba:La apartada', '0'),
+(1783, 71, 'Cordoba:Puerto libertador', '0'),
+(1784, 71, 'Cordoba:Monteria', '0'),
+(1785, 71, 'Cundinamarca:La palma', '0'),
+(1786, 71, 'Cundinamarca:San cayetano', '0'),
+(1787, 71, 'Cundinamarca:Topaipi', '0'),
+(1788, 71, 'Cundinamarca:Utica', '0'),
+(1789, 71, 'Cundinamarca:Choconta', '0'),
+(1790, 71, 'Cundinamarca:Suesca', '0'),
+(1791, 71, 'Cundinamarca:Vergara', '0'),
+(1792, 71, 'Cundinamarca:Nimaima', '0'),
+(1793, 71, 'Cundinamarca:Cogua', '0'),
+(1794, 71, 'Cundinamarca:Nemocon', '0'),
+(1795, 71, 'Cundinamarca:Facatativa', '0'),
+(1796, 71, 'Cundinamarca:Yacopi', '0'),
+(1797, 71, 'Cundinamarca:Puerto salgar', '0'),
+(1798, 71, 'Cundinamarca:Simijaca', '0'),
+(1799, 71, 'Cundinamarca:Caparrapi', '0'),
+(1800, 71, 'Cundinamarca:Susa', '0'),
+(1801, 71, 'Cundinamarca:Fuquene', '0'),
+(1802, 71, 'Cundinamarca:Carmen de carupa', '0'),
+(1803, 71, 'Cundinamarca:Paime', '0'),
+(1804, 71, 'Cundinamarca:Guacheta', '0'),
+(1805, 71, 'Cundinamarca:Guaduas', '0'),
+(1806, 71, 'Cundinamarca:Lenguazaque', '0'),
+(1807, 71, 'Cundinamarca:Ubate', '0'),
+(1808, 71, 'Cundinamarca:Villapinzon', '0'),
+(1809, 71, 'Cundinamarca:Villagomez', '0'),
+(1810, 71, 'Cundinamarca:El penon', '0'),
+(1811, 71, 'Cundinamarca:Cucunuba', '0'),
+(1812, 71, 'Cundinamarca:Pacho', '0'),
+(1813, 71, 'Cundinamarca:Sutatausa', '0'),
+(1814, 71, 'Cundinamarca:Zipaquira', '0'),
+(1815, 71, 'Cundinamarca:Quebradanegra', '0'),
+(1816, 71, 'Cundinamarca:Macheta', '0'),
+(1817, 71, 'Cundinamarca:Tibirita', '0'),
+(1818, 71, 'Cundinamarca:Supata', '0'),
+(1819, 71, 'Cundinamarca:Nocaima', '0'),
+(1820, 71, 'Cundinamarca:Sesquile', '0'),
+(1821, 71, 'Cundinamarca:Subachoque', '0'),
+(1822, 71, 'Cundinamarca:Villeta', '0'),
+(1823, 71, 'Cundinamarca:La vega', '0'),
+(1824, 71, 'Cundinamarca:Manta', '0'),
+(1825, 71, 'Cundinamarca:La pena', '0'),
+(1826, 71, 'Cundinamarca:Tausa', '0'),
+(1827, 71, 'Cundinamarca:Gachancipa', '0'),
+(1828, 71, 'Cundinamarca:San francisco', '0'),
+(1829, 71, 'Cundinamarca:Tocancipa', '0'),
+(1830, 71, 'Cundinamarca:Sasaima', '0'),
+(1831, 71, 'Cundinamarca:Chaguani', '0'),
+(1832, 71, 'Cundinamarca:Tabio', '0'),
+(1833, 71, 'Cundinamarca:Guatavita', '0'),
+(1834, 71, 'Cundinamarca:Cajica', '0'),
+(1835, 71, 'Cundinamarca:San juan de rio seco', '0'),
+(1836, 71, 'Cundinamarca:Sopo', '0'),
+(1837, 71, 'Cundinamarca:Viani', '0'),
+(1838, 71, 'Cundinamarca:Gacheta', '0'),
+(1839, 71, 'Cundinamarca:Alban', '0'),
+(1840, 71, 'Cundinamarca:Guayabal de siquima', '0'),
+(1841, 71, 'Cundinamarca:El rosal', '0'),
+(1842, 71, 'Cundinamarca:Bituima', '0'),
+(1843, 71, 'Cundinamarca:Guasca', '0'),
+(1844, 71, 'Cundinamarca:Chia', '0'),
+(1845, 71, 'Cundinamarca:Tenjo', '0'),
+(1846, 71, 'Cundinamarca:Ubala', '0'),
+(1847, 71, 'Cundinamarca:Madrid', '0'),
+(1848, 71, 'Cundinamarca:Cota', '0'),
+(1849, 71, 'Cundinamarca:Anolaima', '0'),
+(1850, 71, 'Cundinamarca:Beltran', '0'),
+(1851, 71, 'Cundinamarca:Junin', '0'),
+(1852, 71, 'Cundinamarca:La calera', '0'),
+(1853, 71, 'Cundinamarca:Zipacon', '0'),
+(1854, 71, 'Cundinamarca:Gachala', '0'),
+(1855, 71, 'Cundinamarca:Quipile', '0'),
+(1856, 71, 'Cundinamarca:Funza', '0'),
+(1857, 71, 'Cundinamarca:Gama', '0'),
+(1858, 71, 'Cundinamarca:Cachipay', '0'),
+(1859, 71, 'Cundinamarca:Bojaca', '0'),
+(1860, 71, 'Cundinamarca:Puli', '0'),
+(1861, 71, 'Cundinamarca:Mosquera', '0'),
+(1862, 71, 'Cundinamarca:La mesa', '0'),
+(1863, 71, 'Cundinamarca:Tena', '0'),
+(1864, 71, 'Cundinamarca:Fomeque', '0'),
+(1865, 71, 'Cundinamarca:Medina', '0'),
+(1866, 71, 'Cundinamarca:Jerusalen', '0'),
+(1867, 71, 'Cundinamarca:Choachi', '0'),
+(1868, 71, 'Cundinamarca:San antonio de tequendam', '0'),
+(1869, 71, 'Cundinamarca:Anapoima', '0'),
+(1870, 71, 'Cundinamarca:Soacha', '0'),
+(1871, 71, 'Cundinamarca:Rafael reyes', '0'),
+(1872, 71, 'Cundinamarca:El colegio', '0'),
+(1873, 71, 'Cundinamarca:Tocaima', '0'),
+(1874, 71, 'Cundinamarca:Guataqui', '0'),
+(1875, 71, 'Cundinamarca:Granada', '0'),
+(1876, 71, 'Cundinamarca:Ubaque', '0'),
+(1877, 71, 'Cundinamarca:Sibate', '0'),
+(1878, 71, 'Cundinamarca:Viota', '0'),
+(1879, 71, 'Cundinamarca:Chipaque', '0'),
+(1880, 71, 'Cundinamarca:Silvania', '0'),
+(1881, 71, 'Cundinamarca:Narino', '0'),
+(1882, 71, 'Cundinamarca:Caqueza', '0'),
+(1883, 71, 'Cundinamarca:Girardot', '0'),
+(1884, 71, 'Cundinamarca:Une', '0'),
+(1885, 71, 'Cundinamarca:Fusagasuga', '0'),
+(1886, 71, 'Cundinamarca:Agua de dios', '0'),
+(1887, 71, 'Cundinamarca:Quetame', '0'),
+(1888, 71, 'Cundinamarca:Pasca', '0'),
+(1889, 71, 'Cundinamarca:Ricaurte', '0'),
+(1890, 71, 'Cundinamarca:Tibacuy', '0'),
+(1891, 71, 'Cundinamarca:Nilo', '0'),
+(1892, 71, 'Cundinamarca:Fosca', '0'),
+(1893, 71, 'Cundinamarca:Guayabetal', '0'),
+(1894, 71, 'Cundinamarca:Gutierrez', '0'),
+(1895, 71, 'Cundinamarca:Arbelaez', '0'),
+(1896, 71, 'Cundinamarca:Pandi', '0'),
+(1897, 71, 'Cundinamarca:San bernardo', '0'),
+(1898, 71, 'Cundinamarca:Ospina perez', '0'),
+(1899, 71, 'Cundinamarca:Cabrera', '0'),
+(1900, 71, 'Cundinamarca:Paratebueno', '0'),
+(1901, 71, 'Cundinamarca:Bogota', '0'),
+(1902, 71, 'Guainia:Cacahual', '0'),
+(1903, 71, 'Guainia:Barranco minas', '0'),
+(1904, 71, 'Guainia:San felipe', '0'),
+(1905, 71, 'Guainia:Inirida', '0'),
+(1906, 71, 'Guaviare:El retorno', '0'),
+(1907, 71, 'Guaviare:Calamar', '0'),
+(1908, 71, 'Guaviare:Miraflores', '0'),
+(1909, 71, 'Guaviare:San jose del guaviare', '0'),
+(1910, 71, 'Huila:Tello', '0'),
+(1911, 71, 'Huila:Altamira', '0'),
+(1912, 71, 'Huila:Colombia', '0'),
+(1913, 71, 'Huila:Aipe', '0'),
+(1914, 71, 'Huila:Villavieja', '0'),
+(1915, 71, 'Huila:Baraya', '0'),
+(1916, 71, 'Huila:Palermo', '0'),
+(1917, 71, 'Huila:Santa maria', '0'),
+(1918, 71, 'Huila:Iquira', '0'),
+(1919, 71, 'Huila:Rivera', '0'),
+(1920, 71, 'Huila:Teruel', '0'),
+(1921, 71, 'Huila:Campoalegre', '0'),
+(1922, 71, 'Huila:Yaguara', '0'),
+(1923, 71, 'Huila:Algeciras', '0'),
+(1924, 71, 'Huila:Nataga', '0'),
+(1925, 71, 'Huila:Hobo', '0'),
+(1926, 71, 'Huila:Tesalia', '0'),
+(1927, 71, 'Huila:Gigante', '0'),
+(1928, 71, 'Huila:La plata', '0'),
+(1929, 71, 'Huila:Paicol', '0'),
+(1930, 71, 'Huila:Agrado', '0'),
+(1931, 71, 'Huila:Pital', '0'),
+(1932, 71, 'Huila:Garzon', '0'),
+(1933, 71, 'Huila:San jose de isnos', '0'),
+(1934, 71, 'Huila:La argentina', '0'),
+(1935, 71, 'Huila:Saladoblanco', '0'),
+(1936, 71, 'Huila:Tarqui', '0'),
+(1937, 71, 'Huila:San agustin', '0'),
+(1938, 71, 'Huila:Oporapa', '0'),
+(1939, 71, 'Huila:Guadalupe', '0'),
+(1940, 71, 'Huila:Elias', '0'),
+(1941, 71, 'Huila:Timana', '0'),
+(1942, 71, 'Huila:Suaza', '0'),
+(1943, 71, 'Huila:Pitalito', '0'),
+(1944, 71, 'Huila:Acevedo', '0'),
+(1945, 71, 'Huila:Palestina', '0'),
+(1946, 71, 'Huila:Neiva', '0'),
+(1947, 71, 'La guajira:Uribia', '0'),
+(1948, 71, 'La guajira:Manaure', '0'),
+(1949, 71, 'La guajira:Maicao', '0'),
+(1950, 71, 'La guajira:Dibulla', '0'),
+(1951, 71, 'La guajira:Hatonuevo', '0'),
+(1952, 71, 'La guajira:Barrancas', '0'),
+(1953, 71, 'La guajira:Distraccion', '0'),
+(1954, 71, 'La guajira:Fonseca', '0'),
+(1955, 71, 'La guajira:San juan del cesar', '0'),
+(1956, 71, 'La guajira:El molino', '0'),
+(1957, 71, 'La guajira:Villanueva', '0'),
+(1958, 71, 'La guajira:Urumita', '0'),
+(1959, 71, 'La guajira:La jagua del pilar', '0'),
+(1960, 71, 'La guajira:Balcon del cesar', '0'),
+(1961, 71, 'La guajira:Riohacha', '0'),
+(1962, 71, 'Magdalena:Sitionuevo', '0'),
+(1963, 71, 'Magdalena:Aracataca', '0'),
+(1964, 71, 'Magdalena:El reten', '0'),
+(1965, 71, 'Magdalena:Remolino', '0'),
+(1966, 71, 'Magdalena:Pivijay', '0'),
+(1967, 71, 'Magdalena:Salamina', '0'),
+(1968, 71, 'Magdalena:El pinon', '0'),
+(1969, 71, 'Magdalena:Algarrobo', '0'),
+(1970, 71, 'Magdalena:Cerro san antonio', '0'),
+(1971, 71, 'Magdalena:Concordia', '0'),
+(1972, 71, 'Magdalena:Pedraza', '0'),
+(1973, 71, 'Magdalena:San angel', '0'),
+(1974, 71, 'Magdalena:Chivolo', '0'),
+(1975, 71, 'Magdalena:Tenerife', '0'),
+(1976, 71, 'Magdalena:Plato', '0'),
+(1977, 71, 'Magdalena:El dificil', '0'),
+(1978, 71, 'Magdalena:Santa ana', '0'),
+(1979, 71, 'Magdalena:Pijino del carmen', '0'),
+(1980, 71, 'Magdalena:San sebastian de buenavista', '0'),
+(1981, 71, 'Magdalena:San zenon', '0'),
+(1982, 71, 'Magdalena:Guamal', '0'),
+(1983, 71, 'Magdalena:El banco', '0'),
+(1984, 71, 'Magdalena:Santa marta', '0'),
+(1985, 71, 'Meta:San luis de cubarral', '0'),
+(1986, 71, 'Meta:Barranca de upia', '0'),
+(1987, 71, 'Meta:Vistahermosa', '0'),
+(1988, 71, 'Meta:Puerto concordia', '0'),
+(1989, 71, 'Meta:San juanito', '0'),
+(1990, 71, 'Meta:Puerto gaitan', '0'),
+(1991, 71, 'Meta:Cabuyaro', '0'),
+(1992, 71, 'Meta:Restrepo', '0'),
+(1993, 71, 'Meta:El calvario', '0'),
+(1994, 71, 'Meta:Puerto lopez', '0'),
+(1995, 71, 'Meta:Cumaral', '0'),
+(1996, 71, 'Meta:Acacias', '0'),
+(1997, 71, 'Meta:Guamal', '0'),
+(1998, 71, 'Meta:San carlos de guaroa', '0'),
+(1999, 71, 'Meta:Castilla la nueva', '0'),
+(2000, 71, 'Meta:San martin', '0'),
+(2001, 71, 'Meta:Lejanias', '0'),
+(2002, 71, 'Meta:La uribe', '0'),
+(2003, 71, 'Meta:El castillo', '0'),
+(2004, 71, 'Meta:Granada', '0'),
+(2005, 71, 'Meta:Mesetas', '0'),
+(2006, 71, 'Meta:Fuente de oro', '0'),
+(2007, 71, 'Meta:San juan de arama', '0'),
+(2008, 71, 'Meta:Puerto lleras', '0'),
+(2009, 71, 'Meta:Mapiripan', '0'),
+(2010, 71, 'Meta:Puerto rico', '0'),
+(2011, 71, 'Meta:La macarena', '0'),
+(2012, 71, 'Meta:El dorado', '0'),
+(2013, 71, 'Meta:Villavicencio', '0'),
+(2014, 71, 'Narino:Iles', '0'),
+(2015, 71, 'Narino:Cumbal', '0'),
+(2016, 71, 'Narino:Pupiales', '0'),
+(2017, 71, 'Narino:Aldana', '0'),
+(2018, 71, 'Narino:Gualmatan', '0'),
+(2019, 71, 'Narino:Contadero', '0'),
+(2020, 71, 'Narino:Puerres', '0'),
+(2021, 71, 'Narino:Carlosama', '0'),
+(2022, 71, 'Narino:Ipiales', '0'),
+(2023, 71, 'Narino:Cordoba', '0'),
+(2024, 71, 'Narino:Potosi', '0'),
+(2025, 71, 'Narino:El charco', '0'),
+(2026, 71, 'Narino:La tola', '0'),
+(2027, 71, 'Narino:Iscuande', '0'),
+(2028, 71, 'Narino:Bocas de satinga', '0'),
+(2029, 71, 'Narino:Mosquera', '0'),
+(2030, 71, 'Narino:Salahonda', '0'),
+(2031, 71, 'Narino:San jose', '0'),
+(2032, 71, 'Narino:Leiva', '0'),
+(2033, 71, 'Narino:Payan', '0'),
+(2034, 71, 'Narino:Tumaco', '0'),
+(2035, 71, 'Narino:El rosario', '0'),
+(2036, 71, 'Narino:Cumbitara', '0'),
+(2037, 71, 'Narino:Policarpa', '0'),
+(2038, 71, 'Narino:Barbacoas', '0'),
+(2039, 71, 'Narino:San pablo', '0'),
+(2040, 71, 'Narino:Sotomayor', '0'),
+(2041, 71, 'Narino:La union', '0'),
+(2042, 71, 'Narino:Taminango', '0'),
+(2043, 71, 'Narino:Genova', '0'),
+(2044, 71, 'Narino:San lorenzo', '0'),
+(2045, 71, 'Narino:La llanada', '0'),
+(2046, 71, 'Narino:La cruz', '0'),
+(2047, 71, 'Narino:Belen', '0'),
+(2048, 71, 'Narino:El penol', '0'),
+(2049, 71, 'Narino:San pedro de cartago', '0'),
+(2050, 71, 'Narino:San bernardo', '0'),
+(2051, 71, 'Narino:Berruecos', '0'),
+(2052, 71, 'Narino:El tambo', '0'),
+(2053, 71, 'Narino:Chachagui', '0'),
+(2054, 71, 'Narino:El tablon', '0'),
+(2055, 71, 'Narino:San jose', '0'),
+(2056, 71, 'Narino:Linares', '0'),
+(2057, 71, 'Narino:Ricaurte', '0'),
+(2058, 71, 'Narino:Buesaco', '0'),
+(2059, 71, 'Narino:La florida', '0'),
+(2060, 71, 'Narino:Guachaves', '0'),
+(2061, 71, 'Narino:Sandona', '0'),
+(2062, 71, 'Narino:Piedrancha', '0'),
+(2063, 71, 'Narino:Ancuya', '0'),
+(2064, 71, 'Narino:Providencia', '0'),
+(2065, 71, 'Narino:Tuquerres', '0'),
+(2066, 71, 'Narino:Consaca', '0'),
+(2067, 71, 'Narino:Guaitarilla', '0'),
+(2068, 71, 'Narino:Tangua', '0'),
+(2069, 71, 'Narino:Yacuanquer', '0'),
+(2070, 71, 'Narino:Imues', '0'),
+(2071, 71, 'Narino:Sapuyes', '0'),
+(2072, 71, 'Narino:Ospina', '0'),
+(2073, 71, 'Narino:Funes', '0'),
+(2074, 71, 'Narino:Guachucal', '0'),
+(2075, 71, 'Narino:San juan de pasto', '0'),
+(2076, 71, 'Norte de santander:El carmen', '0'),
+(2077, 71, 'Norte de santander:Convencion', '0'),
+(2078, 71, 'Norte de santander:Teorama', '0'),
+(2079, 71, 'Norte de santander:Tibu', '0'),
+(2080, 71, 'Norte de santander:Ocana', '0'),
+(2081, 71, 'Norte de santander:El tarra', '0'),
+(2082, 71, 'Norte de santander:San calixto', '0'),
+(2083, 71, 'Norte de santander:Sardinata', '0'),
+(2084, 71, 'Norte de santander:Hacari', '0'),
+(2085, 71, 'Norte de santander:Puerto santander', '0'),
+(2086, 71, 'Norte de santander:La playa', '0'),
+(2087, 71, 'Norte de santander:El zulia', '0'),
+(2088, 71, 'Norte de santander:Abrego', '0'),
+(2089, 71, 'Norte de santander:Bucarasica', '0'),
+(2090, 71, 'Norte de santander:Villa caro', '0'),
+(2091, 71, 'Norte de santander:Gramalote', '0'),
+(2092, 71, 'Norte de santander:Santiago', '0'),
+(2093, 71, 'Norte de santander:Salazar', '0'),
+(2094, 71, 'Norte de santander:Los patios', '0'),
+(2095, 71, 'Norte de santander:Cachira', '0'),
+(2096, 71, 'Norte de santander:Durania', '0'),
+(2097, 71, 'Norte de santander:La esperanza', '0'),
+(2098, 71, 'Norte de santander:Chinacota', '0'),
+(2099, 71, 'Norte de santander:Ragonvalia', '0'),
+(2100, 71, 'Norte de santander:Arboledas', '0'),
+(2101, 71, 'Norte de santander:Cucutilla', '0'),
+(2102, 71, 'Norte de santander:Pamplonita', '0'),
+(2103, 71, 'Norte de santander:Herran', '0'),
+(2104, 71, 'Norte de santander:Lourdes', '0'),
+(2105, 71, 'Norte de santander:San cayetano', '0'),
+(2106, 71, 'Norte de santander:Villa del rosario', '0'),
+(2107, 71, 'Norte de santander:Bochalema', '0'),
+(2108, 71, 'Norte de santander:Toledo', '0'),
+(2109, 71, 'Norte de santander:Pamplona', '0'),
+(2110, 71, 'Norte de santander:Labateca', '0'),
+(2111, 71, 'Norte de santander:Mutiscua', '0'),
+(2112, 71, 'Norte de santander:Cacota', '0'),
+(2113, 71, 'Norte de santander:Silos', '0'),
+(2114, 71, 'Norte de santander:Chitaga', '0'),
+(2115, 71, 'Norte de santander:Cucuta', '0'),
+(2116, 71, 'Putumayo:Puerto asis', '0'),
+(2117, 71, 'Putumayo:Puerto caicedo', '0'),
+(2118, 71, 'Putumayo:Puerto leguizamo', '0'),
+(2119, 71, 'Putumayo:Orito', '0'),
+(2120, 71, 'Putumayo:La hormiga', '0'),
+(2121, 71, 'Putumayo:San francisco', '0'),
+(2122, 71, 'Putumayo:Sibundoy', '0'),
+(2123, 71, 'Putumayo:Colon', '0'),
+(2124, 71, 'Putumayo:Santiago', '0'),
+(2125, 71, 'Putumayo:Villagarzon', '0'),
+(2126, 71, 'Putumayo:Puerto guzman', '0'),
+(2127, 71, 'Putumayo:Mocoa', '0'),
+(2128, 71, 'Quindio:Quimbaya', '0'),
+(2129, 71, 'Quindio:Montenegro', '0'),
+(2130, 71, 'Quindio:Calarca', '0'),
+(2131, 71, 'Quindio:Salento', '0'),
+(2132, 71, 'Quindio:Circasia', '0'),
+(2133, 71, 'Quindio:Filandia', '0'),
+(2134, 71, 'Quindio:La tebaida', '0'),
+(2135, 71, 'Quindio:Cordoba', '0'),
+(2136, 71, 'Quindio:Buenavista', '0'),
+(2137, 71, 'Quindio:Pijao', '0'),
+(2138, 71, 'Quindio:Genova', '0'),
+(2139, 71, 'Quindio:Armenia', '0'),
+(2140, 71, 'Risaralda:Pueblo rico', '0'),
+(2141, 71, 'Risaralda:Quinchia', '0'),
+(2142, 71, 'Risaralda:Apia', '0'),
+(2143, 71, 'Risaralda:Mistrato', '0'),
+(2144, 71, 'Risaralda:Guatica', '0'),
+(2145, 71, 'Risaralda:Santuario', '0'),
+(2146, 71, 'Risaralda:Belen de umbria', '0'),
+(2147, 71, 'Risaralda:Marsella', '0'),
+(2148, 71, 'Risaralda:Balboa', '0'),
+(2149, 71, 'Risaralda:Santa rosa de cabal', '0'),
+(2150, 71, 'Risaralda:La virginia', '0'),
+(2151, 71, 'Risaralda:Dosquebradas', '0'),
+(2152, 71, 'Risaralda:La celia', '0'),
+(2153, 71, 'Risaralda:Pereira', '0'),
+(2154, 71, 'San andres y providencia:San andres', '0'),
+(2155, 71, 'Santander:Rionegro', '0'),
+(2156, 71, 'Santander:Sabana de torres', '0'),
+(2157, 71, 'Santander:El playon', '0'),
+(2158, 71, 'Santander:Surata', '0'),
+(2159, 71, 'Santander:Tona', '0'),
+(2160, 71, 'Santander:Barrancabermeja', '0'),
+(2161, 71, 'Santander:Giron', '0'),
+(2162, 71, 'Santander:Betulia', '0'),
+(2163, 71, 'Santander:San vicente chucuri', '0'),
+(2164, 71, 'Santander:Floridablanca', '0'),
+(2165, 71, 'Santander:Piedecuesta', '0'),
+(2166, 71, 'Santander:Santa barbara', '0'),
+(2167, 71, 'Santander:Guaca', '0'),
+(2168, 71, 'Santander:Cerrito', '0'),
+(2169, 71, 'Santander:Zapatoca', '0'),
+(2170, 71, 'Santander:Simacota', '0'),
+(2171, 71, 'Santander:San andres', '0'),
+(2172, 71, 'Santander:El carmen de chucuri', '0'),
+(2173, 71, 'Santander:Aratoca', '0'),
+(2174, 71, 'Santander:Cepita', '0'),
+(2175, 71, 'Santander:Galan', '0'),
+(2176, 71, 'Santander:Malaga', '0'),
+(2177, 71, 'Santander:Cimitarra', '0'),
+(2178, 71, 'Santander:Villanueva', '0'),
+(2179, 71, 'Santander:Carcasi', '0'),
+(2180, 71, 'Santander:El penon', '0'),
+(2181, 71, 'Santander:Chipata', '0'),
+(2182, 71, 'Santander:Matanza', '0'),
+(2183, 71, 'Santander:Lebrija', '0'),
+(2184, 71, 'Santander:California', '0'),
+(2185, 71, 'Santander:Vetas', '0'),
+(2186, 71, 'Santander:Charta', '0'),
+(2187, 71, 'Santander:Los santos', '0'),
+(2188, 71, 'Santander:Concepcion', '0'),
+(2189, 71, 'Santander:Puerto parra', '0'),
+(2190, 71, 'Santander:Jordan', '0'),
+(2191, 71, 'Santander:Barichara', '0'),
+(2192, 71, 'Santander:Molagavita', '0'),
+(2193, 71, 'Santander:Enciso', '0'),
+(2194, 71, 'Santander:Curiti', '0'),
+(2195, 71, 'Santander:San jose de miranda', '0'),
+(2196, 71, 'Santander:San gil', '0'),
+(2197, 71, 'Santander:Mogotes', '0'),
+(2198, 71, 'Santander:Hato', '0'),
+(2199, 71, 'Santander:Cabrera', '0'),
+(2200, 71, 'Santander:San miguel', '0'),
+(2201, 71, 'Santander:Capitanejo', '0'),
+(2202, 71, 'Santander:Macaravita', '0'),
+(2203, 71, 'Santander:San joaquin', '0'),
+(2204, 71, 'Santander:Palmar', '0'),
+(2205, 71, 'Santander:Landazuri', '0'),
+(2206, 71, 'Santander:Velez', '0'),
+(2207, 71, 'Santander:Pinchote', '0'),
+(2208, 71, 'Santander:Onzaga', '0'),
+(2209, 71, 'Santander:Socorro', '0'),
+(2210, 71, 'Santander:Santa helena del opon', '0'),
+(2211, 71, 'Santander:Paramo', '0'),
+(2212, 71, 'Santander:Valle de san jose', '0'),
+(2213, 71, 'Santander:Chima', '0'),
+(2214, 71, 'Santander:Palmas socorro', '0'),
+(2215, 71, 'Santander:Confines', '0'),
+(2216, 71, 'Santander:Ocamonte', '0'),
+(2217, 71, 'Santander:Charala', '0'),
+(2218, 71, 'Santander:La paz', '0'),
+(2219, 71, 'Santander:Coromoro', '0'),
+(2220, 71, 'Santander:Contratacion', '0'),
+(2221, 71, 'Santander:Guapota', '0'),
+(2222, 71, 'Santander:Oiba', '0'),
+(2223, 71, 'Santander:El guacamayo', '0'),
+(2224, 71, 'Santander:Guadalupe', '0'),
+(2225, 71, 'Santander:Bolivar', '0'),
+(2226, 71, 'Santander:Aguada', '0'),
+(2227, 71, 'Santander:Encino', '0'),
+(2228, 71, 'Santander:Suaita', '0'),
+(2229, 71, 'Santander:Sucre', '0'),
+(2230, 71, 'Santander:San benito', '0'),
+(2231, 71, 'Santander:Gambita', '0'),
+(2232, 71, 'Santander:Guepsa', '0'),
+(2233, 71, 'Santander:La belleza', '0'),
+(2234, 71, 'Santander:Barbosa', '0'),
+(2235, 71, 'Santander:Guavata', '0'),
+(2236, 71, 'Santander:Puente nacional', '0'),
+(2237, 71, 'Santander:Jesus maria', '0'),
+(2238, 71, 'Santander:Albania', '0'),
+(2239, 71, 'Santander:Florian', '0'),
+(2240, 71, 'Santander:Bucaramanga', '0'),
+(2241, 71, 'Sucre:San onofre', '0'),
+(2242, 71, 'Sucre:Ovejas', '0'),
+(2243, 71, 'Sucre:Tolu', '0'),
+(2244, 71, 'Sucre:Chalan', '0'),
+(2245, 71, 'Sucre:Ricaurte (coloso)', '0'),
+(2246, 71, 'Sucre:Toluviejo', '0'),
+(2247, 71, 'Sucre:San pedro', '0'),
+(2248, 71, 'Sucre:Los palmitos', '0'),
+(2249, 71, 'Sucre:Morroa', '0'),
+(2250, 71, 'Sucre:Corozal', '0'),
+(2251, 71, 'Sucre:Buenavista', '0'),
+(2252, 71, 'Sucre:Palmito', '0'),
+(2253, 71, 'Sucre:San juan de betulia', '0'),
+(2254, 71, 'Sucre:Since', '0'),
+(2255, 71, 'Sucre:Sampues', '0'),
+(2256, 71, 'Sucre:Nueva granada', '0'),
+(2257, 71, 'Sucre:San benito abad', '0'),
+(2258, 71, 'Sucre:Sucre', '0'),
+(2259, 71, 'Sucre:Caimito', '0'),
+(2260, 71, 'Sucre:La union', '0'),
+(2261, 71, 'Sucre:Majagual', '0'),
+(2262, 71, 'Sucre:San marcos', '0'),
+(2263, 71, 'Sucre:Guaranda', '0'),
+(2264, 71, 'Sucre:Sincelejo', '0'),
+(2265, 71, 'Tolima:Piedras', '0'),
+(2266, 71, 'Tolima:Coyaima', '0'),
+(2267, 71, 'Tolima:Anzoategui', '0'),
+(2268, 71, 'Tolima:Alvarado', '0'),
+(2269, 71, 'Tolima:Honda', '0'),
+(2270, 71, 'Tolima:Mariquita', '0'),
+(2271, 71, 'Tolima:Fresno', '0'),
+(2272, 71, 'Tolima:Falan', '0'),
+(2273, 71, 'Tolima:Herveo', '0'),
+(2274, 71, 'Tolima:Guayabal', '0'),
+(2275, 71, 'Tolima:Palocabildo', '0'),
+(2276, 71, 'Tolima:Casabianca', '0'),
+(2277, 71, 'Tolima:Villahermosa', '0'),
+(2278, 71, 'Tolima:Libano', '0'),
+(2279, 71, 'Tolima:Lerida', '0'),
+(2280, 71, 'Tolima:Ambalema', '0'),
+(2281, 71, 'Tolima:Murillo', '0'),
+(2282, 71, 'Tolima:Santa isabel', '0'),
+(2283, 71, 'Tolima:Venadillo', '0'),
+(2284, 71, 'Tolima:Coello', '0'),
+(2285, 71, 'Tolima:Rovira', '0'),
+(2286, 71, 'Tolima:San luis', '0'),
+(2287, 71, 'Tolima:Flandes', '0'),
+(2288, 71, 'Tolima:Roncesvalles', '0'),
+(2289, 71, 'Tolima:Valle de san juan', '0'),
+(2290, 71, 'Tolima:Melgar', '0'),
+(2291, 71, 'Tolima:Icononzo', '0'),
+(2292, 71, 'Tolima:Suarez', '0'),
+(2293, 71, 'Tolima:Guamo', '0'),
+(2294, 71, 'Tolima:Espinal', '0'),
+(2295, 71, 'Tolima:Carmen de apicala', '0'),
+(2296, 71, 'Tolima:Cunday', '0'),
+(2297, 71, 'Tolima:San antonio', '0'),
+(2298, 71, 'Tolima:Ortega', '0'),
+(2299, 71, 'Tolima:Chaparral', '0'),
+(2300, 71, 'Tolima:Purificacion', '0'),
+(2301, 71, 'Tolima:Saldana', '0'),
+(2302, 71, 'Tolima:Villarrica', '0'),
+(2303, 71, 'Tolima:Dolores', '0'),
+(2304, 71, 'Tolima:Prado', '0'),
+(2305, 71, 'Tolima:Rioblanco', '0'),
+(2306, 71, 'Tolima:Natagaima', '0'),
+(2307, 71, 'Tolima:Ataco', '0'),
+(2308, 71, 'Tolima:Alpujarra', '0'),
+(2309, 71, 'Tolima:Planadas', '0'),
+(2310, 71, 'Tolima:Ibague', '0'),
+(2311, 71, 'Valle:El dovio', '0'),
+(2312, 71, 'Valle:La union', '0'),
+(2313, 71, 'Valle:La victoria', '0'),
+(2314, 71, 'Valle:Restrepo', '0'),
+(2315, 71, 'Valle:Guacari', '0'),
+(2316, 71, 'Valle:Versalles', '0'),
+(2317, 71, 'Valle:Obando', '0'),
+(2318, 71, 'Valle:El aguila', '0'),
+(2319, 71, 'Valle:Ansermanuevo', '0'),
+(2320, 71, 'Valle:El cairo', '0'),
+(2321, 71, 'Valle:Cartago', '0'),
+(2322, 71, 'Valle:Argelia', '0'),
+(2323, 71, 'Valle:Ulloa', '0'),
+(2324, 71, 'Valle:Toro', '0'),
+(2325, 71, 'Valle:Alcala', '0'),
+(2326, 71, 'Valle:Roldanillo', '0'),
+(2327, 71, 'Valle:Bolivar', '0'),
+(2328, 71, 'Valle:Zarzal', '0'),
+(2329, 71, 'Valle:Caicedonia', '0'),
+(2330, 71, 'Valle:Sevilla', '0'),
+(2331, 71, 'Valle:Bugalagrande', '0'),
+(2332, 71, 'Valle:Trujillo', '0'),
+(2333, 71, 'Valle:Buenaventura', '0'),
+(2334, 71, 'Valle:Andalucia', '0'),
+(2335, 71, 'Valle:Riofrio', '0'),
+(2336, 71, 'Valle:Tulua', '0'),
+(2337, 71, 'Valle:Darien', '0'),
+(2338, 71, 'Valle:Yotoco', '0'),
+(2339, 71, 'Valle:San pedro', '0'),
+(2340, 71, 'Valle:Buga', '0'),
+(2341, 71, 'Valle:Dagua', '0'),
+(2342, 71, 'Valle:Vijes', '0'),
+(2343, 71, 'Valle:Ginebra', '0'),
+(2344, 71, 'Valle:El cerrito', '0'),
+(2345, 71, 'Valle:La cumbre', '0'),
+(2346, 71, 'Valle:Palmira', '0'),
+(2347, 71, 'Valle:Yumbo', '0'),
+(2348, 71, 'Valle:Pradera', '0'),
+(2349, 71, 'Valle:Candelaria', '0'),
+(2350, 71, 'Valle:Florida', '0'),
+(2351, 71, 'Valle:Jamundi', '0'),
+(2352, 71, 'Valle:Santiago de cali', '0'),
+(2353, 71, 'Valle:Cali', '0'),
+(2354, 71, 'Vaupes:Taraira', '0'),
+(2355, 71, 'Vaupes:Caruru', '0'),
+(2356, 71, 'Vaupes:Mit√∫', '0'),
+(2357, 71, 'Vichada:La primavera', '0'),
+(2358, 71, 'Vichada:Cumaribo', '0'),
+(2359, 71, 'Vichada:Puerto carreno', '0'),
+(2361, 18, '-75.9791386 5.9631358 15', '0'),
+(2365, 72, 'id_form:1 key:1 limit:10', '0');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `form_contenido_campos`
+--
+
+CREATE TABLE IF NOT EXISTS `form_contenido_campos` (
+  `id` int(11) NOT NULL,
+  `id_campo` int(11) NOT NULL,
+  `id_empresa` int(11) NOT NULL,
+  `id_form` int(2) NOT NULL,
+  `obligatorio` set('0','1') COLLATE utf8_spanish2_ci NOT NULL DEFAULT '0',
+  `multiple` set('0','1') COLLATE utf8_spanish2_ci NOT NULL DEFAULT '0',
+  `orden` int(2) NOT NULL COMMENT 'orden en que aparecer√° cada campo en la cnsulta particular',
+  `control` varchar(32) COLLATE utf8_spanish2_ci NOT NULL
+) ENGINE=MyISAM AUTO_INCREMENT=80 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
+
+--
+-- Dumping data for table `form_contenido_campos`
+--
+
+INSERT INTO `form_contenido_campos` (`id`, `id_campo`, `id_empresa`, `id_form`, `obligatorio`, `multiple`, `orden`, `control`) VALUES
+(1, 8, 1, 1, '0', '0', 64, '6e32ac8d93d1a961ab91d73cfb7575d3'),
+(2, 12, 1, 1, '0', '0', 86, '834f71fbbafd7ec4f3ee69e29f03acad'),
+(3, 14, 1, 1, '0', '0', 28, '4721b9600b48d52bcea9562e761cdf63'),
+(4, 13, 1, 1, '0', '0', 92, '0bf782d4f388d371beac89d0c04add1f'),
+(5, 17, 1, 1, '0', '0', 21, '68298143ba7642d8c159bd1e6683fd69'),
+(6, 15, 1, 1, '0', '0', 100, 'cab04c8a42502bcc0c09b345626899a8'),
+(7, 16, 1, 1, '0', '0', 80, '9ce8a2166c9fbe73db787b2fa3792236'),
+(8, 9, 1, 1, '0', '1', 45, '82fea7e28bb6d1c8b662f38917a20105'),
+(9, 7, 1, 1, '0', '0', 50, '0c7e879ac516f5bee9bc5a987c81364a'),
+(10, 11, 1, 1, '1', '0', 40, '00bee84be8fad0e613a6b7884dc4666b'),
+(11, 18, 1, 1, '1', '0', 35, '23b34e9ef1fa1a9bababd422981f1327'),
+(12, 10, 1, 1, '0', '0', 75, '0ca2686b829f9e84272e628d9189f7ed'),
+(14, 3, 1, 1, '0', '0', 10, '820fb45d7de3a9c89269c1be25b7c370'),
+(15, 1, 1, 1, '0', '0', 3, 'c6157909441e8a4ed35f40778ffb6798'),
+(16, 4, 1, 1, '0', '0', 11, 'bbe12fe0eea1ac187d7c08d96c6c635a'),
+(17, 2, 1, 1, '0', '0', 6, '8d9ffbf53c8f139785ee5e2268eacdcf'),
+(18, 6, 1, 1, '0', '0', 87, '1e5b1b8b1b5b0b936652ce98c2f9424c'),
+(65, 58, 1, 2, '0', '1', 21, 'dccampos21'),
+(64, 57, 1, 2, '0', '1', 20, 'dccampos20'),
+(63, 56, 1, 2, '0', '1', 19, 'dccampos19'),
+(62, 55, 1, 2, '0', '1', 18, 'dccampos18'),
+(61, 54, 1, 2, '0', '1', 17, 'dccampos17'),
+(60, 53, 1, 2, '0', '1', 16, 'dccampos16'),
+(59, 52, 1, 2, '0', '1', 15, 'dccampos15'),
+(58, 51, 1, 2, '0', '1', 14, 'dccampos14'),
+(57, 50, 1, 2, '0', '1', 13, 'dccampos13'),
+(56, 49, 1, 2, '0', '1', 12, 'dccampos12'),
+(55, 48, 1, 2, '0', '1', 11, 'dccampos11'),
+(54, 47, 1, 2, '0', '1', 10, 'dccampos10'),
+(53, 46, 1, 2, '0', '1', 9, 'dccampos09'),
+(52, 45, 1, 2, '0', '1', 8, 'dccampos08'),
+(51, 44, 1, 2, '0', '1', 7, 'dccampos07'),
+(50, 43, 1, 2, '0', '1', 6, 'dccampos06'),
+(49, 42, 1, 2, '0', '1', 5, 'dccampos05'),
+(48, 41, 1, 2, '0', '1', 4, 'dccampos04'),
+(47, 40, 1, 2, '0', '1', 3, 'dccampos03'),
+(41, 19, 2, 1, '0', '0', 100, '38a7c271c9b8cbbb787e66d24d32bec6'),
+(42, 26, 1, 1, '0', '0', 0, '1093ccfaf6138e73381df8bf004b76cc'),
+(46, 39, 1, 2, '0', '1', 2, 'dccampos02'),
+(45, 38, 1, 2, '0', '1', 1, 'dccampos01'),
+(66, 59, 1, 2, '0', '1', 22, 'dccampos22'),
+(67, 60, 1, 2, '0', '1', 23, 'dccampos23'),
+(68, 61, 1, 2, '0', '1', 24, 'dccampos24'),
+(69, 62, 1, 2, '0', '1', 25, 'dccampos25'),
+(70, 63, 1, 2, '0', '1', 26, 'dccampos26'),
+(71, 64, 1, 2, '0', '1', 27, 'dccampos27'),
+(72, 65, 1, 2, '0', '1', 28, 'dccampos28'),
+(73, 66, 1, 2, '0', '1', 29, 'dccampos29'),
+(74, 67, 1, 2, '0', '1', 30, 'dccampos30'),
+(75, 68, 1, 2, '0', '1', 31, 'dccampos31'),
+(76, 69, 1, 2, '0', '0', 0, 'e5add8d17b13a7f49b032839bd7a5526'),
+(77, 70, 1, 2, '0', '0', 0, '326d66ceef37a30dc7ee0cbf2ffee221'),
+(78, 71, 1, 1, '0', '0', 17, 'a1cc9a5f7c0e8c5a9adb9206180231b4'),
+(79, 72, 1, 1, '0', '0', 2, 'be9b193e361a6c92be50c0dffd67436e');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `form_datos`
+--
+
+CREATE TABLE IF NOT EXISTS `form_datos` (
+  `id` int(11) NOT NULL,
+  `id_campo` int(11) DEFAULT NULL,
+  `form_id` int(3) DEFAULT NULL,
+  `orden` int(11) NOT NULL DEFAULT '0',
+  `id_usuario` int(11) DEFAULT NULL,
+  `id_empresa` int(11) NOT NULL,
+  `contenido` text NOT NULL,
+  `timestamp` int(20) DEFAULT NULL,
+  `ip` int(10) unsigned DEFAULT NULL,
+  `control` char(32) NOT NULL
+) ENGINE=InnoDB AUTO_INCREMENT=43 DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `form_datos`
+--
+
+INSERT INTO `form_datos` (`id`, `id_campo`, `form_id`, `orden`, `id_usuario`, `id_empresa`, `contenido`, `timestamp`, `ip`, `control`) VALUES
+(1, 70, 2, 0, 1, 1, '919667cc0724a21a78e221ba5d4524d0.png', 1424879698, NULL, 'feb16a589d41a37406fb5ed9d1c34f11'),
+(2, 69, 2, 0, 1, 1, 'https://www.youtube.com/watch?v=EAvWLo74alY', 1424879698, NULL, 'feb16a589d41a37406fb5ed9d1c34f11'),
+(3, 38, 2, 0, 1, 1, 'Yoga Cinco ritos tibetanos', 1424879698, NULL, 'feb16a589d41a37406fb5ed9d1c34f11'),
+(4, 39, 2, 0, 1, 1, 'Easy Five Tibetans Rites', 1424879698, NULL, 'feb16a589d41a37406fb5ed9d1c34f11'),
+(5, 40, 2, 0, 1, 1, 'Fundaci√≥n VivirEnLaFinca.org', 1424879698, NULL, 'feb16a589d41a37406fb5ed9d1c34f11'),
+(6, 41, 2, 0, 1, 1, 'Janeth Urreste Castro', 1424879698, NULL, 'feb16a589d41a37406fb5ed9d1c34f11'),
+(7, 42, 2, 0, 1, 1, 'proyectos@vivirenlafinca.org', 1424879698, NULL, 'feb16a589d41a37406fb5ed9d1c34f11'),
+(8, 43, 2, 0, 1, 1, 'http://vivirenlafinca.org', 1424879698, NULL, 'feb16a589d41a37406fb5ed9d1c34f11'),
+(9, 44, 2, 0, 1, 1, 'Yoga', 1424879698, NULL, 'feb16a589d41a37406fb5ed9d1c34f11'),
+(10, 45, 2, 0, 1, 1, 'Ejercicios completos de la rutina de los "Cinco ritos tibetanos" explicados para su realizaci√≥n de forma f√°cil.', 1424879698, NULL, 'feb16a589d41a37406fb5ed9d1c34f11'),
+(11, 47, 2, 0, 1, 1, 'Full exercise routine "Five Tibetan Rites " explained for implementation easy.', 1424879698, NULL, 'feb16a589d41a37406fb5ed9d1c34f11'),
+(12, 48, 2, 0, 1, 1, 'Fundaci√≥n Vivirenlafinca.org', 1424879698, NULL, 'feb16a589d41a37406fb5ed9d1c34f11'),
+(13, 49, 2, 0, 1, 1, 'fredy Rivera', 1424879698, NULL, 'feb16a589d41a37406fb5ed9d1c34f11'),
+(14, 50, 2, 0, 1, 1, '2010-03-01', 1424879698, NULL, 'feb16a589d41a37406fb5ed9d1c34f11'),
+(15, 51, 2, 0, 1, 1, 'Movingimage (imagen en movimiento)', 1424879698, NULL, 'feb16a589d41a37406fb5ed9d1c34f11'),
+(16, 52, 2, 0, 1, 1, 'Video/3gpp', 1424879698, NULL, 'feb16a589d41a37406fb5ed9d1c34f11'),
+(17, 53, 2, 0, 1, 1, 'https://www.youtube.com/watch?v=EAvWLo74alY', 1424879698, NULL, 'feb16a589d41a37406fb5ed9d1c34f11'),
+(18, 54, 2, 0, 1, 1, 'Spa', 1424879698, NULL, 'feb16a589d41a37406fb5ed9d1c34f11'),
+(19, 55, 2, 0, 1, 1, 'http://en.wikipedia.org/wiki/Five_Tibetan_Rites', 1424879698, NULL, 'feb16a589d41a37406fb5ed9d1c34f11'),
+(20, 61, 2, 0, 1, 1, 'http://creativecommons.org/licenses/by-sa/2.5/co/', 1424879698, NULL, 'feb16a589d41a37406fb5ed9d1c34f11'),
+(21, 62, 2, 0, 1, 1, 'All', 1424879698, NULL, 'feb16a589d41a37406fb5ed9d1c34f11'),
+(22, 64, 2, 0, 1, 1, 'Fredy Rivera y Janeth Urreste', 1424879698, NULL, 'feb16a589d41a37406fb5ed9d1c34f11'),
+(23, 65, 2, 0, 1, 1, 'Ejercicios pr√°cticos', 1424879698, NULL, 'feb16a589d41a37406fb5ed9d1c34f11'),
+(24, 68, 2, 0, 1, 1, 'https://www.youtube.com/watch?v=EAvWLo74alY', 1424879699, NULL, 'feb16a589d41a37406fb5ed9d1c34f11'),
+(25, 1, 1, 0, 1, 1, 'Fredy', 1433516975, NULL, '5cc74e40b9af87c0bc6b56ca4796c073'),
+(26, 3, 1, 0, 1, 1, 'Rivera', 1433516975, NULL, '5cc74e40b9af87c0bc6b56ca4796c073'),
+(27, 4, 1, 0, 1, 1, 'Berm√∫dez', 1433516975, NULL, '5cc74e40b9af87c0bc6b56ca4796c073'),
+(28, 71, 1, 0, 1, 1, 'Cundinamarca Bogota', 1433516975, NULL, '5cc74e40b9af87c0bc6b56ca4796c073'),
+(29, 14, 1, 0, 1, 1, 'Amigo', 1433516975, NULL, '5cc74e40b9af87c0bc6b56ca4796c073'),
+(30, 18, 1, 0, 1, 1, '-74.091796875 4.576424935853651 7', 1433516975, NULL, '5cc74e40b9af87c0bc6b56ca4796c073'),
+(31, 11, 1, 0, 1, 1, 'QWERTY LTDA', 1433516975, NULL, '5cc74e40b9af87c0bc6b56ca4796c073'),
+(32, 9, 1, 0, 1, 1, 'Director de desarrollo MILFS', 1433516975, NULL, '5cc74e40b9af87c0bc6b56ca4796c073'),
+(33, 15, 1, 0, 1, 1, 'fredyrivera@qwerty.co', 1433516975, NULL, '5cc74e40b9af87c0bc6b56ca4796c073'),
+(34, 72, 1, 0, 1, 1, '5cc74e40b9af87c0bc6b56ca4796c073', 1433615534, NULL, '018f39193a26376e38273ef8a50e478a'),
+(35, 1, 1, 0, 1, 1, 'Pedro', 1433615534, NULL, '018f39193a26376e38273ef8a50e478a'),
+(36, 2, 1, 0, 1, 1, 'Miguel', 1433615534, NULL, '018f39193a26376e38273ef8a50e478a'),
+(37, 3, 1, 0, 1, 1, 'Picapiedra', 1433615534, NULL, '018f39193a26376e38273ef8a50e478a'),
+(38, 4, 1, 0, 1, 1, 'Marmol', 1433615534, NULL, '018f39193a26376e38273ef8a50e478a'),
+(39, 71, 1, 0, 1, 1, 'Cundinamarca Susa', 1433615534, NULL, '018f39193a26376e38273ef8a50e478a'),
+(40, 14, 1, 0, 1, 1, 'Amigo', 1433615534, NULL, '018f39193a26376e38273ef8a50e478a'),
+(41, 18, 1, 0, 1, 1, '-74.35546875 5.3425828520359735 7', 1433615534, NULL, '018f39193a26376e38273ef8a50e478a'),
+(42, 11, 1, 0, 1, 1, 'Carrangueros ltda.', 1433615534, NULL, '018f39193a26376e38273ef8a50e478a');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `form_id`
+--
+
+CREATE TABLE IF NOT EXISTS `form_id` (
+  `id` int(11) NOT NULL,
+  `nombre` varchar(60) COLLATE utf8_spanish2_ci NOT NULL,
+  `descripcion` text COLLATE utf8_spanish2_ci NOT NULL,
+  `activo` set('0','1') COLLATE utf8_spanish2_ci NOT NULL,
+  `modificable` set('0','1') COLLATE utf8_spanish2_ci NOT NULL DEFAULT '1',
+  `publico` set('0','1') COLLATE utf8_spanish2_ci NOT NULL DEFAULT '0',
+  `propietario` int(11) NOT NULL,
+  `id_empresa` int(11) NOT NULL,
+  `creacion` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `orden` int(11) NOT NULL,
+  `formulario_respuesta` int(3) DEFAULT NULL COMMENT 'Formulario con el que se contesta'
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
+
+--
+-- Dumping data for table `form_id`
+--
+
+INSERT INTO `form_id` (`id`, `nombre`, `descripcion`, `activo`, `modificable`, `publico`, `propietario`, `id_empresa`, `creacion`, `orden`, `formulario_respuesta`) VALUES
+(1, 'Contacto', 'Capura de datos en evento.', '1', '1', '1', 1, 1, '2014-09-30 19:47:38', 80, 0),
+(2, 'Biblioteca Digital', 'Repositorio digital de documentos de nuestrared.org.\nLos metadatos fueron establecidos usando <a target= ventana  href= http://biblioestandares.bn.cl/sites/biblioestandares.bn.cl/files/guia_para_la_creacion_de_metadatos_octubre_pub_2009.pdf >Este documento</a>', '1', '1', '1', 1, 1, '2015-02-25 15:38:05', 0, 0);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `form_tipo_campo`
+--
+
+CREATE TABLE IF NOT EXISTS `form_tipo_campo` (
+  `id_tipo_campo` int(11) NOT NULL,
+  `tipo_campo_nombre` text NOT NULL,
+  `tipo_campo_accion` text NOT NULL,
+  `activo` int(11) NOT NULL DEFAULT '0'
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `form_tipo_campo`
+--
+
+INSERT INTO `form_tipo_campo` (`id_tipo_campo`, `tipo_campo_nombre`, `tipo_campo_accion`, `activo`) VALUES
+(1, 'Texto', 'text', 1),
+(2, 'Nota', 'textarea', 1),
+(3, 'Num√©rico', 'number', 1),
+(4, 'URL', 'url', 1),
+(5, 'Medio', 'media', 1),
+(7, 'HTML', 'html', 1),
+(8, 'Select', 'select', 1),
+(9, 'Combo select', 'combo', 1),
+(10, 'Relaci√≥n', 'relacion', 1),
+(11, 'Fecha', 'date', 1),
+(12, 'Email', 'email', 1),
+(13, 'Email env√≠o', 'envio', 1),
+(14, 'Mapa', 'mapa', 1),
+(15, 'Imagen', 'imagen', 1),
+(16, 'Rango', 'rango', 1),
+(17, 'Texto limitado', 'limit', 1);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `parametrizacion`
+--
+
+CREATE TABLE IF NOT EXISTS `parametrizacion` (
+  `id` int(11) NOT NULL,
+  `tabla` varchar(32) NOT NULL,
+  `campo` varchar(32) NOT NULL,
+  `opcion` varchar(200) NOT NULL,
+  `descripcion` text NOT NULL,
+  `visible` set('0','1') NOT NULL DEFAULT '1'
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `usuarios`
+--
+
+CREATE TABLE IF NOT EXISTS `usuarios` (
+  `id` int(32) NOT NULL,
+  `username` varchar(255) CHARACTER SET latin1 NOT NULL DEFAULT '',
+  `passwd` varchar(255) CHARACTER SET latin1 NOT NULL DEFAULT '',
+  `id_grupo` int(11) NOT NULL DEFAULT '0',
+  `id_empresa` int(11) NOT NULL DEFAULT '0',
+  `email` varchar(255) CHARACTER SET latin1 NOT NULL DEFAULT '',
+  `adddate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `status` int(3) NOT NULL DEFAULT '0',
+  `lastip` varchar(255) CHARACTER SET latin1 NOT NULL DEFAULT '',
+  `lastdate` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `p_nombre` varchar(255) COLLATE utf8_spanish2_ci DEFAULT NULL,
+  `s_nombre` varchar(255) COLLATE utf8_spanish2_ci DEFAULT NULL,
+  `p_apellido` varchar(255) COLLATE utf8_spanish2_ci DEFAULT NULL,
+  `s_apellido` varchar(255) COLLATE utf8_spanish2_ci NOT NULL DEFAULT '',
+  `nombre_completo` varchar(254) CHARACTER SET utf8 COLLATE utf8_spanish_ci NOT NULL DEFAULT '',
+  `fecha_nacimiento` varchar(15) COLLATE utf8_spanish2_ci NOT NULL,
+  `documento_tipo` int(11) NOT NULL DEFAULT '0',
+  `documento_numero` char(20) CHARACTER SET latin1 NOT NULL,
+  `documento_expedicion` varchar(100) COLLATE utf8_spanish2_ci NOT NULL,
+  `control` varchar(50) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL,
+  `firma_recuperacion` char(40) COLLATE utf8_spanish2_ci DEFAULT NULL,
+  `genero` set('M','F') CHARACTER SET latin1 NOT NULL DEFAULT '',
+  `cargo` varchar(255) CHARACTER SET latin1 NOT NULL DEFAULT '',
+  `fotografia` char(36) COLLATE utf8_spanish2_ci NOT NULL,
+  `licencia` text COLLATE utf8_spanish2_ci NOT NULL,
+  `licencia_fecha` int(20) DEFAULT '0',
+  `bio` longtext COLLATE utf8_spanish2_ci NOT NULL
+) ENGINE=MyISAM AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
+
+--
+-- Dumping data for table `usuarios`
+--
+
+INSERT INTO `usuarios` (`id`, `username`, `passwd`, `id_grupo`, `id_empresa`, `email`, `adddate`, `status`, `lastip`, `lastdate`, `p_nombre`, `s_nombre`, `p_apellido`, `s_apellido`, `nombre_completo`, `fecha_nacimiento`, `documento_tipo`, `documento_numero`, `documento_expedicion`, `control`, `firma_recuperacion`, `genero`, `cargo`, `fotografia`, `licencia`, `licencia_fecha`, `bio`) VALUES
+(1, 'admin', '21232f297a57a5a743894a0e4a801fc3', 0, 1, 'correo@qwerty.co', '2014-09-15 22:58:45', 1, '', '0000-00-00 00:00:00', 'administrador', NULL, 'milfs', '', '', '', 0, '', '', NULL, '', '', '', '', '', 0, '');
+
+--
+-- Indexes for dumped tables
+--
+
+--
+-- Indexes for table `empresa`
+--
+ALTER TABLE `empresa`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `estilos`
+--
+ALTER TABLE `estilos`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `form_campos`
+--
+ALTER TABLE `form_campos`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `identificador` (`identificador`);
+
+--
+-- Indexes for table `form_campos_valores`
+--
+ALTER TABLE `form_campos_valores`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `form_contenido_campos`
+--
+ALTER TABLE `form_contenido_campos`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `control` (`control`);
+
+--
+-- Indexes for table `form_datos`
+--
+ALTER TABLE `form_datos`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `id` (`id`),
+  ADD KEY `control` (`control`),
+  ADD KEY `id_campo` (`id_campo`),
+  ADD KEY `perfil` (`form_id`),
+  ADD KEY `id_usuario` (`id_usuario`);
+
+--
+-- Indexes for table `form_id`
+--
+ALTER TABLE `form_id`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `form_tipo_campo`
+--
+ALTER TABLE `form_tipo_campo`
+  ADD PRIMARY KEY (`id_tipo_campo`);
+
+--
+-- Indexes for table `parametrizacion`
+--
+ALTER TABLE `parametrizacion`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `id` (`id`);
+
+--
+-- Indexes for table `usuarios`
+--
+ALTER TABLE `usuarios`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `email` (`email`);
+
+--
+-- AUTO_INCREMENT for dumped tables
+--
+
+--
+-- AUTO_INCREMENT for table `empresa`
+--
+ALTER TABLE `empresa`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=7;
+--
+-- AUTO_INCREMENT for table `estilos`
+--
+ALTER TABLE `estilos`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=34;
+--
+-- AUTO_INCREMENT for table `form_campos`
+--
+ALTER TABLE `form_campos`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=73;
+--
+-- AUTO_INCREMENT for table `form_campos_valores`
+--
+ALTER TABLE `form_campos_valores`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=2366;
+--
+-- AUTO_INCREMENT for table `form_contenido_campos`
+--
+ALTER TABLE `form_contenido_campos`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=80;
+--
+-- AUTO_INCREMENT for table `form_datos`
+--
+ALTER TABLE `form_datos`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=43;
+--
+-- AUTO_INCREMENT for table `form_id`
+--
+ALTER TABLE `form_id`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=3;
+--
+-- AUTO_INCREMENT for table `form_tipo_campo`
+--
+ALTER TABLE `form_tipo_campo`
+  MODIFY `id_tipo_campo` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=18;
+--
+-- AUTO_INCREMENT for table `parametrizacion`
+--
+ALTER TABLE `parametrizacion`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `usuarios`
+--
+ALTER TABLE `usuarios`
+  MODIFY `id` int(32) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=7;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
