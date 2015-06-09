@@ -1,5 +1,116 @@
 <?php
 
+
+function relacion_render($form_id,$id_campo,$valor,$cantidad){
+
+
+
+$claves = remplacetas("form_campos_valores","id_form_campo","$id_campo","campo_valor","");
+$claves = $claves[0];
+		$claves = explode(' ',$claves);
+		$formulario = explode(':',$claves[0]) ;
+			$formulario = $formulario[1];
+		$key = explode(':',$claves[1]) ;
+			$key = $key[1];
+		$limit = explode(':',$claves[2]) ;
+			$limit = $limit[1];
+if($valor !="") {
+$valor_actual = contenido_mostrar("$formulario",$valor,'','5');
+$link = "<a href = '$_SESSION[url]/?id=$formulario&c=$valor' target='referencia'>Ver referencia</a> ";
+}
+
+	return " $valor_actual $link";
+$div ="div_relacion_$name";
+
+$consulta = "SELECT contenido, control  FROM form_datos WHERE form_id ='$formulario' and id_campo ='$key' GROUP BY 	control LIMIT $limit ";
+if($name =="") {
+//return "$valor_actual";
+}
+$link=Conectarse(); 
+mysql_query("SET NAMES 'utf8'");
+$sql=mysql_query($consulta,$link);
+
+
+if (mysql_num_rows($sql)!='0'){
+$onchange = " xajax_contenido_mostrar('$formulario',(this.value),'$div','5')";
+$resultado=" <SELECT class='form-control' NAME='$name' id='$name' onchange=\"$onchange\"  >
+<option value=''>Seleccione </option>
+				" ;
+
+while( $row = mysql_fetch_array( $sql ) ) {
+
+		if($row[control] == "$valor") {
+
+					$selected = "selected";
+					}else{ $selected = "";}
+		$resultado .= "<option value='$row[control]' $selected > $row[contenido]</option>";
+
+															}
+
+$resultado .= "</select>
+		<div id='$div'>$valor_actual</div>";
+										}else{$resultado = "<div class='alert alert-warning'><i class='fa fa-exclamation-triangle'></i> No hay resultados $consulta </div>";}
+
+
+			return $resultado;
+
+}
+$xajax->registerFunction("relacion_render");
+
+
+
+function relacion_select($id_campo,$form_id,$valor,$name,$control,$tipo){
+$link=Conectarse(); 
+mysql_query("SET NAMES 'utf8'");
+
+$claves = remplacetas("form_campos_valores","id_form_campo","$id_campo","campo_valor","");
+$claves = $claves[0];
+		$claves = explode(' ',$claves);
+		$formulario = explode(':',$claves[0]) ;
+			$formulario = $formulario[1];
+		$key = explode(':',$claves[1]) ;
+			$key = $key[1];
+		$limit = explode(':',$claves[2]) ;
+			$limit = $limit[1];
+if($valor !="") {
+$valor_actual = contenido_mostrar("$formulario",$valor,'','5');
+}
+
+$div ="div_relacion_$name";
+
+$consulta = "SELECT contenido, control  FROM form_datos WHERE form_id ='$formulario' and id_campo ='$key' GROUP BY 	control LIMIT $limit ";
+if($name =="") {
+//return "$valor_actual";
+}
+$sql=mysql_query($consulta,$link);
+
+
+if (mysql_num_rows($sql)!='0'){
+$onchange = " xajax_contenido_mostrar('$formulario',(this.value),'$div','5')";
+$resultado=" <SELECT class='form-control' NAME='$name' id='$name' onchange=\"$onchange\"  >
+<option value=''>Seleccione </option>
+				" ;
+
+while( $row = mysql_fetch_array( $sql ) ) {
+
+		if($row[control] == "$valor") {
+
+					$selected = "selected";
+					}else{ $selected = "";}
+		$resultado .= "<option value='$row[control]' $selected > $row[contenido]</option>";
+
+															}
+
+$resultado .= "</select>
+		<div id='$div'>$valor_actual</div>";
+										}else{$resultado = "<div class='alert alert-warning'><i class='fa fa-exclamation-triangle'></i> No hay resultados $consulta </div>";}
+
+
+			return $resultado;
+
+}
+$xajax->registerFunction("relacion_select");
+
 function combo_select($id_campo,$form_id,$valor,$name,$control,$control_combo){
 $link=Conectarse(); 
 mysql_query("SET NAMES 'utf8'");
@@ -923,12 +1034,14 @@ function contenido_mostrar($id,$control,$div,$plantilla){
 
 	$respuesta = new xajaxResponse('utf-8');
 $link=Conectarse(); 
-$sql=mysql_query($consulta,$link);
-if (mysql_num_rows($sql)!='0'){
+//$sql=mysql_query($consulta,$link);
+//if (mysql_num_rows($sql)!='0'){
+if ($control !=""){
 
 $impresion = formulario_imprimir("$id","$control","$plantilla"); 
 
 										}
+										else{$impresion ="";}
 if($div !="") {
 		$respuesta->addAssign("$div","innerHTML","$impresion");
 		return $respuesta;
@@ -1275,14 +1388,8 @@ $xajax->registerFunction("editar_campo");
 
 
 function formulario_imprimir($id,$control,$tipo) {
-//include ('includes/markdown.php');
-/*if (function_exists("Markdown")) {
 
-}else{
-//require_once ('milfs/includes/markdown.php');
-  }
-  */
-  //  include_once ('milfs/includes/markdown.php');
+if(is_numeric($tipo)) { $limit = "limit $tipo "; $class= "alert alert-info";}
 	$id = mysql_seguridad($id);
 		$publico = remplacetas('form_id','id',$id,'publico','') ;
 		if($publico[0] != "1" and (!isset ( $_SESSION[id]) )) {
@@ -1290,14 +1397,14 @@ function formulario_imprimir($id,$control,$tipo) {
 		return $resultado;
 
 																					}
-	//if($tipo =='obligatorio'){ $w_tipo = "AND obligatorio = '1' ";}
+
 	if($id !='') {$w_id = "AND form_id = '$id'";}else {$w_id='';}
 	$control = mysql_seguridad($control);
 	$consulta = "SELECT *
 						FROM form_contenido_campos 
 						WHERE form_contenido_campos.id_form = '$id'
 						
-						ORDER BY form_contenido_campos.orden ASC
+						ORDER BY form_contenido_campos.orden ASC $limit 
 						";
 		$categoria_campo = remplacetas('parametrizacion','campo',$id,'descripcion'," tabla='form_id' and  opcion = 'categoria:campo'") ;
 		$categoria_campo = $categoria_campo[0];
@@ -1307,29 +1414,11 @@ $link=Conectarse();
 mysql_query("SET NAMES 'utf8'"); 
 $sql=mysql_query($consulta,$link);
  
-//$timestamp=mysql_result($sql,0,"timestamp");
-//$fecha  = date ( "Y-m-d h:i:s" , $timestamp);
 
 if (mysql_num_rows($sql)!='0'){
 
 	mysql_data_seek($sql, 0);
-	//$resultado ="<div class='row' >";
-	/*	$imagen = formulario_valor_campo("$id","0","","$control");
-		$imagen = $imagen[3];
-		if($imagen[3] != "") {
-		$resultado .= "
-			<div class='row' id='contenedor_imagen'>
-				<div class='col-lg-12 '>
-					<img class='img-thumbnail responsive' src='http://$_SERVER[HTTP_HOST]/milfs/images/secure/?file=300/$imagen'>
-				</div>
-			</div>";
-			$imagen_ancho = '100%';
-		$campo[0] = "http://$_SERVER[HTTP_HOST]/milfs/images/secure/?file=600/".$imagen;
-	}else {$resultado .="";
-		$imagen =  remplacetas("empresa","id",$id_empresa[0],"imagen","");	
-		$campo[0] = "http://$_SERVER[HTTP_HOST]/milfs/images/100x100.png";
-	}
-	*/
+
 	while( $row = mysql_fetch_array( $sql ) ) {
 		$multiple ="$row[multiple]";
 		$campo_tipo =  remplacetas('form_campos','id',$row['id_campo'],'campo_tipo','');
@@ -1354,17 +1443,17 @@ if (mysql_num_rows($sql)!='0'){
 										}
 			}
 		elseif($campo_tipo=='4'){ $contenido = "<a href='$contenido'>$contenido</a>";}
+		elseif($campo_tipo=='10'){
+			//$contenido = contenido_mostrar("$id","$contenido",'','5');
+   		//	$valor_actual = contenido_mostrar("$row[id_campo]","$contenido",'','5');
+//   $valor_actual = relacion_select($row[id_campo],$id,$contenido,"",$contenido,$tipo);
+				$valor_actual = relacion_render("$id","$row[id_campo]",$contenido,'5');
+   				//$value = 	remplacetas('form_datos','id',$id_dato,'contenido'," control = '$control'") ;
+			 $contenido = "$valor_actual";}
 		elseif($campo_tipo=='5' AND $contenido !=""){ $contenido = "<iframe  width='100%' height='100%'  class= 'iframe-media' src=\"$contenido\" frameborder='0' allowFullScreen ></iframe>";}
 		else {
 	$html ="$contenido";
-//	$html = html_entity_decode($html);
-	//$html = str_replace('&ndash;','-',$html);
-	//$html = str_replace('&quot;','"',$html);
-	//$html = preg_replace('/\&amp;(nbsp);/','&${1};',$html);
-//	$html = str_replace('{{PAGENAME}}',$title,$html);
-	// Table
-//	$html = convertTables($html);
-//	$html = simpleText($html);
+
 	$contenido = nl2br($html);
 			//$contenido = Markdown($contenido);
 			}
@@ -1424,7 +1513,7 @@ if($plantilla != ""){
 eval("\$plantilla = \"$plantilla \";");
 	$full =" $plantilla	";
 							}else {
-	$full= $resultado;							
+	$full= "<div class='$class'>$resultado</div>";							
 							}
 
 		$resultado =" $full 
@@ -1454,7 +1543,7 @@ if (mysql_num_rows($sql)!='0'){
 
 }
 	$resultado .="</table></div>";	
-}else{$resultado ="problema";}
+}else{$resultado ="";}
 return $resultado;
 }
 
@@ -2240,7 +2329,7 @@ $respuesta->addAssign("grupo_campo_nombre","className"," input-group has-error  
 return $respuesta;
 }
 
-$campo_nombre = ucfirst(strtolower($campo_nombre));
+//$campo_nombre = ucfirst(strtolower($campo_nombre));
 $campo_descripcion = $form["campo_descripcion"];
 $campo_tipo = $form["campo_tipo"];
 $campo_area = $form["campo_area"];
@@ -3142,9 +3231,11 @@ $consulta ="
 			$select = select_edit($id_campo,$id_form,$value,$id_campo."[".$item."]",$control);
 			$render = "$select ";}
 		elseif($campo_tipo_accion == 'combo'){
-			
 			//$select = select('form_campos_valores','campo_valor','campo_valor','',"id_form_campo = $id_campo",$id_campo."[".$item."]");
 			$select = combo_select($id_campo,$id_form,$value,$id_campo."[".$item."]",$control,"");
+			$render = "$select ";}
+		elseif($campo_tipo_accion == 'relacion'){
+			$select = relacion_select($id_campo,$id_form,$value,$id_campo."[".$item."]",$control,"");
 			$render = "$select ";}
 		elseif($campo_tipo_accion == 'number'){$render = "<code>(Este campo solo acepta números)</code>
 															<input value='$value' type='number' id='".$id_campo."[".$item."]' name='".$id_campo."[".$item."]' class=' has-warning form-control' placeholder='$campo_descripcion' > ";}
