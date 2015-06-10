@@ -69,37 +69,7 @@ INSTALACION
     un formulario de muestra llamado contacto.
 
 
-SOLUCIÓN DE PROBLEMAS 
-
-Milfs HTTPS:
-
-Es necesario modificar el archivo 
-https://github.com/humano/milfs/blob/master/milfs/index.php 
-
-Buscar la linea (Linea 5):
-$xajax = new xajax();
-
-Y cambiar la por
-$xajax = new xajax("https://URLSITE/milfs/index.php");
-
-- O el lugar para en donde este instalado su instancia de MILFS
-
-Si tiene problemas para visualizar imagenes en una conexión segura prueba editar el archivo 
-https://github.com/humano/milfs/blob/master/milfs/images/secure/index.php
-Linea 22 cambiando HTTP por HTTPS 
-
-
-
-Para que se muestren las imagenes por medio de la api.php en las versiones antes del 20150218 
-se debe hacer la siguiente entrada en el mysql:
-
-INSERT INTO `form_campos` (`id`, `id_especialista`, `id_empresa`, `campo_nombre`, `campo_descripcion`, `campo_tipo`, `campo_area`, `orden`, `activo`, `identificador`, `bloqueo`, `tipo_contenido`) VALUES
-(0, 0, 1, 'imagen', 'Campo especial para la imagen', 15, 0, 0, 1, 'imagen', 0, '');
-
-Para agregar el campo "Select Combo" en instancias que no hayan sido recien instaladas, ejecute este comando en MYSQL:
-
-INSERT INTO `form_tipo_campo` (`id_tipo_campo`, `tipo_campo_nombre`, `tipo_campo_accion`, `activo`) VALUES
-(9, 'Combo select', 'combo', 1);
+[+ Información sobre instalación y actualización](https://github.com/humano/milfs/wiki/Instalaci%C3%B3n-y-Actualizaci%C3%B3n)
 
 
 DISFRUTALO.
