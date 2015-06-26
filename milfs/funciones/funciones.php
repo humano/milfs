@@ -1680,7 +1680,7 @@ if (mysql_num_rows($sql)!='0'){
 			"; 
 										}
 			}
-		elseif($campo_tipo=='4'){ $contenido = "<a href='$contenido'>$contenido</a>";}
+		elseif($campo_tipo=='4'){ $contenido = "<a href='$contenido' target='_blank'>$contenido</a>";}
 		elseif($campo_tipo=='10'){
 			//$contenido = contenido_mostrar("$id","$contenido",'','5');
    		//	$valor_actual = contenido_mostrar("$row[id_campo]","$contenido",'','5');
@@ -2141,7 +2141,7 @@ $td .= "<td>$imagen</td>";
 						<img class='img-round '  src='http://api.tiles.mapbox.com/v4/examples.map-zr0njcqy/url-http%3A%2F%2F$_SERVER[HTTP_HOST]%2Fmilfs%2Fimages%2Ficonos%2Fnaranja.png($lat,$lon,$zoom)/$lat,$lon,$zoom/350x100.png?access_token=pk.eyJ1IjoiaHVtYW5vIiwiYSI6IlgyRTFNdFEifQ.OmQBXmcVg_zq-vMpr8P5vQ' >";
 											} else { $contenido ='';}
 			}
-			elseif($campo_tipo=='4'){ $contenido = "<a href='$contenido'>$contenido</a>";}
+			elseif($campo_tipo=='4'){ $contenido = "<a href='$contenido' target='_blank'>$contenido</a>";}
 			elseif($campo_tipo=='3' AND $contenido !=""){ $contenido = number_format($contenido);}
 			else {$contenido = Markdown("$contenido");}
 			
