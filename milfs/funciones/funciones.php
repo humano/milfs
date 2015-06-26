@@ -1,7 +1,225 @@
 <?php
 
+function importar_coleccion($form){
+$div ="confirmar_importacion";
+//$archivos = listado_archivos("$form[path]");
+//$archivos = listar_archivos("$form[path]",'cantidad','',$form);
+
+	$directorio = opendir("$form[path]"); //ruta actual
+$resultado = " ";
+while ($archivo = readdir($directorio)) //obtenemos un archivo y luego otro sucesivamente
+{
+    if (is_dir($archivo))//verificamos si es o no un directorio
+    {
+  //     $resultado .= "[".$archivo . "]<br />"; //de ser un directorio lo envolvemos entre corchetes
+    }
+    else
+    {$autor="";
+    	            	$ext = explode(".", $archivo);					$ext = strtolower($ext[count($ext) - 1]);					if ($ext == "jpeg") {$ext = "jpg";  }
+					if ($ext == "jpg") {
+						$cantidad_imagenes++ ;
+					
+					$exif = leer_exif("$form[path]/$archivo");
+					//$name = $exif['exif']['FileName']." ".$form['38']['0']."*" ;
+					$form['0']['0'] = "$archivo";
+					$autor= $exif['exif']['Artist'];
+					$creator = $form['40'][0];
+					if($autor !="" ) { $remplazo = array('40' => array("$autor")); }else{ $remplazo; }
+					
+											}
+					//$form = 	array_replace_recursive($form, $reemplazo);	
+        $resultado .= $archivo ." / $name ".$form['0'][0]."<br />";
+    }
+}
+
+/*
+foreach($form as $c=>$v){ 
+				
+//LISTA ELEMENTOS DE UN ARRAY
+if (is_array($v) ){
+	foreach($v as $C=>$V){
+				$campo .= "( $c  : $V )<br> ";
+			if($V != '') {
+								}
+				}
+}
+}
+*/
+//$resultado="$archivos $campo";
+    			$respuesta = new xajaxResponse('utf-8');
+			$respuesta->addAssign("$div","innerHTML","$resultado");
+			return $respuesta;
+			
+}
+$xajax->registerFunction("importar_coleccion");
+
+
+
+
+function listar_archivos( $path ,$opcion, $div,$datos){
+    // Abrimos la carpeta que nos pasan como parámetro
+
+    $resultado ="";
+    //$link = Conectarse();
+    $dir = opendir($path);
+    $cantidad =0;
+    $cantidad_imagenes =0;
+//$datos['61'] = array ( 0 => "otro valor");//"OTRO VALOR";
+		if(is_file($path)) {$esarchivo="Escriba la ruta a un directorio en el servidor<br>"; }
+    // Leo todos los ficheros de la carpeta
+    //if($esarchivo =="") {
+    //	$elemento = readdir($dir); 
+    	//}
+    while ($elemento = readdir($dir) ){
+    
+        // Tratamos los elementos . y .. que tienen todas las carpetas
+        if( $elemento != "." && $elemento != ".."){
+            // Si es una carpeta
+            if( is_dir($path.$elemento) ){
+                // Muestro la carpeta
+              //  $resultado .= "<p><strong>CARPETA: ". $elemento ."</strong></p>";
+            // Si es un fichero
+            } else {
+            	$ext = explode(".", $elemento);					$ext = strtolower($ext[count($ext) - 1]);					if ($ext == "jpeg") {$ext = "jpg";  }
+					if ($ext == "jpg") {$cantidad_imagenes++ ;
+					
+					$exif = leer_exif("$path/$elemento");
+					$name = $exif['exif']['FileName'];
+					$title= "$name ";
+					$date= $exif['exif']['DateTimeOriginal'];
+					$autor= $exif['exif']['Artist'];
+					if(!isset($autor)) { $autor = $datos['40'][0]; }
+					$licencia= $exif['exif']['Copyright'];
+					if($licencia ==="") {  }
+					else{
+//						$datos['61'][0]= " XX $licencia XXX"; 
+						}
+
+					
+					//$datos['61'][0] = $licencia;
+					if(isset($exif['exif']['UndefinedTag:0xC4A5'])) {
+                $exif['exif']['UndefinedTag:0xC4A5']= base64_encode($exif['exif']['UndefinedTag:0xC4A5']);
+																	}
+					if(isset($exif['exif']['MakerNote'])) {
+                $exif['exif']['MakerNote']= base64_encode($exif['exif']['MakerNote']);
+            													}
+            		 if ( $exif['lon'] =="" )
+            		 	{
+            		 				$geo = $datos['58'][0];	
+            		 				$mundo ="";	
+            		 				$datos['58'][0] = $datos['58'][0];
+			
+													}
+										else			{ 
+										$geo = "$exif[lon] $exif[lat] 18" ;//$datos['58'][0];
+										$mundo ="<i class='fa fa-globe'></i>";
+										$datos['58'][0]= "$geo";
+										
+										
+							}
+														
+				//	$remplazos = array('40');                	 
+                	// else { $mapa="";}
+					//$json = json_encode($exif['exif'],JSON_PRETTY_PRINT);
+					//if ( $exif['lon'] =="" ){$datos['58'][0] = $geo;}else {$datos['58'][0] = $datos['58'][0];}
+					$resultado .= "<li>$geo $mundo / ".$datos['58'][0]."  ".$datos['999'][0]." $title / $autor / ".$datos['61'][0]." ".$datos['68'][0]."</li>";
+
+				}
+
+         $cantidad ++;
+
+					$campo .= "";
+
+         
+            }
+        }
+
+    }
+    
+
+    if($div !="" ) {
+    	if($opcion == "cantidad") { 
+    	$resultado = "
+    	<div class='alert alert-warning'>
+    		$esarchivo <i class='fa fa-file'></i> <strong>$cantidad</strong> archivos, <i class='fa fa-picture-o'></i> <strong> $cantidad_imagenes </strong> imágenes jpg, <i class='fa fa-globe'></i> <strong>$mapa</strong>  georeferenciadas  
+    	</div>
+    	<div id='div_resultado'  style='max-height: 100px; overflow:auto'>
+    	<ol>
+    	$resultado
+    	</ol>
+    	</div>";
+    	}
+    		
+    			$respuesta = new xajaxResponse('utf-8');
+			$respuesta->addAssign("$div","innerHTML","$resultado");
+			return $respuesta;
+						}else {  
+						
+					
+						
+						  return " $campo $resultado"; }
+}
+$xajax->registerFunction("listar_archivos");
+
+
+
+// Convertir un string "1/123" a su representación float
+function exif_float($value) {
+  $pos = strpos($value, '/');
+  if ($pos === false) return (float) $value;
+  $a = (float) substr($value, 0, $pos);
+  $b = (float) substr($value, $pos+1);
+  return ($b == 0) ? ($a) : ($a / $b);
+} 
+
+function leer_exif($file){
+	//$file = "/var/www/html/milfs/images/gps.jpg";
+	 $exif = exif_read_data( "$file" );
+	 $resultado['exif'] = $exif;
+	 $resultado['file']= $file;
+	 $resultado['FileName']=$exif['FileName'];
+	 
+if($exif === false) {
+//return false;
+}
+
+if ( !empty($exif['GPSLongitude']) && !empty($exif['GPSLatitude']) ) {
+    $d = (float) $exif['GPSLongitude'][0];
+    $m = exif_float($exif['GPSLongitude'][1] );
+    $s = exif_float( $exif['GPSLongitude'][2] );
+     
+    $gps_longitude = (float)$d + $m/60 + $s/3600;
+    if ( $exif['GPSLongitudeRef'] == 'W')
+        $gps_longitude = -$gps_longitude;
+     
+    $d = $exif['GPSLatitude'][0];
+    $m = exif_float($exif['GPSLatitude'][1] );
+    $s = exif_float( $exif['GPSLatitude'][2] );
+     
+    $gps_latitude = (float)$d + $m/60 + $s/3600;
+    if ( $exif['GPSLatitudeRef'] == 'S')
+        $gps_latitude = -$gps_latitude;
+        if($gps_latitude !='') {
+        	$resultado['lat'] = $gps_latitude;
+        	$resultado['lon'] = $gps_longitude;
+
+  //$resultado =   "$_SESSION[url]/mapa.php?lon=$gps_latitude&lat=$gps_longitude&zoom=18";
+										  }else{}
+
+}
+
+										  
+			$resultado['DateTime'] = $exif['DateTimeOriginal'];
+        	$resultado['estado'] = "oK";
+        	
+//$resultado = "$gps_longitude $gps_latitude";        
+        
+        return $resultado;
+}
 
 function relacion_render($form_id,$id_campo,$valor,$cantidad){
+
+
 
 
 
@@ -244,7 +462,27 @@ function formulario_embebido($id){
 			$formulario_descripcion = remplacetas('form_id','id',$id,'descripcion') ;
 
 			$muestra_form = "<div class='container-fluid' id='contenedor_datos' > <h1 class='formulario_nombre'>$formulario_nombre[0]</h1>
-			<h2 class='formulario_descripcion'>$formulario_descripcion[0] </h2>$impresion</div>Poweredy by <a href='https://github.com/humano/milfs' target='milfs'><img width='30px' src='http://qwerty.co/demo/images/logo.png'> MILFS</a>";
+			<h2 class='formulario_descripcion'>$formulario_descripcion[0] </h2>$impresion</div>Poweredy by <a href='https://github.com/humano/milfs' target='milfs'><!-- <img width='30px' src='http://qwerty.co/demo/images/logo.png'> --> MILFS</a>";
+			return $muestra_form ;
+}
+
+ 
+function formulario_embebido_campos($id,$opcion){
+			$impresion = formulario_modal("$id",$form_respuesta,$control,"$opcion");
+
+			$formulario_nombre = remplacetas('form_id','id',$id,'nombre') ;
+			$formulario_descripcion = remplacetas('form_id','id',$id,'descripcion') ;
+	
+			$muestra_form = "
+			<div class='container-fluid' id='contenedor_datos' > 
+				<h3 class='formulario_nombre'>$formulario_nombre[0]</h3>
+				<p class='formulario_descripcion'>$formulario_descripcion[0] </p>
+					$impresion
+			</div>
+			<div class='pie'>
+				Poweredy by <a href='https://github.com/humano/milfs' target='milfs'><img width='30px' src='http://qwerty.co/demo/images/logo.png'> MILFS</a>
+			</div>
+			<br>";
 			return $muestra_form ;
 }
 
@@ -1426,7 +1664,7 @@ if (mysql_num_rows($sql)!='0'){
 		$contenido = formulario_valor_campo("$id","$row[id_campo]","","$control",'');
 		$md5_contenido = $contenido[4];
 		$contenido = $contenido[3];
-		//$contenido = Markdown($contenido);
+		
 		
 		if($campo_tipo=='15' AND $tipo==""){if($contenido !=""){$contenido = "<img class='img-responsive' src='http://$_SERVER[HTTP_HOST]/milfs/images/secure/?file=600/$contenido'>"; }else{$contenido="";}}
 				
@@ -1455,7 +1693,7 @@ if (mysql_num_rows($sql)!='0'){
 	$html ="$contenido";
 
 	$contenido = nl2br($html);
-			//$contenido = Markdown($contenido);
+			$contenido = Markdown($contenido);
 			}
 	$campo_nombre =  remplacetas('form_campos','id',$row[id_campo],'campo_nombre');
 	$nombre[$row[id_campo]] = $campo_nombre[0] ;
@@ -1891,6 +2129,7 @@ $td .= "<td>$imagen</td>";
 			if($size > $limite) {
 			$contenido = substr($contenido,0, $length = 300)."... ";//$contenido;
 										}
+			if($campo_tipo=='15' AND $tipo==""){if($contenido !=""){$contenido = "<img class='img-responsive' src='http://$_SERVER[HTTP_HOST]/milfs/images/secure/?file=600/$contenido'>"; }else{$contenido="";}}
 			if($campo_tipo=='14'){
 				if($contenido !='') {
 													$campos = explode(" ",$contenido);
@@ -1902,12 +2141,17 @@ $td .= "<td>$imagen</td>";
 						<img class='img-round '  src='http://api.tiles.mapbox.com/v4/examples.map-zr0njcqy/url-http%3A%2F%2F$_SERVER[HTTP_HOST]%2Fmilfs%2Fimages%2Ficonos%2Fnaranja.png($lat,$lon,$zoom)/$lat,$lon,$zoom/350x100.png?access_token=pk.eyJ1IjoiaHVtYW5vIiwiYSI6IlgyRTFNdFEifQ.OmQBXmcVg_zq-vMpr8P5vQ' >";
 											} else { $contenido ='';}
 			}
+			elseif($campo_tipo=='4'){ $contenido = "<a href='$contenido'>$contenido</a>";}
+			elseif($campo_tipo=='3' AND $contenido !=""){ $contenido = number_format($contenido);}
+			else {$contenido = Markdown("$contenido");}
+			
 			}
 
 
 	if($tipo=="titulos") {
 $td .= "<th> $contenido </th>";	
 	}else{
+		
 	$td .= "<td> $contenido </td>";
 	}
 															}
@@ -3765,6 +4009,7 @@ $subir_imagen = subir_imagen('',"$campo_imagen"."[0]");
 		$campos = formulario_campos_render($row[id_campo],$id,$control_edit,'');									
 										}
 	$muestra_form .= "$campos ";
+	$solo_campos .= $campos; 
 															}
 	$muestra_form .="<br><div class='row' id='respuesta_$control' name='respuesta_$control' ></div>
 	<div class='row'>
@@ -3782,7 +4027,9 @@ $muestra_form .="
 
 		</form>
 		</div>";
-
+if($tipo=='campos') {
+	return $solo_campos;
+}
 if($tipo=='embebido') {
 	return $muestra_form;
 }

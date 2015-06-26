@@ -6,6 +6,7 @@ $xajax = new xajax();
 require ('funciones/funciones.php');
 require ('funciones/convert.php');
 require ('funciones/login.php');
+require ("includes/markdown.php");
 
 $xajax->processRequests(); 
 //$xajax->debugOn('');
@@ -72,6 +73,12 @@ if (isset($_REQUEST['t'])) {$t = $_REQUEST['t'];} else {$t = "";}
 ?>
 </head>
 <body  >
+      <script src="js/jquery.min.js"></script>
+  <script src="js/bootstrap.js"></script>
+  <script src="js/markdown.js"></script>
+  <script src="js/to-markdown.js"></script>
+  <script src="js/bootstrap-markdown.js"></script>
+      <script src="js/scripts.js"></script>
 <?php if($form !='') { echo formulario_embebido($form);
 }else{
 
@@ -189,12 +196,7 @@ if($_REQUEST[id] !=''){$onload ="<script type=\"text/javascript\"> xajax_formula
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-      <script src="js/jquery.min.js"></script>
-  <script src="js/bootstrap.js"></script>
-  <script src="js/markdown.js"></script>
-  <script src="js/to-markdown.js"></script>
-  <script src="js/bootstrap-markdown.js"></script>
-      <script src="js/scripts.js"></script>
+
 <!-- <script src="js/jquery.min.js"></script> 
 <script src="js/bootstrap.min.js"></script>
     <script src="js/scripts.js"></script>
