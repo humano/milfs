@@ -1666,7 +1666,7 @@ if (mysql_num_rows($sql)!='0'){
 		$contenido = $contenido[3];
 		
 		
-		if($campo_tipo=='15' AND $tipo==""){if($contenido !=""){$contenido = "<img class='img-responsive' src='http://$_SERVER[HTTP_HOST]/milfs/images/secure/?file=600/$contenido'>"; }else{$contenido="";}}
+		if($campo_tipo=='15' AND $tipo==""){if($contenido !=""){$contenido = strip_tags($contenido); $contenido = "<img class='img-responsive' src='http://$_SERVER[HTTP_HOST]/milfs/images/secure/?file=600/$contenido'>"; }else{$contenido="";}}
 				
 		elseif($campo_tipo=='14'){
 			if($contenido !='') {
@@ -1697,7 +1697,8 @@ if (mysql_num_rows($sql)!='0'){
 			}
 	$campo_nombre =  remplacetas('form_campos','id',$row[id_campo],'campo_nombre');
 	$nombre[$row[id_campo]] = $campo_nombre[0] ;
-	$campo[$row[id_campo]]=$contenido;
+	if($row[id_campo] =='0'){	$contenido = strip_tags($contenido);		}
+		$campo[$row[id_campo]]=$contenido;
 	$campo_400[$row[id_campo]] = substr($contenido,0, $length = 400)."... ";//$contenido;
 	$campo_80[$row[id_campo]] = substr($contenido,0, $length = 80);//$contenido;
 	$campo_55[$row[id_campo]] = substr($contenido,0, $length = 55);//$contenido;
@@ -2129,7 +2130,7 @@ $td .= "<td>$imagen</td>";
 			if($size > $limite) {
 			$contenido = substr($contenido,0, $length = 300)."... ";//$contenido;
 										}
-			if($campo_tipo=='15' AND $tipo==""){if($contenido !=""){$contenido = "<img class='img-responsive' src='http://$_SERVER[HTTP_HOST]/milfs/images/secure/?file=600/$contenido'>"; }else{$contenido="";}}
+			if($campo_tipo=='15' AND $tipo==""){if($contenido !=""){$contenido = strip_tags($contenido); $contenido = "<img class='img-responsive' src='http://$_SERVER[HTTP_HOST]/milfs/images/secure/?file=600/$contenido'>"; }else{$contenido="";}}
 			if($campo_tipo=='14'){
 				if($contenido !='') {
 													$campos = explode(" ",$contenido);
