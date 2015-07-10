@@ -7,6 +7,7 @@ $xajax = new xajax();
 require ('milfs/funciones/funciones.php');
 require ('milfs/funciones/convert.php');
 require ('milfs/funciones/login.php');
+require ("milfs/funciones/conex.php");
 $xajax->processRequests(); 
 $logo = remplacetas('empresa','id','1','imagen') ;
 $direccion = remplacetas('empresa','id','1','direccion') ;

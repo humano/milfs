@@ -5,6 +5,7 @@ require ('xajax/xajax.inc.php');
 $xajax = new xajax();
 require ('funciones/funciones.php');
 require ('funciones/convert.php');
+require ("funciones/conex.php");
 $xajax->processRequests(); 
 if($_REQUEST[id2] =='') {$agregar= $_REQUEST[id];}else {$agregar = $_REQUEST[id2];}
 $formulario_nombre = remplacetas('form_id','id',$_REQUEST[id],'nombre') ;

@@ -6,6 +6,7 @@ $xajax = new xajax();
 require ('funciones/funciones.php');
 require ('funciones/convert.php');
 require ('funciones/login.php');
+require ("funciones/conex.php");
 $xajax->processRequests(); 
 
 ?>
