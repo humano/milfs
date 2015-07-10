@@ -24,9 +24,9 @@ $xajax->processRequests();
 	<link href="css/font-awesome/css/font-awesome.css" rel="stylesheet">
  <link href="http://getbootstrap.com/examples/sticky-footer-navbar/sticky-footer-navbar.css" rel="stylesheet">
 
-<script src="http://cdn.leafletjs.com/leaflet-0.7/leaflet.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.js"></script>
 
-<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7/leaflet.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.css" />
 <link href="css/bootstrap.min.css" rel="stylesheet">
 <link href="css/estilos.php" rel="stylesheet">
   <style type="text/css">
