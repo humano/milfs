@@ -4,9 +4,9 @@
 <meta charset=utf-8 />
 <title>Display latitude longitude on marker movement</title>
 
-<script src="https://cdn.leafletjs.com/leaflet-0.7/leaflet.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.js"></script>
 
-<link rel="stylesheet" href="https://cdn.leafletjs.com/leaflet-0.7/leaflet.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.css" />
 <style>
   body { margin:0; padding:0; }
   #map {width: 100%;height: 280px;}
@@ -26,7 +26,7 @@
 <script>
 var map = L.map('map')
     .setView([<?php echo $lon ?>, <?php echo $lat ?>], <?php echo $zoom ?>);
-L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
 //var lat = window.parent.document.getElementById('lat');
 //var lng = window.parent.document.getElementById('lon');
