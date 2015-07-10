@@ -22,8 +22,8 @@ $xajax->processRequests();
     <link rel="shortcut icon" href="favicon-152.png">
 	<link rel="apple-touch-icon-precomposed" href="favicon-152.png">
 	<link href="css/font-awesome/css/font-awesome.css" rel="stylesheet">
- <link href="http://getbootstrap.com/examples/sticky-footer-navbar/sticky-footer-navbar.css" rel="stylesheet">
-
+	<link href="css/sticky-footer-navbar.css" rel="stylesheet">
+ 
 <script src="http://cdn.leafletjs.com/leaflet-0.7/leaflet.js"></script>
 
 <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7/leaflet.css" />
