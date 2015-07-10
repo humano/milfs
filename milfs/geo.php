@@ -24,9 +24,9 @@ $xajax->processRequests();
 	<link href="css/font-awesome/css/font-awesome.css" rel="stylesheet">
  <link href="http://getbootstrap.com/examples/sticky-footer-navbar/sticky-footer-navbar.css" rel="stylesheet">
 
-<script src="http://cdn.leafletjs.com/leaflet-0.7/leaflet.js"></script>
+<script src="https://cdn.leafletjs.com/leaflet-0.7/leaflet.js"></script>
 
-<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7/leaflet.css" />
+<link rel="stylesheet" href="https://cdn.leafletjs.com/leaflet-0.7/leaflet.css" />
 <link href="css/bootstrap.min.css" rel="stylesheet">
 <link href="css/estilos.php" rel="stylesheet">
   <style type="text/css">
@@ -37,13 +37,13 @@ $xajax->processRequests();
 }
   </style>
 
-  <script src="http://code.jquery.com/jquery-2.1.0.min.js"></script>
+  <script src="https://code.jquery.com/jquery-2.1.0.min.js"></script>
   <link rel="points" type="application/json" href="json.php?id=<?php echo $_REQUEST["id"] ?>">
 </head>
 <body>
   <div id="cupcake-map"></div>
   <script>
-  var cupcakeTiles = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  var cupcakeTiles = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZooom: 18  
   });
 
