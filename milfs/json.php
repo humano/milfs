@@ -5,6 +5,7 @@ $xajax = new xajax();
 require ('funciones/funciones.php');
 require ('funciones/convert.php');
 require ("includes/markdown.php");
+require ("funciones/conex.php");
 
 	$fecha_inicio = mysql_seguridad($_REQUEST[inicio]);
 	$fin = mysql_seguridad($_REQUEST[fin]);

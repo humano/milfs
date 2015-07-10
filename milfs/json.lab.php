@@ -4,6 +4,7 @@ require ('xajax/xajax.inc.php');
 $xajax = new xajax();
 require ('funciones/funciones.php');
 require ('funciones/convert.php');
+require ("funciones/conex.php");
 
 	$fecha_inicio = mysql_seguridad($_REQUEST[inicio]);
 	$fin = mysql_seguridad($_REQUEST[fin]);

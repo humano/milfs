@@ -4,6 +4,7 @@ require ('xajax/xajax.inc.php');
 $xajax = new xajax();
 //require ('json.lab.php');
 require ('funciones/funciones.php');
+require ("funciones/conex.php");
 //require_once ('milfs/includes/markdown.php');
 //require ('funciones/convert.php');
 $xajax->processRequests(); 
