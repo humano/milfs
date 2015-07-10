@@ -2675,7 +2675,7 @@ if (mysql_num_rows($sql)==0){
 if (mysql_num_rows($sql)!=0){
 		$total_registros = mysql_num_rows($sql);
 	if($formato=='csv'){ 
-		$nombre_archivo ="tmp/Formulario_".mktime()."_".$_SESSION['id'].".csv";
+		$nombre_archivo ="/tmp/Formulario_".mktime()."_".$_SESSION['id'].".csv";
 		$boton_descarga ="<a class='btn btn-default btn-success' href='$nombre_archivo'>Descargar <i class='fa fa-cloud-download'></i></a>";
 			$archivo_reporte=fopen($nombre_archivo , "w");
 				$encabezado =";;Periodo\n;;$inicio\n;;$fin \n ";
