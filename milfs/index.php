@@ -7,7 +7,7 @@ require ('funciones/funciones.php');
 require ('funciones/convert.php');
 require ('funciones/login.php');
 require ("includes/markdown.php");
-
+require ("funciones/conex.php");
 $xajax->processRequests(); 
 //$xajax->debugOn('');
 if (isset($_REQUEST['form'])) {$form = $_REQUEST['form'];} else {$form = "";}
