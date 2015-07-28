@@ -1,6 +1,123 @@
 <?php
 
+function buscar_datos($valores,$id_form,$plantilla,$div){
+	$valores = mysql_seguridad($valores);
+	if (is_array($valores) ){
+	$valor = $valores['valor'];
+									}
+	else {$valor=$valores;}
+if($valor =='') {
+$resultado="
+<div class='col-sm-3 col-md-3'>
+	<form class='navbar-form' role='search' id='formulario_buscar_datos' name='formulario_buscar_datos'>
+		<div class='form-group'>
+			<div class='input-group'>
+				<input placeholder='Escribe para buscar' class='form-control' id='valor' name= 'valor'>
+				<div class='input-group-btn'>
+				<div class='btn btn-default' onclick =\"xajax_buscar_datos(xajax.getFormValues('formulario_buscar_datos'),'$id_form','$plantilla','$div'); \"><i class='glyphicon glyphicon-search'></i></div>
+				</div>
+			</div>
+		</div>
+	</form>
+</div>
+";
+return $resultado;
+						}else{
+if($id_form !="") {$w_form ="form_id = '$id_form' AND ";}
+$consulta ="SELECT * FROM  form_datos WHERE $w_form contenido like '%%$valor%%' group by control LIMIT 200  ";
+$link=Conectarse(); 
+mysql_query("SET NAMES 'utf8'");
+$sql=mysql_query($consulta,$link);
+if (mysql_num_rows($sql)!=0){
+mysql_data_seek($sql, 0);
+$fila=1;
+$divider=3;
+$cols = (12/$divider);
+$i =0;
+while( $row = mysql_fetch_array( $sql ) ) {
+if($i % $divider==0) {
 
+		$encontrados .= "
+		
+						<div class='container-fluid ' role='row' id='grid_$i'  style=''>
+
+							";
+								}
+			$i++;
+    /*       $contenido = htmlentities($row[contenido]);
+   						$p  = stripos($contenido, $valor);
+                    $s1 = substr($contenido, 0, $p);
+                    $s2 = substr($contenido, $p, strlen($valor));
+                    $s3 = substr($contenido, ($p + strlen($valor)));
+                    $r = $s1."<font color='red'>$s2</font>".$s3;
+                    */
+   $datos = contenido_mostrar("$row[form_id]","$row[control]",'',"$plantilla");
+	$contenido ="<div class='col-sm-$cols' style=''>$datos</div>";     	
+	
+	$encontrados .="$contenido";
+	$fila++;
+	if( $i % $divider==0) {
+			$encontrados .= "</div>	";
+								}
+														}
+										}
+$resultado .="<div class='container-fluid'><h1>Resultados de: $valor</h1>$encontrados  </div>  ";						
+$respuesta = new xajaxResponse('utf-8');
+$respuesta->addAssign("$div","innerHTML",$resultado);
+			return $respuesta;
+			
+						}
+}
+$xajax->registerFunction("buscar_datos");
+
+function datos_grid($id_form,$filtro,$valor,$plantilla) {
+
+	if($valor !=""){
+$md5_valor = $valor;
+if($filtro !='' ){$w_filtro =" AND id_campo = '$filtro' AND md5(binary contenido) = '$md5_valor'  ";}
+}
+$consulta= "SELECT * FROM form_datos WHERE form_id= '$id_form' $w_filtro GROUP BY control LIMIT 250";
+$link=Conectarse(); 
+mysql_query("SET NAMES 'utf8'");
+//mysql_real_escape_string($consulta);
+$sql=mysql_query($consulta,$link);
+		$descripcion = remplacetas('form_id','id',$id_form,'descripcion',"") ;
+		$descripcion = $descripcion[0];
+		$buscador  = buscar_datos("","$id_form","$plantilla","grid_resultado");
+		$contenido = "$descripcion";
+if (mysql_num_rows($sql)!=0){
+mysql_data_seek($sql, 0);
+$fila=1;
+$divider=3;
+$cols = (12/$divider);
+$i =0;
+
+while( $row = mysql_fetch_array( $sql ) ) {
+			if($i % $divider==0) {
+
+		$contenido .= "
+		
+						<div class='container-fluid ' role='row' id='grid_$i'  style=''>
+
+							";
+								}
+			$i++;
+$datos = contenido_mostrar("$id_form","$row[control]",'',"$plantilla");
+$contenido .="<div class='col-sm-$cols' style=''>$datos</div>";
+$fila++;
+	if( $i % $divider==0) {
+			$contenido .= "</div>	";
+								}
+	
+}
+									}
+									$resultado =" <br>$buscador  <div id='grid_resultado'>  $contenido</div><br>";
+$respuesta = new xajaxResponse('utf-8');
+$respuesta->addAssign("contenedor","innerHTML",$resultado);
+			return $respuesta;
+} 
+$xajax->registerFunction("datos_grid");
+	
 
 function insertar_registro($tabla,$formulario,$div,$principal) {
 	//$valores ="$formulario[0]";
@@ -75,9 +192,9 @@ $resultado = "$muestra_form";
 			return $campos;
 			
 }
-function formulario_areas($perfil){
 
-			$tipo ="embebido";
+function formulario_areas($perfil,$tipo){
+	//		$tipo ="embebido";
 	if(func_get_arg(2)=='respuesta'){$control =func_get_arg(3);}else{
 $control = md5(rand(1,99999999).microtime());
 }
@@ -216,20 +333,20 @@ $muestra_form .="
 
 		</form>
 		</div>";
-/*if($tipo=='campos') {
-	return $solo_campos;
+if($tipo=='campos') {
+	return $resultado_campos;
 }
 if($tipo=='embebido') {
 	return $muestra_form;
 }
-*/
+
 /// fin cierre form
 									//	$resultado .= "$consulta";
 //$respuesta->addAssign($div,"style.display","block");
 //$respuesta->addAssign($div,"innerHTML",$resultado);
 //return $respuesta;
  //print $muestra_form;
- return $muestra_form;
+// return $muestra_form;
 	}
 	
 	$xajax->registerFunction("formulario_areas");
@@ -594,6 +711,76 @@ $resultado .= "</select>
 }
 $xajax->registerFunction("relacion_render");
 
+function buscador_campo($id_campo,$form_id,$valor,$name,$control,$tipo){
+$div ="div_buscador_$name";
+$onchange = " xajax_buscador_select('$id_campo','$form_id',(this.value),'$name','$control','$tipo'); document.getElementById('$name').value='';";
+$onclick = " xajax_buscador_select('$id_campo','$form_id','','$name','$control','$tipo'); document.getElementById('$name').value=''; (this).value='';";
+$resultado ="
+	<input class='form-control' name='buscador_$name' id='buscador_$name' onclick= \"$onclick \" onkeyup=\"$onchange\"  >
+	<input type='hidden' class='form-control' name='$name' id='$name'   >
+<div id='$div'></div>";
+return $resultado;
+
+}
+$xajax->registerFunction("buscador_campo");
+
+
+function buscador_select($id_campo,$form_id,$valor,$name,$control,$tipo){
+	$div ="div_buscador_$name";
+	$respuesta = new xajaxResponse('utf-8');
+	if($valor=="") {
+			$respuesta->addAssign("$div","innerHTML","$resultado");
+			return $respuesta;
+		}
+$link=Conectarse(); 
+mysql_query("SET NAMES 'utf8'");
+
+$claves = remplacetas("form_campos_valores","id_form_campo","$id_campo","campo_valor","");
+$claves = $claves[0];
+		$claves = explode(' ',$claves);
+		$formulario = explode(':',$claves[0]) ;
+			$formulario = $formulario[1];
+		$key = explode(':',$claves[1]) ;
+			$key = $key[1];
+		$descripcion = explode(':',$claves[2]) ;
+			$descripcion = $descripcion[1];
+
+if($valor !="") {
+$valor_actual = contenido_mostrar("$formulario",$valor,'','5');
+}
+
+$consulta = "SELECT contenido, control  FROM form_datos WHERE form_id ='$formulario' and (id_campo ='$key' OR id_campo ='$descripcion' )AND contenido like '$valor%%%' GROUP BY control limit 50 ";
+
+$sql=mysql_query($consulta,$link);
+
+if (mysql_num_rows($sql)!='0'){
+
+while( $row = mysql_fetch_array( $sql ) ) {
+$campo_descripcion= remplacetas("form_datos","control","$row[control]","contenido"," id_campo = '$descripcion' ");
+$campo_key= remplacetas("form_datos","control","$row[control]","contenido"," id_campo = '$key' ");
+		if($row[control] == "$valor") {
+
+					$selected = "selected";
+					}else{ $selected = "";}
+		$resultado .= "<li><a onclick=\"	document.getElementById('$name').value='$campo_key[0]';
+													document.getElementById('buscador_$name').value='$campo_key[0] - $campo_descripcion[0]';
+													xajax_limpia_div('$div') \">
+									<strong>$campo_key[0]</strong> $campo_descripcion[0] </a> </li>";
+
+															}
+
+$resultado .= "
+		<div id='$div'></div>";
+										}else{$resultado = "<div class='alert alert-warning'><i class='fa fa-exclamation-triangle'></i> No hay resultados </div>";}
+
+
+
+			$respuesta->addAssign("$div","innerHTML","$resultado");
+			return $respuesta;
+
+}
+$xajax->registerFunction("buscador_select");
+
 
 
 function relacion_select($id_campo,$form_id,$valor,$name,$control,$tipo){
@@ -609,6 +796,7 @@ $claves = $claves[0];
 			$key = $key[1];
 		$limit = explode(':',$claves[2]) ;
 			$limit = $limit[1];
+						if($limit =="" ) {$limit = 20;}
 if($valor !="") {
 $valor_actual = contenido_mostrar("$formulario",$valor,'','5');
 }
@@ -1205,7 +1393,7 @@ return " $presentacion";
 }
 $xajax->registerFunction("aplicacion_presentacion");
 
-function aplicaciones_listado($id_form,$tipo){
+function aplicaciones_listado($id_form,$tipo,$div){
 
 //		if($id_empresa !=''){ $_empresa = " ";}
 		//if($tipo =='publico'){ $w_publico =" publico ='0'";}else {$w_publico =" publico ='1'";}
@@ -1230,7 +1418,8 @@ if (mysql_num_rows($sql)!='0'){
 $fila=0;
 while( $row = mysql_fetch_array( $sql ) ) {
 	 if ( isset ( $_SESSION['id'] ) ) {	
-	$botonera ="<a style ='font-size:20px;'  title='Agregar contenido' class='link '  onclick=\"xajax_formulario_modal('$row[id]','','',''); \"><i class='fa fa-plus-circle '></i> </a>" ;
+	$botonera ="<a style ='font-size:20px;'  title='Agregar contenido' class='link '  onclick=\"xajax_formulario_modal('$row[id]','','',''); \">
+	<i class='fa fa-plus-circle '></i> </a>" ;
 												}else {$botonera='';}
 			if($i % $divider==0) {$resultado_inicial = "<div class='row '  id='grid' style=''>";}
 			$i++;
@@ -1242,9 +1431,9 @@ while( $row = mysql_fetch_array( $sql ) ) {
 $nombre = $row[nombre];
 $contenido_listado = contenido_listado("$row[id]");
 if($row[nombre] =="Portada") {
-$nombre = '<i class="fa fa-home"></i>';
+$nombre = '';
 $resultado_nav .= "<li class='dropdown' >
-<a href='#' onclick=\"xajax_contenido_parallax('$row[id]');\" class='dropdown-toggle' data-toggle=''> $nombre </a>
+<a  href='#' onclick=\"xajax_contenido_parallax('$row[id]');\" class='dropdown-toggle' data-toggle=''> $nombre </a>
 							$contenido_listado
 							";
 }
@@ -1257,7 +1446,7 @@ $resultado_nav .= "<li class='dropdown' >
 										}										
 										else{
 $resultado_nav .= "<li class='dropdown' >
-							<a href='#' onclick=\"xajax_contenido_parallax('$row[id]');\" class='dropdown-toggle' data-toggle=''> $nombre </a>
+							<a class='dropdown-toggle' data-toggle='dropdown' role='button' aria-haspopup='true' aria-expanded='false' href='#' onclick=\"xajax_contenido_parallax('$row[id]');\" class='dropdown-toggle' data-toggle=''> $nombre </a>
 							$contenido_listado
 							";
 						}
@@ -1313,7 +1502,15 @@ else { $color_aleatorio = sprintf("%02X", mt_rand(0, 0xFFFFFF)); $bg = "backgrou
 
 if($tipo =='li') { return $resultado_li.$resultado;}
 elseif($tipo =='nav') { return $resultado_nav;}
-elseif($tipo =='grid') { return $resultado_grid;}
+elseif($tipo =='grid') { 
+if($div !="") {
+		$respuesta = new xajaxResponse('utf-8');
+				$respuesta->addAssign("$div","innerHTML","$resultado_grid");
+		return $respuesta;
+					}else{
+		return $resultado_grid;
+							}
+}
 elseif($tipo =='banner') { return $resultado_banner;}
 elseif($tipo =='carrusel') { return $resultado_carrusel;}
 else {return $resultado;}
@@ -1401,26 +1598,28 @@ $link=Conectarse();
 $sql=mysql_query($consulta,$link);
 if (mysql_num_rows($sql)!='0'){
 	$control = mysql_result($sql,0,control);
-	//$contenido = "<ul class='dropdown-menu' role='menu'>";
+	$contenido = "";
 		mysql_data_seek($sql, 0);
-				$contenido = " 
 
-";
 				$orden = 0;
 while( $row = mysql_fetch_array( $sql ) ) {
 	//$orden = $orden+500;
 	$identificador = explode(',',$row[identificador]);
 	$identificador = $identificador[0];
-	$contenido_desplegado = contenido_mostrar("$row[form_id]","$row[control]",'');
+	$contenido_desplegado = contenido_mostrar("$row[form_id]","$row[control]",'','contenido');
 
 	$titulo = remplacetas('form_datos','id',$identificador,'contenido',"") ;
-		$nav_li .="<li><a href='#$row[control]'>$titulo[0]</a></li>";
+		$nav_li .="<li class='dropdown' >
+						<a class='menu'  href='#$row[control]'>$titulo[0]
+						
+						</a>
+					</li>";
 		$style .=" a[id= '$row[control]']:target ~ #main_$id article.article 
 								{
 							    -webkit-transform: translateY(-$orden"."px);
 							    transform: translateY( -$orden"."px );
 						    	} ";
-		$links .= " <a id='$row[control]'></a>";
+		$links .= " <a   id='$row[control]'></a>";
 	$contenido  .= "
   
 							$contenido_desplegado 
@@ -1434,8 +1633,7 @@ while( $row = mysql_fetch_array( $sql ) ) {
 	$style
  	.article {
     width: 100%;
-    height: 800px;
-    z-index:0; 
+     z-index:0; 
     -webkit-transform: translateZ( 0 );
     transform: translateZ( 0 );
     -webkit-transition: -webkit-transform 2s ease-in-out;
@@ -1445,7 +1643,7 @@ while( $row = mysql_fetch_array( $sql ) ) {
 }
  	</style>
  	 $links
-<header class='nav' style='left:40px;  position: fixed;z-index: 10;' >
+<!-- <header class='nav' style='' >
 	<nav class='navbar navbar-default submenu'>
 	   
 	       
@@ -1453,8 +1651,11 @@ while( $row = mysql_fetch_array( $sql ) ) {
 	       
 	   
 	</nav>
-</header>
-        <section id='main_$id'>$contenido</section>";
+</header> -->
+        <section id='main_$id'>$contenido</section>
+
+       
+        ";
 										}
 
 //return " $contenido";
@@ -1548,7 +1749,8 @@ while( $row = mysql_fetch_array( $sql ) ) {
 	$identificador = explode(',',$row[identificador]);
 	$identificador = $identificador[0];
 	$titulo = remplacetas('form_datos','id',$identificador,'contenido',"") ;
-	$contenido  .= "<li><a href='#$row[control]'  >$titulo[0] </a> </li>"; 
+	$contenido  .= "<li  class='menu'>
+							<a class='menu' href='#$row[control]'  >$titulo[0] </a> </li>"; 
 														}
  	$contenido .= "</ul>";
 										}
@@ -1582,7 +1784,7 @@ $consulta ="SELECT * FROM  form_datos WHERE form_id = '$id' ORDER BY rand() limi
 $sql=mysql_query($consulta,$link);
 if (mysql_num_rows($sql)!='0'){
 	$control = mysql_result($sql,0,"control");
-	$contenido = formulario_imprimir("$id","$control","c3p"); 
+	$contenido = formulario_imprimir("$id","$control","contenido"); 
 }
 return $contenido.$control;
 
@@ -1860,6 +2062,36 @@ if($div !='') {
 $xajax->registerFunction("eliminar_campo");
 
 
+function insertar_campo($tabla,$formulario,$div) {
+	//$valores ="$formulario[0]";
+	$nombre = $formulario['nombre'];
+	foreach($formulario as $c=>$v){ 
+	
+	$valores .= " $c = '$v',";
+	}
+	$valores = "$valores id_empresa = '$_SESSION[id_empresa]'";
+	$key = limpiar_caracteres($key);
+$respuesta = new xajaxResponse('utf-8');
+	$link=Conectarse(); 
+	mysql_query("SET NAMES 'utf8'");
+	$insertar = "INSERT INTO $tabla set $valores";
+//	$edit = "UPDATE  $tabla SET  $campo =  '$valor' WHERE id = '$key' limit 1; ";
+	$sql=mysql_query($insertar,$link);
+		if(mysql_affected_rows($link) != 0){
+
+														}
+if($div !='') {
+	//$respuesta->addAssign($div,"innerHTML","");
+
+				}
+	//$respuesta->addAlert("$insertar");
+//$areas = tabla_areas('form_areas','id','nombre,descripcion,estado,orden','',"",'Areas','');
+//	$respuesta->addScript("javascript:xajax_tabla_areas('form_areas','id','nombre,descripcion,estado,orden','','','Areas','div_campos')");
+		$respuesta->addAssign("$div","innerHTML","<div class='alert alert-success'>El registro se insertó con éxito</div>");
+									return $respuesta;					
+}
+$xajax->registerFunction("insertar_campo");
+
 function insertar_campo_area($tabla,$formulario,$div) {
 	//$valores ="$formulario[0]";
 	$nombre = $formulario['nombre'];
@@ -2060,7 +2292,14 @@ if (mysql_num_rows($sql)!='0'){
 				$valor_actual = relacion_render("$id","$row[id_campo]",$contenido,'5');
    				//$value = 	remplacetas('form_datos','id',$id_dato,'contenido'," control = '$control'") ;
 			 $contenido = "$valor_actual";}
-		elseif($campo_tipo=='5' AND $contenido !=""){ $contenido = "<iframe  width='100%' height='100%'  class= 'iframe-media' src=\"$contenido\" frameborder='0' allowFullScreen ></iframe>";}
+		elseif($campo_tipo=='5' AND $contenido !=""){ 
+		if($tipo =="") {
+		$contenido = trim($contenido); $contenido = "<iframe  width='100%' height='100%'  class= 'iframe-media' src=\"$contenido\" frameborder='0' allowFullScreen ></iframe>";
+							}else {
+						$contenido =$contenido;
+					}
+				}
+		//elseif($campo_tipo=='5' AND $contenido !=""){ $contenido = trim($contenido); $contenido = "<video width='100%' height='100%' ><source src=\"$contenido\" type='video/mp4'>Video no soportado</video>";}
 		else {
 	$html ="$contenido";
 
@@ -2110,20 +2349,24 @@ if (mysql_num_rows($sql)!='0'){
 	//$resultado .=" </div>	<!-- <div class='badge pull-right'>Datos registrados el $fecha </div> -->	";
 }else {$resultado ="No hay datos ";}
 //if($id=="6" OR $id=="10") {
-	
+	if($tipo !="" AND (!is_numeric($tipo))  ) {
 ////Usa una plantilla apra cada id 
-//$plantilla = remplacetas('parametrizacion','campo',$id,'descripcion'," tabla='form_id' and  opcion = 'plantilla:$tipo'") ;
-
+$plantilla = remplacetas('parametrizacion','campo',$id,'descripcion'," tabla='form_id' and  opcion = 'plantilla:$tipo'") ;
+if($plantilla[0] =="") {
 ///Usa una plantilla generica por nombre
-$plantilla = remplacetas('parametrizacion','opcion',"plantilla:$tipo",'descripcion',"campo = '$id' ") ;
+$plantilla = remplacetas('parametrizacion','opcion',"plantilla:$tipo",'descripcion',"campo = ''") ;
+//$plantilla = remplacetas('parametrizacion','opcion',"plantilla:$tipo",'descripcion',"campo = '$id' ") ;
+}
 if($plantilla[0] !='') { $plantilla = $plantilla[0] ;}
-else {
+/*else {
 $plantilla = remplacetas('parametrizacion','opcion',"plantilla:$tipo",'descripcion',"") ;
 $plantilla= $plantilla[0];
 		}
+		*/
+	}
 if($plantilla != ""){
 eval("\$plantilla = \"$plantilla \";");
-	$full =" $plantilla	";
+	$full =" $plantilla	 ";
 							}else {
 	$full= "<div class='$class'>$resultado</div>";							
 							}
@@ -2163,7 +2406,7 @@ function subir_imagen($respuesta,$id){
 
 ///vinculado con la funcion de javascript resultadoUpload(estado, file)  que esta en librerias/scripts.js
 //this.form.taget= 'ventana'; this.form.action = 'destinoEspecial.html'; this.form.submit()" 
-$javascript="$_SESSION[url]/includes/upload.php";
+$javascript="includes/upload.php";
 if ($id ==''){$id='imagen';}
 $size = ($_SESSION[upload_size]*1024*1024)." bytes";
 $resultado .="
@@ -2277,7 +2520,7 @@ $respuesta = new xajaxResponse('utf-8');
 
  $resultado .= "Importando formulario <b>$perfil_nombre</b> ($perfil)
  <table class='table table-bordered table-striped'>";
-	$nombre = "tmp/$filename";
+	$nombre = "/tmp/$filename";
 	if($accion == "grabar") {
 
 	}
@@ -2393,7 +2636,7 @@ $resultado ="<a href='#'  onclick =\"xajax_borrar_tmp('$div');\">Limpiar</a>";
 
 return $resultado ;
 }
-$dir = "tmp/";
+$dir = "/tmp/";
 $ficheroseliminados= 0;
 $handle = opendir($dir);
 while ($file = readdir($handle)) {
@@ -2444,7 +2687,7 @@ if (mysql_num_rows($sql)!='0'){
 		$imagen = $imagen[3];
 		if($imagen[3] != null AND $tipo !='titulos') {
 			$array[image]=$imagen;
-			$imagen_icon="http://$_SERVER[HTTP_HOST]/milfs/images/secure/?file=150/$imagen";
+			$imagen_icon="secure/?file=150/$imagen";
 		$imagen= "<img class='thumbnail' src='images/secure/?file=150/$imagen' alt='$imagen' style='max-width:100px;' title='$imagen'>";
 		
 	}else {$imagen='';}
@@ -2782,7 +3025,7 @@ function remplacetas($tabla,$campo,$valor,$por,$and){
 $link=Conectarse(); 
 mysql_query("SET NAMES 'utf8'");
 if(@$and !=''){$AND = "AND $and";}else{$AND ="";}
-$consulta = "SELECT  * , md5(binary $por ) as md5_".$por." FROM $tabla WHERE $campo = '$valor' $AND order by id DESC limit 1";
+$consulta = "SELECT  * , md5(binary $por ) as md5_".$por." FROM $tabla WHERE $campo = '$valor' $AND order by $por DESC limit 1";
 $sql=mysql_query($consulta,$link);
 if (@mysql_num_rows($sql)!=0){
 $resultado[] = mysql_result($sql,0,$por);
@@ -3444,7 +3687,7 @@ if($tipo=='grabar_campos'){
 $id_form=func_get_arg(3);
 $consulta = "SELECT id_campo FROM form_contenido_campos WHERE id_campo= '$id' AND id_form= $id_form"; 
 $sql_consulta =mysql_query($consulta,$link); 
-$id_empresa= $_SESSION['id'];
+$id_empresa= $_SESSION['id_empresa'];
 if(mysql_num_rows($sql_consulta) =='0')	{
 $microtime = microtime();
 $consulta_grabar=" INSERT INTO form_contenido_campos (
@@ -3932,6 +4175,9 @@ $consulta ="
 			$render = "$select ";}
 		elseif($campo_tipo_accion == 'relacion'){
 			$select = relacion_select($id_campo,$id_form,$value,$id_campo."[".$item."]",$control,"");
+			$render = "$select ";}
+		elseif($campo_tipo_accion == 'buscador'){
+			$select = buscador_campo($id_campo,$id_form,$value,$id_campo."[".$item."]",$control,"");
 			$render = "$select ";}
 		elseif($campo_tipo_accion == 'number'){$render = "<code>(Este campo solo acepta números)</code>
 															<input value='$value' type='number' id='".$id_campo."[".$item."]' name='".$id_campo."[".$item."]' class=' has-warning form-control' placeholder='$campo_descripcion' > ";}
