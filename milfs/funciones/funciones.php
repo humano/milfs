@@ -70,25 +70,47 @@ $respuesta->addAssign("$div","innerHTML",$resultado);
 }
 $xajax->registerFunction("buscar_datos");
 
-function datos_grid($id_form,$filtro,$valor,$plantilla) {
+function datos_grid($id_form,$filtro,$valor,$plantilla,$divider,$inicio,$limite) {
+	$respuesta = new xajaxResponse('utf-8');
+	$nuevo_inicio = ($inicio+$limite+1);
+if($inicio =="") {
+	$inicio = "0";
+ $script = "
+$(window).scroll(function() {
+  if ($(window).scrollTop() == $(document).height() - $(window).height()) {
+    xajax_datos_grid('$id_form','$filtro','$valor','$plantilla','$divider','$nuevo_inicio','$limite') ;
+  }
+});
+";
+//$respuesta->addScript("$script");	
+//$respuesta->addAlert("$script");	
+	
+	}
+if($limite =="") {$limite = "250";}
 
 	if($valor !=""){
 $md5_valor = $valor;
 if($filtro !='' ){$w_filtro =" AND id_campo = '$filtro' AND md5(binary contenido) = '$md5_valor'  ";}
 }
-$consulta= "SELECT * FROM form_datos WHERE form_id= '$id_form' $w_filtro GROUP BY control LIMIT 250";
+$consulta_total= "SELECT * FROM form_datos WHERE form_id= '$id_form' $w_filtro GROUP BY control ";
+$consulta= "SELECT * FROM form_datos WHERE form_id= '$id_form' $w_filtro GROUP BY control LIMIT $inicio , $limite";
 $link=Conectarse(); 
 mysql_query("SET NAMES 'utf8'");
 //mysql_real_escape_string($consulta);
+$sql_total=mysql_query($consulta_total,$link);
+$total = mysql_num_rows($sql_total);
 $sql=mysql_query($consulta,$link);
 		$descripcion = remplacetas('form_id','id',$id_form,'descripcion',"") ;
 		$descripcion = $descripcion[0];
 		$buscador  = buscar_datos("","$id_form","$plantilla","grid_resultado");
 		$contenido = "$descripcion";
+		
 if (mysql_num_rows($sql)!=0){
 mysql_data_seek($sql, 0);
 $fila=1;
+if($divider =="") {
 $divider=3;
+}
 $cols = (12/$divider);
 $i =0;
 
@@ -111,8 +133,24 @@ $fila++;
 	
 }
 									}
-									$resultado =" <br>$buscador  <div id='grid_resultado'>  $contenido</div><br>";
-$respuesta = new xajaxResponse('utf-8');
+
+
+$inicio = ($inicio+$limite+1);
+$div_mas_contenido ="mas_contenido_".$inicio."_".$limite."";
+$mostrado = ($inicio+$limite-1);
+//$limite = ($inicio+$limite-1);
+$resultado =" <br>$buscador  
+
+	<div id='grid_resultado'> 
+
+		$contenido 
+		<div class='btn btn-default btn-block' id='$div_mas_contenido' onclick=\" xajax_datos_grid('$id_form','$filtro','$valor','$plantilla','$divider','$inicio','$limite') ;\" >
+		Mostrar mas resultados </div>
+	</div><br>
+ ";
+
+
+///$respuesta->addScript("$script");
 $respuesta->addAssign("contenedor","innerHTML",$resultado);
 			return $respuesta;
 } 
@@ -173,14 +211,16 @@ if (mysql_num_rows($sql)!='0'){
 			
 	mysql_data_seek($sql, 0);
 	while( $row = mysql_fetch_array( $sql ) ) {
+					 if( $row[obligatorio] == '1'){$obligatorio="*";}else {$obligatorio='X';}
+
 //$campos .= "<li>$row[id_campo]</li>";	
 		if($row[multiple] ==='1' AND $tipo =='edit'){
 		$campos .= formulario_campos_render_multiple($row[id_campo],$perfil,$control_edit);
 										}else{
 		$campos .= formulario_campos_render($row[id_campo],$perfil,$control_edit,'');									
 										}
-	$muestra_form .= "$campos ";
-	$solo_campos .= $campos; 
+	$muestra_form .= "$campos $obligatorio ";
+	$solo_campos .= "$campos $obligatorio "; 
 	
 	}
 
@@ -210,7 +250,7 @@ $control = md5(rand(1,99999999).microtime());
 		$consulta= "SELECT * FROM form_campos, `form_contenido_campos` 
 		WHERE form_campos.id = form_contenido_campos.id_campo 
 		AND form_contenido_campos.id_form = '$perfil'  
-		AND  form_contenido_campos.id_empresa = '$id_empresa' 
+
 		GROUP BY form_campos.campo_area 
 		";
 		
@@ -294,7 +334,8 @@ $subir_imagen = subir_imagen('',"$campo_imagen"."[0]");
 
 $fila=0;
 while( $row = mysql_fetch_array( $sql ) ) {
-	if($row['campo_area']=="0"){$area_nombre ="General";}
+
+	if($row['campo_area']=="0"){$area_nombre ="";}
 	else{
 	$area_nombre = remplacetas('form_areas','id',$row['campo_area'],'nombre','') ;
 	$area_nombre = $area_nombre[0];
@@ -1468,19 +1509,23 @@ if($imagen[0] !='' ) { $bg ="background-image : url(\"milfs/images/secure/?file=
 										background-repeat: no-repeat; 
 										background-size :cover;
 										background-position: center; ";}
-else { $color_aleatorio = sprintf("%02X", mt_rand(0, 0xFFFFFF)); $bg = "background-color: #$color_aleatorio ;"; }
+else { 
+$color_aleatorio = sprintf("%02X", mt_rand(0, 0xFFFFFF)); 
+//$bg = "background-color: #$color_aleatorio ;"; 
+$bg = "background-color: gray ;"; 
+}
 	$resultado_grid .= "
-	<div class='col-sm-4 div_aplicacion' id='div_aplicacion_$row[id]' style ='height:300px; $bg '>
+	<div class='col-md-4 div_aplicacion' id='div_aplicacion_$row[id]' style ='height:300px; $bg '>
 		
 			<h2 style='text-shadow:  1px 1px 1px rgba(255,255,255,0.8) ;';>$row[nombre] </h2>
 			<div class='round' style=' padding:5px; background-image : url(\"milfs/images/transparente40.png\");'>
 				<h3>$descripcion_corta</h3>
 			</div>
 	 		$contenido <br>
-	 		<a class='btn btn-default btn-block ' href='?id=$row[id]'>Leer</a>
+	 		<a class='btn btn-success btn-block ' href='?id=$row[id]'>Leer</a>
 							</div>";
 		$resultado_banner .= "
-	<div class='col-sm-12 div_aplicacion' id='div_aplicacion_$row[id]' style ='height:300px; $bg '>
+	<div class='col-md-12 div_aplicacion' id='div_aplicacion_$row[id]' style ='height:300px; $bg '>
 		
 			<h2 style='text-shadow:  1px 1px 1px rgba(255,255,255,0.8) ;';>$row[nombre] </h2>
 			<div class='round' style=' padding:5px; background-image : url(\"milfs/images/transparente40.png\");'>
@@ -1534,8 +1579,8 @@ if (mysql_num_rows($sql)!='0'){
 	$descripcion = remplacetas('form_id','id',$id,'descripcion',"") ;
 
 		mysql_data_seek($sql, 0);
-				$contenido = " <h1 class='titulo_aplicacion'>$nombre[0]</h1>";
-				$contenido .= " <h2 class='descripcion_aplicacion'>$descripcion[0]</h2>";
+				//$contenido = " <h1 class='titulo_aplicacion'>$nombre[0]</h1>";
+				$contenido = " <h2 class='descripcion_aplicacion'>$descripcion[0]</h2>";
 				$orden = 0;
 while( $row = mysql_fetch_array( $sql ) ) {
 
@@ -1543,7 +1588,7 @@ while( $row = mysql_fetch_array( $sql ) ) {
 	$identificador = $identificador[0];
 	$contenido_desplegado = contenido_mostrar("$row[form_id]","$row[control]",'',"$plantilla");
 	$titulo = remplacetas('form_datos','id',$identificador,'contenido',"") ;
-	$contenido  .= "$contenido_desplegado "; 
+	$contenido  .= "$contenido_desplegado <hr> "; 
 														}
  	$contenido = " $links <section id=''>$contenido</section>";
 										}
@@ -1790,7 +1835,10 @@ return $contenido.$control;
 
 }
 function contenido_mostrar($id,$control,$div,$plantilla){
-
+if($id=="") {
+				$value = 	remplacetas('form_datos','control',$control,'form_id',"") ;
+				$id= $value[0];
+}
 	$respuesta = new xajaxResponse('utf-8');
 $link=Conectarse(); 
 //$sql=mysql_query($consulta,$link);
@@ -2267,10 +2315,14 @@ if (mysql_num_rows($sql)!='0'){
 		$campo_tipo =$campo_tipo[0];
 		$contenido = formulario_valor_campo("$id","$row[id_campo]","","$control",'');
 		$md5_contenido = $contenido[4];
+		$contenido_original = $contenido[3];
 		$contenido = $contenido[3];
 		
 		
-		if($campo_tipo=='15' AND $tipo==""){if($contenido !=""){$contenido = "<img class='img-responsive' src='http://$_SERVER[HTTP_HOST]/milfs/images/secure/?file=600/$contenido'>"; }else{$contenido="";}}
+		
+		if($campo_tipo=='15' AND $tipo==""){if($contenido !=""){
+			$contenido = "<img class='img-responsive' style='width:100%' src='http://$_SERVER[HTTP_HOST]/milfs/images/secure/?file=600/$contenido'>";
+			 }else{$contenido="";}}
 				
 		elseif($campo_tipo=='14'){
 			if($contenido !='') {
@@ -2280,7 +2332,7 @@ if (mysql_num_rows($sql)!='0'){
 														$zoom = $campos[2];			
 			$contenido = "
 
-			<img class=' img-responsive'  src='http://api.tiles.mapbox.com/v4/examples.map-zr0njcqy/url-http%3A%2F%2F$_SERVER[HTTP_HOST]%2Fmilfs%2Fimages%2Ficonos%2Fnaranja.png($lat,$lon,$zoom)/$lat,$lon,$zoom/600x250.png?access_token=pk.eyJ1IjoiaHVtYW5vIiwiYSI6IlgyRTFNdFEifQ.OmQBXmcVg_zq-vMpr8P5vQ' >
+			<img class=' img-responsive'  style='width:100%'  src='http://api.tiles.mapbox.com/v4/examples.map-zr0njcqy/url-http%3A%2F%2F$_SERVER[HTTP_HOST]%2Fmilfs%2Fimages%2Ficonos%2Fpin.png($lat,$lon,$zoom)/$lat,$lon,$zoom/600x250.png?access_token=pk.eyJ1IjoiaHVtYW5vIiwiYSI6IlgyRTFNdFEifQ.OmQBXmcVg_zq-vMpr8P5vQ' >
 			"; 
 										}
 			}
@@ -2294,7 +2346,11 @@ if (mysql_num_rows($sql)!='0'){
 			 $contenido = "$valor_actual";}
 		elseif($campo_tipo=='5' AND $contenido !=""){ 
 		if($tipo =="") {
-		$contenido = trim($contenido); $contenido = "<iframe  width='100%' height='100%'  class= 'iframe-media' src=\"$contenido\" frameborder='0' allowFullScreen ></iframe>";
+		$contenido = trim($contenido); $contenido = "
+		<video width='100%' controls>
+			<source src='$contenido' type='video/mp4'>
+		</video>
+		<!-- <iframe  width='100%' height='100%'  class= 'iframe-media' src=\"$contenido\" frameborder='0' allowFullScreen ></iframe> -->";
 							}else {
 						$contenido =$contenido;
 					}
@@ -2334,7 +2390,7 @@ if (mysql_num_rows($sql)!='0'){
 					
 																	}else{}
 	
-
+if($contenido_original !="") {
 	$resultado .= "
 	<div class='row' id='contenedor_$row[id_campo]'>
 		<div class='col-xs-12 ' >
@@ -2344,6 +2400,7 @@ if (mysql_num_rows($sql)!='0'){
 			<span class='campo_contenido' id='contenido_$row[id_campo]'>$contenido</span>
 		</div>
 	</div>";
+}
 														}
 	
 	//$resultado .=" </div>	<!-- <div class='badge pull-right'>Datos registrados el $fecha </div> -->	";
@@ -2502,6 +2559,10 @@ $xajax->registerFunction("formularios_muestra_listado");
 	
 		
 function formulario_importar($filename,$accion,$perfil){
+	$respuesta = new xajaxResponse('utf-8');
+		   //	$respuesta->addAlert("$filename,$accion,$perfil ");
+		   //		return $respuesta;
+	
 		if($filename ===""){
 		
 
@@ -2514,13 +2575,13 @@ return $formulario;
 		}
 	
 	$div = "importador_archivo";
-$respuesta = new xajaxResponse('utf-8');
+
 	$link=Conectarse(); 
 	mysql_query("SET NAMES 'utf8'");
 
  $resultado .= "Importando formulario <b>$perfil_nombre</b> ($perfil)
  <table class='table table-bordered table-striped'>";
-	$nombre = "/tmp/$filename";
+	$nombre = "tmp/$filename";
 	if($accion == "grabar") {
 
 	}
@@ -2636,7 +2697,7 @@ $resultado ="<a href='#'  onclick =\"xajax_borrar_tmp('$div');\">Limpiar</a>";
 
 return $resultado ;
 }
-$dir = "/tmp/";
+$dir = "tmp/";
 $ficheroseliminados= 0;
 $handle = opendir($dir);
 while ($file = readdir($handle)) {
@@ -2918,7 +2979,7 @@ if (mysql_num_rows($sql)==0){
 if (mysql_num_rows($sql)!=0){
 		$total_registros = mysql_num_rows($sql);
 	if($formato=='csv'){ 
-		$nombre_archivo ="/tmp/Formulario_".mktime()."_".$_SESSION['id'].".csv";
+		$nombre_archivo ="tmp/Formulario_".mktime()."_".$_SESSION['id'].".csv";
 		$boton_descarga ="<a class='btn btn-default btn-success' href='$nombre_archivo'>Descargar <i class='fa fa-cloud-download'></i></a>";
 			$archivo_reporte=fopen($nombre_archivo , "w");
 				$encabezado =";;Periodo\n;;$inicio\n;;$fin \n ";
@@ -4111,6 +4172,8 @@ $consulta ="
 		$campo_nombre=mysql_result($sql,0,"campo_nombre");
 		$campo_descripcion=mysql_result($sql,0,"campo_descripcion");
 		$campo_tipo_accion=mysql_result($sql,0,"tipo_campo_accion");
+		$campo_obligatorio=mysql_result($sql,0,"obligatorio");
+		if($campo_obligatorio =='1') {$obligatorio ="danger";}else{$obligatorio ="default";}
 		
 		if($campo_tipo_accion == 'text'){$render = "<input value='$value' type='text' id='".$id_campo."[".$item."]' name='".$id_campo."[".$item."]' class='form-control' placeholder='$campo_descripcion' > ";}
 		elseif($campo_tipo_accion == 'date'){$render = "<input value='$value' type='date' id='".$id_campo."[".$item."]' name='".$id_campo."[".$item."]' class='form-control' placeholder='$campo_descripcion' > ";}
@@ -4135,14 +4198,17 @@ $consulta ="
 																		<iframe id='mapita' src='$_SESSION[url]/mapa.php?lat=$lat&lon=$lon&zoom=$zoom&id=".$id_campo."[".$item."]' width='100%' height='300px'></iframe>
 																		<input   value='$value' type='text' id='".$id_campo."[".$item."]' name='".$id_campo."[".$item."]' class='form-control' placeholder='coordenadas' readonly >
 																		
-																				 ";}
+																				 ";
+					$cols='12';																																	 
+																				 }
 		elseif($campo_tipo_accion == 'email'){$render = "<code>Escriba un email válido</code>
 																			<input value='$value' type='email' id='".$id_campo."[".$item."]' name='".$id_campo."[".$item."]' class='form-control' placeholder='$campo_descripcion' > ";}
 		elseif($campo_tipo_accion == 'envio'){$render = "<code>Se enviará un correo electrónico a este email</code>
 																			<input value='$value' type='email' id='".$id_campo."[".$item."]' name='".$id_campo."[".$item."]' class='form-control' placeholder='$campo_descripcion' > ";}
 		elseif($campo_tipo_accion == 'textarea'){
 			$render = "		<textarea cols='50' data-provide=\"markdown\"   rows='15' id='".$id_campo."[".$item."]' name='".$id_campo."[".$item."]' class='form-control' placeholder='$campo_descripcion' >$value</textarea> ";
-																}
+			$cols='12';													
+			}
 																//$subir_imagen = subir_imagen('');		
 		elseif($campo_tipo_accion == 'imagen'){
 		//	$gps = leer_exif($file);
@@ -4153,6 +4219,7 @@ $consulta ="
 			$render = "
 			   
 					<textarea cols='50'  rows='15' id='".$id_campo."[".$item."]' name='".$id_campo."[".$item."]' class='form-control' placeholder='$campo_descripcion' >$value</textarea> ";
+			$cols='12';																													
 																}
 		elseif($campo_tipo_accion == 'limit'){
 			$limite = limite("".$id_campo."[".$item."]",'','limite');
@@ -4162,7 +4229,7 @@ $consulta ="
 			<span id='aviso_".$id_campo."[".$item."]' class='alert-info'></span> 
 				<textarea onkeyup= \"xajax_limite('".$id_campo."[".$item."]',(this.value));\" cols='50' rows='$rows' id='".$id_campo."[".$item."]' name='".$id_campo."[".$item."]' class='form-control' placeholder='$campo_descripcion' >$value</textarea>
 			";
-			
+			$cols='12';													
 				}
 		elseif($campo_tipo_accion == 'select'){
 			
@@ -4195,20 +4262,25 @@ $consulta ="
 	</div>
 	";
 }
-	if($item == 0) { $label = "<label class='control-label ' for='$id_campo"."_".$item."'><span class='label label-default'> $id_campo</span> $campo_nombre </label>";}
-				else {$label = "<label class=' sr-only' for='$id_campo"."_".$item."'>$campo_nombre</label>";}
+	if($item == 0) { $label = "<label class='control-label ' for='$id_campo"."_".$item."' title='$id_campo'> <span class='text-$obligatorio'>$campo_nombre</span>  </label>";}
+				else {$label = "<label class=' sr-only' for='$id_campo"."_".$item."'>$campo_nombre $campo_obligatorio</label>";}
 				///// CAMPOS QUE NO SE MOSTRARAN		
 				if($campo_tipo_accion == 'imagen'){
 		$label="";
 		}
+		if($cols =="") {$cols = "6";}
 		$input = "
-		
-		<div class='form-group' id='input_".$id_campo."[".$item."]' >
+		<div class='col-sm-$cols'>
+		<div class='form-group ' id='input_".$id_campo."[".$item."]' >
+			
 			$label
 			<div class='col-lg-12'>
+			
 			$render 
-			</div>
-			<!-- </div> -->
+			
+			
+		</div>
+		</div>
 		</div>
 $campo_multiple
 		";
