@@ -492,7 +492,9 @@ while ($archivo = readdir($directorio)) //obtenemos un archivo y luego otro suce
     }
     else
     {$autor="";
-    	            	$ext = explode(".", $archivo);					$ext = strtolower($ext[count($ext) - 1]);					if ($ext == "jpeg") {$ext = "jpg";  }
+    	            	$ext = explode(".", $archivo);
+					$ext = strtolower($ext[count($ext) - 1]);
+					if ($ext == "jpeg") {$ext = "jpg";  }
 					if ($ext == "jpg") {
 						$cantidad_imagenes++ ;
 					
@@ -557,7 +559,9 @@ function listar_archivos( $path ,$opcion, $div,$datos){
               //  $resultado .= "<p><strong>CARPETA: ". $elemento ."</strong></p>";
             // Si es un fichero
             } else {
-            	$ext = explode(".", $elemento);					$ext = strtolower($ext[count($ext) - 1]);					if ($ext == "jpeg") {$ext = "jpg";  }
+            	$ext = explode(".", $elemento);
+					$ext = strtolower($ext[count($ext) - 1]);
+					if ($ext == "jpeg") {$ext = "jpg";  }
 					if ($ext == "jpg") {$cantidad_imagenes++ ;
 					
 					$exif = leer_exif("$path/$elemento");
@@ -1035,101 +1039,154 @@ function formulario_embebido_campos($id,$opcion){
 }
 
 function json($datos){
-		if ( !isset ( $_SESSION['id_empresa'] ) ) {	$publico = "AND form_id.publico = '1'  ";	$w_publico = "WHERE form_id.publico = '1'  "; }
-		else {	$publico = "AND form_id.id_empresa = '$_SESSION[id_empresa]'  ";	$w_publico = "WHERE form_id.id_empresa = '$_SESSION[id_empresa]' "; }
-	$datos = mysql_seguridad($datos);
-	$link=Conectarse();
-	if($datos[id] !=''){
-	$consulta = "SELECT form_datos.id as id_dato, form_datos.form_id AS id_formulario, nombre as formulario,  campo_nombre, form_campos.id AS id_campo , contenido ,timestamp, control as identificador , form_datos.orden
-											FROM `form_datos` , `form_campos` ,form_id
-											WHERE  form_datos.id_campo = `form_campos`.id 
-											AND   form_datos.form_id = `form_id`.id 
-											AND (form_id = '$datos[id]'  )
-												$publico
-											ORDER BY  form_datos.control  ,form_datos.timestamp ";
-	}
-	elseif($datos[identificador] !=''){
-	$consulta = "SELECT form_datos.id as id_dato, form_datos.form_id AS id_formulario, nombre as formulario,  campo_nombre, form_campos.id AS id_campo ,contenido ,timestamp, control as identificador , form_datos.orden
-											FROM `form_datos` , `form_campos` ,form_id
-											WHERE  form_datos.id_campo = `form_campos`.id 
-											AND   form_datos.form_id = `form_id`.id 
-											AND (control = '$datos[identificador]'  )
-											$publico
-											";
-	}
-	elseif($datos[dato] !=''){
-	$consulta = "SELECT  form_datos.id as id_dato,  form_datos.form_id AS id_formulario, nombre as formulario,  nombre as formulario,  campo_nombre, form_campos.id AS id_campo ,contenido ,timestamp, control as identificador, form_datos.orden
-											FROM `form_datos` , `form_campos` ,form_id
-											WHERE  form_datos.id_campo = `form_campos`.id 
-											AND   form_datos.form_id = `form_id`.id 
-											AND (form_datos.id = '$datos[dato]'  )
-											$publico
-											";
-	}
-	else {
-	$consulta = "SELECT id as form_id, nombre as form_nombre, descripcion as form_descripcion , creacion , publico AS contenido_publico , modificable AS formulario_publico
-											FROM form_id $w_publico";
-					}
-		//	if($id_form2 !=""){$w_id2 =" OR form_id = '$id_form2'"; $or_2 ="or id_campo = '$id_campo2'";}
-		//AND ( id_campo ='$id_campo' )
-	  
-
-/*if($datos =="") {
-	$consulta = "SELECT * FROM form_id ";
-					}else{
-						
+if ( !isset ( $_SESSION['id_empresa'] ) ) { $publico = "AND
+form_id.publico = '1'  "; $w_publico = "WHERE form_id.publico = '1'
+"; }
+else { $publico = "AND form_id.id_empresa = '$_SESSION[id_empresa]'
+"; $w_publico = "WHERE form_id.id_empresa = '$_SESSION[id_empresa]' ";
 }
-*/
-//return $datos[control];
+$datos = mysql_seguridad($datos);
+$link=Conectarse();
+mysql_query("SET NAMES 'UTF8'");
+if($datos[id] !=''){
+if($datos[tipo] =='simple') {
+$campos ="control " ;
+$consulta = "SELECT $campos
+FROM `form_datos` , `form_campos` ,form_id
+WHERE  form_datos.id_campo = `form_campos`.id
+AND   form_datos.form_id = `form_id`.id
+AND (form_id = '$datos[id]'  )
+$publico
+GROUP BY form_datos.control
+ORDER BY  form_datos.control  ,form_datos.timestamp ";
 
-	mysql_query("SET NAMES 'UTF8'");
-	$sql = mysql_query($consulta,$link) or die("error al ejecutar consulta ");
+$sql = mysql_query($consulta,$link) or die("error al ejecutar consulta ");
  if (mysql_num_rows($sql)!='0'){
-	$id = 1;
-	$features = array();
-	
-	while($row = mysql_fetch_array( $sql ))
+$i = 1;
+$features = array();
+// $features[] = $consulta;
+while($row = mysql_fetch_array( $sql ))
     {
-        $features[] = $row;
+    if($datos[tipo]=="simple"){
+    $contenido = remplacetas('form_datos','id',$row[id_dato],'contenido',"") ;
+    $id_campo = remplacetas('form_datos','id',$row[id_dato],'id_campo',"") ;
+    $nombre_campo =
+remplacetas('form_campos','id',$id_campo[0],'campo_nombre',"") ;
+    $nuevos_datos  = $datos;
+    $nuevos_datos[identificador]="$row[control]";
+    $nuevos_datos[tipo]="array";
+    //$features[$row[control]] = datos_array($row[control]) ;
+//json($nuevos_datos);//"  $contenido[0]";//$row[id_campo];
+    $features[] = datos_array($row[control]) ;
+//json($nuevos_datos);//"  $contenido[0]";//$row[id_campo];
+    }
+    else {
+     $features[] = $row;
+    }
+
+
         $i++;
     }
-    
-/*
-while( $row = mysql_fetch_array( $sql ) ) {
-	$marcador = array();
-	$propiedades = array();
-		$identificador = explode(',',$row[data]);
-		$identificador = $identificador[0]; 
-		$campos = explode(" ",$identificador);
-														$lat = $campos[0];
-														$lon = $campos[1];
-														$zoom = $campos[2];	
-		$formulario = formulario_imprimir($row[id],$row[control],'full');
 
-		$marcador["type"] = "Point";
-		$marcador["coordinates"] = array($lat,$lon);
-		$propiedades = formulario_imprimir_linea($row[id],$row[control],"array");//
-		//$propiedades[description] ="HOLA MUNDO";
-		$propiedades[description] ="<div class='container-fluid' id='contenedor_datos' >$formulario</div>";
-		$propiedades[sounds] ="";
-		$propiedades[url] ='';
-		//$propiedades[title] ='Hola mundo';
-		//$propiedades[icon][iconUrl] = "images/pin.png";
-		$geometria .= "{\"type\":\"Feature\",\"geometry\":".json_encode($marcador,JSON_NUMERIC_CHECK|JSON_PRETTY_PRINT).",\"properties\":".json_encode($propiedades,JSON_NUMERIC_CHECK|JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT)."},";
-		$features[] = $marcador;
-															
-															$id++;
-															}
-															*/
+
 
 }
-//-75.58295 6.25578 16
 
-//encode and output jsonObject
-header('Content-Type: text/plain');
-//echo $consulta;
+
+if($tipo == "array" ) {
+$resultado = $features;
+}else {
 
 $resultado = json_encode($features,JSON_NUMERIC_CHECK|JSON_PRETTY_PRINT);
+}
+return $resultado;
+
+}
+else {
+$campos ="form_datos.id as id_dato, form_datos.form_id AS
+id_formulario, nombre as formulario,  campo_nombre, form_campos.id AS
+id_campo , contenido ,timestamp, control as identificador ,
+form_datos.orden" ;
+$consulta = "SELECT $campos
+FROM `form_datos` , `form_campos` ,form_id
+WHERE  form_datos.id_campo = `form_campos`.id
+AND   form_datos.form_id = `form_id`.id
+AND (form_id = '$datos[id]'  )
+$publico
+ORDER BY  form_datos.control  ,form_datos.timestamp ";
+}
+
+}
+elseif($datos[identificador] !=''){
+if($datos[tipo] =='simple') {$campos ="form_campos.id as id_campo,
+form_datos.id as id_dato " ;}
+else {$campos ="form_datos.id as id_dato, form_datos.form_id AS
+id_formulario, nombre as formulario,  campo_nombre, form_campos.id AS
+id_campo ,contenido ,timestamp, control as identificador ,
+form_datos.orden" ;}
+$consulta = "SELECT $campos
+FROM `form_datos` , `form_campos` ,form_id
+WHERE  form_datos.id_campo = `form_campos`.id
+AND   form_datos.form_id = `form_id`.id
+AND (control = '$datos[identificador]'  )
+$publico
+";
+}
+elseif($datos[dato] !=''){
+if($datos[tipo] =='simple') {$campos ="form_campos.id as id_campo,
+form_datos.id as id_dato " ;}
+else {$campos ="form_datos.id as id_dato,  form_datos.form_id AS
+id_formulario, nombre as formulario,  nombre as formulario,
+campo_nombre, form_campos.id AS id_campo ,contenido ,timestamp,
+control as identificador, form_datos.orden" ;}
+$consulta = "SELECT  $campos
+FROM `form_datos` , `form_campos` ,form_id
+WHERE  form_datos.id_campo = `form_campos`.id
+AND   form_datos.form_id = `form_id`.id
+AND (form_datos.id = '$datos[dato]'  )
+$publico
+";
+}
+else {
+$consulta = "SELECT id as form_id, nombre as form_nombre, descripcion
+as form_descripcion , creacion , publico AS contenido_publico ,
+modificable AS formulario_publico
+FROM form_id $w_publico";
+}
+
+
+$sql = mysql_query($consulta,$link) or die("error al ejecutar consulta ");
+ if (mysql_num_rows($sql)!='0'){
+$i = 1;
+$features = array();
+// $features[] = $consulta;
+while($row = mysql_fetch_array( $sql ))
+    {
+    if($datos[tipo]=="simple"){
+    $contenido = remplacetas('form_datos','id',$row[id_dato],'contenido',"") ;
+    $id_campo = remplacetas('form_datos','id',$row[id_dato],'id_campo',"") ;
+    $nombre_campo =
+remplacetas('form_campos','id',$id_campo[0],'campo_nombre',"") ;
+    $features[] = "$nombre_campo[0] :  $contenido[0]";//$row[id_campo];
+    }
+    else {
+     $features[] = $row;
+    }
+
+
+        $i++;
+    }
+
+
+
+}
+
+if($datos[tipo] == "array" ) {
+$resultado = $features;
+}else {
+
+$resultado = json_encode($features,JSON_NUMERIC_CHECK|JSON_PRETTY_PRINT);
+}
 
 return $resultado;
 }
@@ -5186,4 +5243,31 @@ function parametrizacion($array) {
 	if($sql){return "Campo grabado"; }else{return "Problema $consulta $array[tabla]";}
 	
 }
+
+function datos_array($identificador) {
+
+$link=Conectarse();
+mysql_query("SET NAMES 'UTF8'");
+$consulta ="SELECT * FROM form_datos WHERE control = '$identificador'
+GROUP BY id_campo ORDER BY timestamp DESC ";
+$sql = mysql_query($consulta,$link) or die("error al ejecutar consulta ");
+$array = array();
+$array[identificador] = "$identificador";
+while($row = mysql_fetch_array( $sql ))
+    {
+    $contenido = remplacetas('form_datos','id',$row[id],'contenido',"") ;
+    $id_campo = remplacetas('form_datos','id',$row[id],'id_campo',"") ;
+    $nombre_campo =
+remplacetas('form_campos','id',$id_campo[0],'campo_nombre',"") ;
+    //$array[id_campo] = $row[id_campo];
+    $array[$nombre_campo[0]] = "$contenido[0]";
+    //$array[] = $row;
+
+
+    }
+    return $array;
+}
+
+
+
 ?>
