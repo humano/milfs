@@ -5263,6 +5263,4 @@ remplacetas('form_campos','id',$id_campo[0],'campo_nombre',"") ;
     return $array;
 }
 
-
-
 ?>
