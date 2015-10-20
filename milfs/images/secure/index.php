@@ -7,11 +7,11 @@ session_start();
  header("Location: ../nodisponible.jpg");
 // echo "hola mundo2";
 }*/
-if(!isset($_GET['file'])){
+if(!isset($_GET['file']) ){
 	 header("Location: ../sinimagen.jpg");
 	 
 	}
-$dir='../../../../images_secure/';
+$dir="$_SESSION[path_images_secure]/";
 if ((!$file=realpath($dir.$_GET['file']))
     || strpos($file,realpath($dir))!==0 || substr($file,-4)=='.php'){
  //header('HTTP/1.0 404 Not Found');
@@ -26,6 +26,11 @@ if (strpos($ref,'http://')===0 || strpos($ref,'http')!==0){
     'mid'=>'audio/x-midi',
     'wav'=>'audio/x-wav'
   );
+  if($mime[substr($file,-3)] =='') {
+    header('Location: ../pixel.png');
+   
+  exit();
+  }
   $stat=stat($file);
   header('Content-Type: '.$mime[substr($file,-3)]);
   header('Content-Length: '.$stat[7]);

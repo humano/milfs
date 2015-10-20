@@ -3,7 +3,7 @@
 var scrollDivs=new Array();
 scrollDivs[0]="despacho";
 scrollDivs[1]="";
-
+/*
 function carga()
 {
 	posicion=0;
@@ -15,7 +15,8 @@ function carga()
 
 	registraDivs();
 }
-
+*/
+/*
 function registraDivs()
 {
 	for(divId in scrollDivs)
@@ -24,7 +25,7 @@ function registraDivs()
 		document.getElementById(scrollDivs[divId]).ondblclick=comienzoMovimiento;
 	}
 }
-
+*/
 function evitaEventos(event)
 {
 	// Funcion que evita que se ejecuten eventos adicionales
@@ -91,23 +92,29 @@ function finMovimiento(event)
 	elMovimiento.onmouseup=null;
 }
 
-window.onload=carga;
+//window.onload=carga;
 //// fin drag div
 
 
-function resultadoUpload(estado, file,respuesta) {
+function resultadoUpload(estado, file,respuesta,id,coordenadas) {
 var link = '<br />';
 if (estado == 0)
 var mensaje = '<img class=" img-thumbnail responsive" src="'+respuesta+'images/secure/?file=600/' + file + '" >' + link;
 
 if (estado == 1)
 var mensaje = 'Error ! - El Archivo no llego al servidor' + link;
+
 if (estado == 2)
-var mensaje = '<img src="'+respuesta+'images/atencion.gif"> Error ! - Tipo de archivo incorrecto o demasiado grande' + link;
+{var mensaje = '<img src="'+respuesta+'images/atencion.gif"> Error ! - Tipo de archivo incorrecto o demasiado grande' + link;
+ }
 if (estado == 3)
 var mensaje = 'Error ! - No se pudo copiar Archivo. Posible problema de permisos en server' + link;
 document.getElementById('formUpload').innerHTML=mensaje;
-document.getElementById('imagen').value=file;
+document.getElementById(id).value=file;
+if (coordenadas != '') {
+ document.getElementById('mapita').contentWindow.document.location.href=coordenadas;
+}
+
 }
 
 function resultadoUploadArchivo(estado,file,div) {

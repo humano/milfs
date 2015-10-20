@@ -4,9 +4,9 @@
 <meta charset=utf-8 />
 <title>Display latitude longitude on marker movement</title>
 
-<script src="http://cdn.leafletjs.com/leaflet-0.7/leaflet.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.js"></script>
 
-<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7/leaflet.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.css" />
 <style>
   body { margin:0; padding:0; }
   #map {width: 100%;height: 280px;}
@@ -25,24 +25,56 @@
  ?>
 <script>
 var map = L.map('map')
-    .setView([<?php echo $lon ?>, <?php echo $lat ?>], <?php echo $zoom ?>);
-L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+   .setView([<?php echo $lon ?>, <?php echo $lat ?>], <?php echo $zoom ?>);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+function onLocationFound(e) {
+			var radius = e.accuracy / 2;
+			var marker = L.marker(e.latlng,{draggable: true}).addTo(map)
+						L.circle(e.latlng, radius).addTo(map);
+var mapa = window.parent.document.getElementById('<?php echo $_REQUEST[id]?>');
+			
+			marker.on('dragend', ondragend);
+			ondragend();
+			function ondragend() {
+    			var m = marker.getLatLng();
+    			var z = map.getZoom();
+    mapa.value= m.lng+' '+m.lat+' '+z;
+}
 
+									}
+
+function onLocationError(e) {
+			//alert(e.message);
+			var marker = L.marker([<?php echo $lon ?>,<?php echo $lat ?>],{draggable: true}).addTo(map);
+			var mapa = window.parent.document.getElementById('<?php echo $_REQUEST[id]?>');
+			marker.on('dragend', ondragend);
+			ondragend();
+			function ondragend() {
+    			var m = marker.getLatLng();
+    			var z = map.getZoom();
+    mapa.value= m.lng+' '+m.lat+' '+z;
+ }
+		}
+
+		map.on('locationfound', onLocationFound);
+		map.on('locationerror', onLocationError);
+
+map.locate({setView: true, maxZoom: 16});
 //var lat = window.parent.document.getElementById('lat');
 //var lng = window.parent.document.getElementById('lon');
-var mapa = window.parent.document.getElementById('<?php echo $_REQUEST[id]?>');
+//var mapa = window.parent.document.getElementById('<?php echo $_REQUEST[id]?>');
 
-var marker = L.marker([<?php echo $lon ?>,<?php echo $lat ?>],{draggable: true}).addTo(map);
+//var marker = L.marker([<?php echo $lon ?>,<?php echo $lat ?>],{draggable: true}).addTo(map);
 
 
 
 // every time the marker is dragged, update the coordinates container
-marker.on('dragend', ondragend);
+//marker.on('dragend', ondragend);
 
 // Set the initial marker coordinate on load.
-ondragend();
+//ondragend();
 
-
+/*
 function ondragend() {
     var m = marker.getLatLng();
     var z = map.getZoom();
@@ -50,7 +82,7 @@ function ondragend() {
    // lat.value= m.lat;
    // lng.value= m.lng;
     mapa.value= m.lng+' '+m.lat+' '+z;
-}
+}*/
 </script>
 
 

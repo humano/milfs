@@ -7,7 +7,7 @@ function login_boton($formulario){
 			return $respuesta;
 									}
 								
-	if(isset($_SESSION[id])){
+	if(isset($_SESSION['id'])){
 
 $accion = "<li><a class=' btn  '  onclick=\"xajax_login_boton('x') \"><i class='fa fa-sign-out fa-fw'></i>$_SESSION[username]</a></li>";
 	}else{
@@ -198,7 +198,7 @@ $consulta = "INSERT INTO usuarios (username,p_nombre,p_apellido,email,bio,passwd
 	$consulta_localizacion = "INSERT INTO localizacion (id_localizado,telefono,id_grupo) VALUES ('$id','$telefono_express','1')";
 	$consulta_empresa = "INSERT INTO empresa SET razon_social = '$nombre_express $nombre_express', regimen_tributario = 'simplificado' ,id_responsable='$id'";
 	$sql_localizacion=mysql_query($consulta_localizacion,$link);
-	$sql_empresa=mysql_query($consulta_empresa,$link);
+	//$sql_empresa=mysql_query($consulta_empresa,$link);
 	if($sql_empresa) {
 			$id_empresa = mysql_insert_id();
 			$_SESSION[id_empresa] = $id_empresa;
@@ -392,7 +392,7 @@ $resultado = "
 				<div id='login_info'></div>
 				</div>
 	";
-if(!isset($_SESSION[id])){ print $resultado; }else {
+if(!isset($_SESSION['id'])){ print $resultado; }else {
 $nuevo = "<div class='btn btn-primary  btn-block' onclick=\"xajax_registro_express(xajax.getFormValues('login'),'nuevo');\">Usuario nuevo</div>";
 print $nuevo ;
 }
@@ -464,8 +464,8 @@ $razon_social[0]
 
 <hr />
 <p>Se ha solicitado un cambio de clave para tu usuario.<br />
-Si fuiste tu quien lo solicit&oacute;, sigue este <a href='http://listas.museocasadelamemoria.org/milfs/index.php?change=$firma_recuperacion'>enlace</a> para realizar el cambio.</p>
-http://listas.museocasadelamemoria.org/milfs/index.php?change=$firma_recuperacion
+Si fuiste tu quien lo solicit&oacute;, sigue este <a href='http://$_SERVER[HTTP_HOST]/milfs/index.php?change=$firma_recuperacion'>enlace</a> para realizar el cambio.</p>
+http://$_SERVER[HTTP_HOST]/milfs/index.php?change=$firma_recuperacion
 
 <h3>Si no solicitaste el cambio, por favor comun&iacute;calo respondiendo este correo.</h3>
 </div>

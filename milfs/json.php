@@ -3,27 +3,35 @@
 require ('xajax/xajax.inc.php');
 $xajax = new xajax();
 require ('funciones/funciones.php');
+require ('funciones/convert.php');
+require ("includes/markdown.php");
+require ("funciones/conex.php");
 
 	$fecha_inicio = mysql_seguridad($_REQUEST[inicio]);
 	$fin = mysql_seguridad($_REQUEST[fin]);
-	$perfil = mysql_seguridad($_REQUEST[form_id_id]);
+	$perfil = mysql_seguridad($_REQUEST[id]);
 	$id = mysql_seguridad($_REQUEST[id]);
 	$busqueda = mysql_seguridad($_REQUEST[cadena]);
 	$campo = buscar_campo_tipo($id,"14");
 	$id_campo = $campo[0];
 	  
 $link=Conectarse();
-
-
-
-
-	
+/*
 	$consulta = "	SELECT  distinct(contenido) as data, control,form_datos.form_id as id, timestamp
 					FROM form_datos
 					WHERE form_datos.id_campo = '$id_campo' 
-					AND form_id = '$id'
+					AND form_id = '$id' 
 					";
-					
+					*/
+						$consulta = "SELECT  form_id as id, control, GROUP_CONCAT(contenido  ORDER by timestamp desc ) as data  
+											FROM `form_datos` 
+											WHERE form_id = '$id' 
+											AND id_campo ='$id_campo' $valor
+											group by  control  
+											ORDER BY  orden  desc";
+
+
+
  //echo $consulta;
 
 	mysql_query("SET NAMES 'UTF8'");
@@ -39,15 +47,19 @@ while( $row = mysql_fetch_array( $sql ) ) {
 		//$marcador["id"] = $id;
 		//$titulo = remplacetas("form_datos","control","$row[control]","contenido","id_campo ='28' AND timestamp ='$row[timestamp]'");
 		//$marcador["id"] = $id;
-		$campos = explode(" ",$row[data]);
+		//$identificador=mysql_result($sql,0,"identificador");
+		$identificador = explode(',',$row[data]);
+		$identificador = $identificador[0]; 
+		$campos = explode(" ",$identificador);
 														$lat = $campos[0];
 														$lon = $campos[1];
 														$zoom = $campos[2];	
 		$marcador["type"] = "Point";
 		$marcador["coordinates"] = array($lat,$lon);
 		//$marcador["loc"] = array('lat'=>$lat,'lon'=>$lon);
-		$formulario = formulario_imprimir($pefil,$row[control]);
-		$propiedades["name"] =$formulario;
+		
+		$formulario = formulario_imprimir($perfil,$row[control],'obligatorio');
+		$propiedades["name"] ="<div class='container-fluid' id='contenedor_datos' >$formulario</div>";
 		
 		//formulario_imprimir($id,$control)
 		//$marcador["zoom"] = $zoom;

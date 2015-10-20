@@ -4,8 +4,17 @@ session_start();
 require ('xajax/xajax.inc.php');
 $xajax = new xajax();
 require ('funciones/funciones.php');
+require ('funciones/convert.php');
 require ('funciones/login.php');
+require ("includes/markdown.php");
+require ("funciones/conex.php");
 $xajax->processRequests(); 
+//$xajax->debugOn('');
+if (isset($_REQUEST['form'])) {$form = $_REQUEST['form'];} else {$form = "";}
+if (isset($_REQUEST['id'])) {$id = $_REQUEST['id'];} else {$id = "";}
+if (isset($_REQUEST['c'])) {$c = $_REQUEST['c'];} else {$c = "";}
+if (isset($_REQUEST['f'])) {$f = $_REQUEST['f'];} else {$f = "";}
+if (isset($_REQUEST['t'])) {$t = $_REQUEST['t'];} else {$t = "";}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -17,10 +26,18 @@ $xajax->processRequests();
     <meta name="description" content="">
     <meta name="author" content="fredyrivera" >
      <?php $xajax->printJavascript("xajax/");  ?>
-    <link rel="shortcut icon" href="favicon-152.png">
+	<link rel="shortcut icon" href="favicon-152.png">
 	<link rel="apple-touch-icon-precomposed" href="favicon-152.png">
 	<link href="css/font-awesome/css/font-awesome.css" rel="stylesheet">
- <link href="http://getbootstrap.com/examples/sticky-footer-navbar/sticky-footer-navbar.css" rel="stylesheet">
+	<?php if($form !='') { echo "<link href='css/embebido.css' rel='stylesheet'>";}else{ echo "<link href='css/estilos.php?dd' rel='stylesheet'>";} ?>
+<!-- 	<link href="css/estilos.php?dd" rel="stylesheet">
+	<link href="css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" type="text/css" media="screen" href="css/bootstrap.css">
+	<link rel="stylesheet" type="text/css" media="screen" href="css/bootstrap-markdown.css">
+	<link rel="stylesheet" type="text/css" media="screen" href="css/bootstrap-markdown.min.css"> -->
+	<link rel="stylesheet" type="text/css" media="screen" href="css/bootstrap.css">
+	<link rel="stylesheet" type="text/css" media="screen" href="css/bootstrap-markdown.css">
+	<link rel="stylesheet" type="text/css" media="screen" href="css/bootstrap-markdown.min.css">
 
 
 <style>
@@ -32,7 +49,7 @@ $xajax->processRequests();
     <title>I<3MILFS</title>
 
     <!-- Bootstrap core CSS -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
+    
 <!--     <script language="JavaScript" src="escritorio/librerias/scripts.js" type="text/javascript"></script> -->
     <!-- Custom styles for this template -->
     
@@ -51,13 +68,24 @@ $xajax->processRequests();
 		//setcookie("aviso","presentacion",time()+60*60*24);
 					//	}
 					//($id,$form_respuesta,$control,$tipo)
-					if($_REQUEST[id] !='' OR $_REQUEST[c]){$onload ="<script type=\"text/javascript\"> xajax_formulario_modal('$_REQUEST[id]','','$_REQUEST[c]','$_REQUEST[t]')</script>";}
+					if($id !='' OR $c ){$onload ="<script type=\"text/javascript\"> xajax_formulario_modal('".$id."','','".$c."','".$t."')</script>";}
+					
 ?>
 </head>
 <body  >
-<?php echo $onload; ?>
-<?php if(isset($_REQUEST[f])){
-form_publico("$_REQUEST[f]");
+      <script src="js/jquery.min.js"></script>
+  <script src="js/bootstrap.js"></script>
+  <script src="js/markdown.js"></script>
+  <script src="js/to-markdown.js"></script>
+  <script src="js/bootstrap-markdown.js"></script>
+      <script src="js/scripts.js"></script>
+<?php if($form !='') { echo formulario_embebido($form);
+}else{
+
+ ?>
+<?php echo @$onload; ?>
+<?php if(isset($_REQUEST['f'])){
+form_publico("$f");
 }
  if ( isset ( $_SESSION['id'] ) ) {	?>
 <div class="navbar navbar-inverse nav-bar-fixed-top " role="navigation">
@@ -84,16 +112,16 @@ form_publico("$_REQUEST[f]");
 		<div id='contenido'>
 		
 		<?php 
-		if(!isset($_SESSION[id_empresa])) {$id_empresa_portada='1';} else{$id_empresa_portada = $_SESSION[id_empresa];}
+		if(!isset($_SESSION['id_empresa'])) {$id_empresa_portada='1';} else{$id_empresa_portada = $_SESSION['id_empresa'];}
 	$encabezado = empresa_datos("$id_empresa_portada",'encabezado');
 	$pie = empresa_datos("$id_empresa_portada",'pie');
 	echo "$encabezado";		
 		?>
 		
-<?php if(isset($_REQUEST[change])){
+<?php if(isset($_REQUEST['change'])){
 echo cambiar_password_formato("$_REQUEST[change]");
 }
-revisar_ingreso();?>		
+revisar_ingreso('');?>		
 
 <?php echo $pie; ?>
 <img class='img-responsive center-block' src="images/logo.png" alt="MILFS">
@@ -144,7 +172,7 @@ if($_REQUEST[id] !=''){$onload ="<script type=\"text/javascript\"> xajax_formula
         <h4 class='modal-title' id='myModalLabel_info'><div id='titulo_modal'></div></h4>
       </div>
       <div class='modal-body'>
-      
+
        <div id='muestra_form'></div>
       </div>
       <div class='modal-footer' id='pie_modal'>
@@ -164,13 +192,18 @@ if($_REQUEST[id] !=''){$onload ="<script type=\"text/javascript\"> xajax_formula
         <a target="_blank" href='http://qwerty.co/faq/category/19/privacidad-y-protecci%C3%B3n-de-datos.html'>Políticas de privacidad y protección de datos.</a> 
         	</div> 
       </div>
-      
+      <?php } ?>
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-     <script src="js/jquery.min.js"></script> 
-    <script src="js/bootstrap.min.js"></script>
-    <script src="js/scripts.js"></script>
 
+<!-- <script src="js/jquery.min.js"></script> 
+<script src="js/bootstrap.min.js"></script>
+    <script src="js/scripts.js"></script>
+<script src="js/bootstrap-markdown.js"></script>
+<script src="js/markdown.js"></script>
+<script src="js/to-markdown.js"></script>
+<script src="js/bootstrap-markdown.js"></script>
+ -->
 </body>
 </html>
