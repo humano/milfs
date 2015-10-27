@@ -1,6 +1,6 @@
 <?php
 session_start();
-//ini_set('display_errors', 'On');
+        if(isset($_REQUEST[debug])) {ini_set('display_errors', 'On');}
 require ('xajax/xajax.inc.php');
 $xajax = new xajax();
 require ('funciones/funciones.php');
@@ -8,9 +8,11 @@ require ('funciones/convert.php');
 require ('funciones/login.php');
 require ("includes/markdown.php");
 require ("funciones/conex.php");
+
 $xajax->processRequests(); 
 //$xajax->debugOn('');
 if (isset($_REQUEST['form'])) {$form = $_REQUEST['form'];} else {$form = "";}
+if (isset($_REQUEST['identificador'])) {$identificador = $_REQUEST['identificador'];} else {$identificador = "";}
 if (isset($_REQUEST['id'])) {$id = $_REQUEST['id'];} else {$id = "";}
 if (isset($_REQUEST['c'])) {$c = $_REQUEST['c'];} else {$c = "";}
 if (isset($_REQUEST['f'])) {$f = $_REQUEST['f'];} else {$f = "";}
@@ -79,8 +81,9 @@ if (isset($_REQUEST['t'])) {$t = $_REQUEST['t'];} else {$t = "";}
   <script src="js/to-markdown.js"></script>
   <script src="js/bootstrap-markdown.js"></script>
       <script src="js/scripts.js"></script>
-<?php if($form !='') { echo formulario_embebido($form);
-}else{
+<?php if($form !='') { echo formulario_embebido($form);}
+elseif($identificador !='') { echo mostrar_identificador($identificador);}
+else{
 
  ?>
 <?php echo @$onload; ?>

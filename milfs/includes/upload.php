@@ -30,8 +30,9 @@ if (($tipo == 'image/jpeg' or $tipo =='image/png') AND $size  <= $upload_size ) 
 $name = MD5(time())."$ext";
 $nombre= "$_SESSION[path_images_secure]/full/".$name;
 $imagenX = $_FILES[fileUpload][tmp_name];
-$coordenadas = leer_exif($imagenX);
-if($coordenadas !='') { $alerta = "alert('Se han detectado coordenadas en los metadatos de la imagen y se ubicará el mapa en ese lugar.');";}
+/*$coordenadas = leer_exif($imagenX);
+if($coordenadas !='') { $alerta = "alert('Se han detectado coordenadas en los metadatos de la imagen y se ubicará el mapa en ese lugar.($coordenadas) ');";}
+*/
 //if (!copy($_FILES['fileUpload']['tmp_name'],"$nombre"))
 if (!move_uploaded_file($_FILES['fileUpload']['tmp_name'],$nombre))
 //move_uploaded_file($tmp_name, "$uploads_dir/$name");

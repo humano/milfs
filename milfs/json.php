@@ -58,12 +58,12 @@ while( $row = mysql_fetch_array( $sql ) ) {
 		$marcador["coordinates"] = array($lat,$lon);
 		//$marcador["loc"] = array('lat'=>$lat,'lon'=>$lon);
 		
-		$formulario = formulario_imprimir($perfil,$row[control],'obligatorio');
+		$formulario = formulario_imprimir($perfil,$row[control],'');
 		$propiedades["name"] ="<div class='container-fluid' id='contenedor_datos' >$formulario</div>";
 		
 		//formulario_imprimir($id,$control)
 		//$marcador["zoom"] = $zoom;
-		$geometria .= "{\"type\":\"Feature\",\"geometry\":".json_encode($marcador,JSON_NUMERIC_CHECK).",\"properties\":".json_encode($propiedades,JSON_NUMERIC_CHECK)."},";
+		$geometria .= "{\"type\":\"Feature\",\"geometry\":".json_encode($marcador,JSON_NUMERIC_CHECK).",\"properties\":".json_encode($propiedades,JSON_NUMERIC_CHECK)."}";
 		$features[] = $marcador;
  //$resultado .= "<li> $row[tipo]<br> <a href=\"#\" onclick=\"javascript:loadMarker($id);return false;\"><b>$row[title]</b></a><br>$row[description]<hr> </li>";
 															

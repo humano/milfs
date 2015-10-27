@@ -5,26 +5,14 @@ $xajax = new xajax();
 //require ('json.lab.php');
 require ('funciones/funciones.php');
 require ("funciones/conex.php");
-//require_once ('milfs/includes/markdown.php');
+require_once ('includes/markdown.php');
 //require ('funciones/convert.php');
 $xajax->processRequests(); 
 if($_REQUEST[id2] =='') {$agregar= $_REQUEST[id];}else {$agregar = $_REQUEST[id2];}
 $formulario_nombre = remplacetas('form_id','id',$_REQUEST[id],'nombre') ;
 $agregar_nombre = remplacetas('form_id','id',$agregar,'nombre') ;
 ?>
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset=utf-8 />
-<title><?php echo $formulario_nombre[0] ?> MILFS</title>
-<meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
-<script src='https://api.tiles.mapbox.com/mapbox.js/v2.1.2/mapbox.js'></script>
-<link href='https://api.tiles.mapbox.com/mapbox.js/v2.1.2/mapbox.css' rel='stylesheet' />
-<style>
-  body { margin:0; padding:0; }
-  #map { position:absolute; top:0; bottom:0; width:100%; }
-</style>
-</head>
+
 <!DOCTYPE html>
 <html lang="en">
    <head >
@@ -46,7 +34,7 @@ $agregar_nombre = remplacetas('form_id','id',$agregar,'nombre') ;
 
 <!-- <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7/leaflet.css" /> -->
 <link href="css/bootstrap.min.css" rel="stylesheet">
-<link href="css/estilos.php?hghgS" rel="stylesheet">
+<link href="css/estilos.php?hghgSs" rel="stylesheet">
   <style type="text/css">
   body {  padding: 0; margin: 0;  }
 
@@ -62,8 +50,9 @@ $agregar_nombre = remplacetas('form_id','id',$agregar,'nombre') ;
 <body>
 <div id='map'></div>
 <script>
-L.mapbox.accessToken = 'pk.eyJ1IjoiaHVtYW5vIiwiYSI6IlgyRTFNdFEifQ.OmQBXmcVg_zq-vMpr8P5vQ';
-var map = L.mapbox.map('map', 'examples.map-i86nkdio')
+L.mapbox.accessToken = 'pk.eyJ1IjoiZmNhc3Ryb3QiLCJhIjoiY2lnOWw1bmd1MG93eXVsbTJpcmluYTBxdCJ9.yG7C1rEH6-MpZBEEb68IVg';
+/* var map = L.mapbox.map('map', 'examples.map-i86nkdio')*/
+var map = L.mapbox.map('map', 'mapbox.streets')
     .setView([40, -74.50], 8);
 
 var geoJson = [ <?php echo imprime_geojson("$_REQUEST[id]","$_REQUEST[id2]");?> ];

@@ -49,13 +49,15 @@ $web = remplacetas('empresa','id','1','web') ;
 <link href="milfs/css/carousel.css" rel="stylesheet">
 <style type="text/css">
 body {
-    background: url("") no-repeat center center fixed;
+  /*  background: url("") no-repeat center center fixed;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;
     background-size: cover;
     color: gray;
-    background-color: black;}
+    background-color: black;
+*/    
+    }
 .alert-info{
 color: #341208;
 border-color:  #341208;
@@ -76,7 +78,7 @@ background-color: black;
 .navbar-header {width: 50%;}
 
 .div_aplicacion {
-background-color: #f0eee1 !important;
+/* background-color: #f0eee1 !important;*/
 }
 .div_aplicacion:hover {
    -webkit-animation: animatedBackground 1s ease-out 1;
@@ -202,7 +204,7 @@ background-color: #f0eee1 !important;
 	//echo contenido_aplicacion_nombre("Portada","banner") ;
 	//echo aplicaciones_listado("","grid");} ?>
 	<div class="container" style="width:80%">
-	<?php echo aplicaciones_listado("","carrusel");} 
+	<?php echo aplicaciones_listado("","carrusel","");} 
 	?>
 	</div>
 <br></br>
