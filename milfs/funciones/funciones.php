@@ -4916,16 +4916,17 @@ if ( !isset ( $_SESSION['id_empresa'] ) ) {
 $respuesta->addRedirect("index.php");
 return $respuesta;
 }
-
+		
 	$id_empresa= $_SESSION['id'];
 		if($div==''){
 					$div = "contenido";
-$resultado = "<a href='#'  onclick=\"xajax_formulario_listado('','$div'); \"><i class='fa fa-list'></i> Formularios</a> ";
+$resultado = "<li id='link_formulario'><a href='#'  onclick=\"xajax_formulario_listado('$_SESSION[grupo_formularios]','$div'); \"><i class='fa fa-list'></i> Formularios</a></li> ";
 					
 					return $resultado;;
 		}
 $control = md5(rand(1,99999999).microtime());
 $respuesta = new xajaxResponse('utf-8');
+$_SESSION['grupo_formularios'] = $filtro_grupo;
 
 $link=Conectarse(); 
 	$id=mysql_real_escape_string('$id');
@@ -4942,19 +4943,37 @@ AND form_id.id_empresa ='$_SESSION[id_empresa]'  ORDER BY orden ASC";
 }
 $sql=mysql_query($consulta,$link);
 if($filtro_grupo !="") {
-	$leyenda_filtro_grupo ="<h2>Grupo $filtro_grupo";
-}
+	$leyenda_filtro_grupo ="<legend>Grupo $filtro_grupo</legend>";
+					
+	}else{ unset($_SESSION['grupo_formularios']);}
+$resultado_link = "<a href='#'  onclick=\"xajax_formulario_listado('$_SESSION[grupo_formularios]','$div'); \"><i class='fa fa-list'></i> Formularios</a> ";
+$respuesta->addAssign("link_formulario","innerHTML",$resultado_link);
+
+
 $divider = 3;
 				$listado_grupos = select('form_grupo','grupo','grupo',"xajax_formulario_listado((this.value),'contenido')","AGRUPADO",'');
-   			$nuevo_formulario = "<a class='btn btn-primary ' href='#' onclick=\"xajax_formulario_nuevo('','contenido'); \">
-				<i class='fa fa-plus-square-o'></i> Crear formulario </a>"; 
+				$listado_grupos ="
+				<div class='input-group'>
+					<span class='input-group-addon'>Seleccione un grupo de formularios</span>
+					$listado_grupos
+				</div>				
+				
+				";    			
+   			
+   			$nuevo_formulario = "
+				<div class='form-group'>	
+   			<a class='btn btn-primary btn-block ' href='#' onclick=\"xajax_formulario_nuevo('','contenido'); \">
+				<i class='fa fa-plus-square-o'></i> Crear formulario </a>
+				</div>"; 
 			$resultado = "
-							<div class='col-sm-12' style=';'>
-							
+							<div class='col-sm-4' style=''>
 							$nuevo_formulario
+							</div>
+							<div class='col-sm-8' style=''>
 							$listado_grupos
+							</div>
 							$leyenda_filtro_grupo
-							</div>";
+							";
 							
 if (mysql_num_rows($sql)!='0' ){
 	$i =0;
@@ -5901,9 +5920,9 @@ $consulta = "SELECT $value, $descripcion FROM $tabla WHERE 1 $w $group ORDER BY 
 $sql=mysql_query($consulta,$link);
 if($nombre==''){$name=$tabla."_".$value;}else{$name = "$nombre";}
 if (mysql_num_rows($sql)!='0'){
-	if($onchange !=''){$vacio ="";}else{$vacio ="<option value=''> >> Nuevo $descripcion << </option>";}
+	if($onchange !=''){$vacio ="<option value=''>Todos los valores</option>";}else{$vacio ="<option value=''> >> Nuevo $descripcion << </option>";}
 $resultado="<SELECT class='form-control' NAME='$name' id='$name' onchange=\"$onchange\" title='Seleccione $descripcion'  >
-<option value=''>Seleccione </option>
+<option value=''>$nombre</option>$vacio
 				" ;
 while( $row = mysql_fetch_array( $sql ) ) {
 if($row[$value]=="") {$resultado.="";}else{
@@ -6232,7 +6251,7 @@ function milfs(){
 
         <li>$crear_campos</li>
         
-        <li>$listado</li>
+        $listado
         <li>$consultas</li>
         <li>$importador</li>
         <li id='borra_tmp'>$limpiar_cache</li>
