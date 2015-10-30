@@ -4265,12 +4265,20 @@ $w_campo = "id = '$id_campo_editar'";
 
 								}else {
 $id_empresa = $_SESSION['id_empresa'];
+		$buscar_campo_nombre = 	remplacetas('form_campos','campo_nombre',$campo_nombre,'campo_nombre'," id_empresa = '$id_empresa' AND campo_area = '$campo_area' ") ;
+		if($buscar_campo_nombre[0] == $campo_nombre) { 
+		$respuesta->addAlert("El Nombre del campo ( $campo_nombre ) ya existe en la misma área ");
+		$respuesta->addAssign("grupo_campo_nombre","className"," input-group has-error  ");
+		return $respuesta;
+		}
+
 $consulta = "
 				INSERT INTO `form_campos` 
 			(`id_especialista`, `campo_nombre`,`campo_descripcion`,`campo_tipo`, `campo_area`, `orden`, `activo`, `identificador`, `id_empresa`) 
   VALUES ('$id_especialista','$campo_nombre','$campo_descripcion','$campo_tipo','$campo_area','$campo_orden','1','$campo_identificador','$id_empresa')";
   $sql =mysql_query($consulta,$link);  
 $w_campo= "identificador = '$campo_identificador'";
+if($sql) {$campos_formulario ="<h2 class='alert alert-success'>El campo se creó con éxito</h2>"; }
 										}
 										
 if($id_campo_editar !=''){$id_form_campo = $id_campo_editar;}else {
@@ -4311,7 +4319,7 @@ $consulta_campos_valores = "INSERT INTO form_campos_valores (id_form_campo,campo
 		AND form_campos.campo_tipo = form_tipo_campo.id_tipo_campo
 		LIMIT 1",$link);
 
-$campos_formulario = "";
+
 $campos_formulario .= "<div name='crear_campos_consulta_$campo_area' id='crear_campos_consulta_$campo_area'>	</div>";	
 while( $row = mysql_fetch_array( $campos ) ) {
 if ($row['tipo_campo_accion']=='textarea'){
@@ -4364,11 +4372,13 @@ function crear_campos_formulario($form){
 
 $form = mysql_seguridad($form);
 $respuesta = new xajaxResponse('utf-8');
-//$div = $form['div'];
-$div="div_campos";
+if($form['div'] !="") { $div = $form['div'];}else{$div="div_campos";}
+
 $especialista = $form["id_especialista"];
 $id_campo_editar = $form["id_campo_editar"];
-$resultado = "$id_campo_editar";
+$resultado = "
+
+$id_campo_editar";
 $link = Conectarse();
 mysql_query("SET NAMES 'utf8'");
 $capa = "crear_campos_consulta_$area";	
@@ -4465,7 +4475,13 @@ $resultado .= "<div name='formulario_campos_$area' id='formulario_campos_$area' 
 	 	</form>
 			 	
 	 	</div>";
-	
+$resultado = "
+<br>
+<div class='alert alert-warning'>
+	<legend>Crear un nuevo campo</legend>
+	$resultado
+</div>
+";
 $respuesta->addAssign("$div","innerHTML",$resultado);
 return $respuesta;
 }
@@ -4619,8 +4635,9 @@ return $respuesta;
 }
 $xajax->registerFunction("formulario_crear_campo");
 
-function agregar_campos($tipo,$div,$id){ 
+function agregar_campos($tipo,$div,$id,$formulario){ 
 $respuesta = new xajaxResponse('utf-8');
+
 $link=Conectarse();
 mysql_query("SET NAMES 'utf8'");
 
@@ -4724,19 +4741,46 @@ $consulta_campos_todos ="SELECT  form_campos.id, form_campos.campo_nombre, form_
  ORDER BY campo_nombre ";	
 $sql_consulta_campo =mysql_query($consulta_campos_todos,$link); 
 
-$resultado .="<div name='atencion' id='atencion' style='display:inline'></div>
-<select class='form-control' name='id_form_campo' id='id_form_campo' onchange=\"xajax_agregar_campos('grabar_campos','$div',this.value,'$id')\">";
-$resultado .= "<option value=''> Agregar campo a $nombre  </option>";
+$crear_nuevo ="<div name='atencion' id='atencion' style='display:inline'></div>
+	<form name='nuevo_campo' id='nuevo_campo' role='form'>
+		<input type ='hidden' name='id_usuario' id='id_usuario' value='$_SESSION[id_usuario]'>
+		<input type='hidden' name='div' id='div' value='atencion'> 
+	</form> 
+			<div class='form-group'>
+				<div class='btn btn-block   btn-warning'  OnClick=\"xajax_crear_campos_formulario(xajax.getFormValues('nuevo_campo'));\"><i class='fa fa-plus-square'></i> Crear campo</div>
+			</div>
+
+";
 								while( $row = mysql_fetch_array( $sql_consulta_campo ) ) {
-$resultado .= "<option value='$row[id]' title='$row[campo_descripcion]'>$row[campo_nombre]</option>";
+$valores .= "<option value='$row[id]' title='$row[campo_descripcion]'>$row[campo_nombre] [$row[id]]</option>";
 																											}
-$resultado .="</select> <hr>";	
+$resultado .="
+<br>
+<div class='input-group'>
+	<span class='input-group-addon'><i class='fa fa-plus-square'></i> Agregar campo a este formulario</span>
+		<select class='form-control' name='id_form_campo' id='id_form_campo' onchange=\"xajax_agregar_campos('grabar_campos','$div',this.value,'$id')\">
+		<option value='nuevo'> Seleccione un campo  </option>
+		$valores
+		</select>
+	<span class='input-group-btn'>
+	<div class='btn btn-default' onclick=\"xajax_agregar_campos('consultar_campos','contenido','$id')\">Actualizar</div>
+	</span>
+</div>
+<br>
+$crear_nuevo ";	
 
 											}/// fin de consultar_campos
 											
 if($tipo=='grabar_campos'){
+	if ($id=="nuevo")
+{ 
+
+
+}
+elseif($id =="") { $div='atencion';$resultado="<i class='fa fa-exclamation-triangle'></i> Seleccione un campo";}
+else {
 $id_form=func_get_arg(3);
-$consulta = "SELECT id_campo FROM form_contenido_campos WHERE id_campo= '$id' AND id_form= $id_form"; 
+$consulta = "SELECT id_campo FROM form_contenido_campos WHERE id_empresa = '$_SESSION[id_empresa]' AND id_campo= '$id' AND id_form= $id_form"; 
 $sql_consulta =mysql_query($consulta,$link); 
 $id_empresa= $_SESSION['id_empresa'];
 if(mysql_num_rows($sql_consulta) =='0')	{
@@ -4754,7 +4798,10 @@ VALUES (
 $sql_consulta_grabar =mysql_query($consulta_grabar,$link);
 $respuesta->addScript("xajax_agregar_campos('consultar_campos','$div','$id_form')");
 return $respuesta;
-														}else{$div='atencion';$resultado="<i class='fa fa-exclamation-triangle'></i> El campo ya pertenece a esta consulta ";}
+														}else{
+$div='atencion';$resultado="<i class='fa fa-exclamation-triangle'></i> El campo ya pertenece a esta consulta ";
+																	}
+					}
 
 									}///fin de grabar_campos	
 									
@@ -4945,7 +4992,7 @@ $sql=mysql_query($consulta,$link);
 if($filtro_grupo !="") {
 	$leyenda_filtro_grupo ="<legend>Grupo $filtro_grupo</legend>";
 					
-	}else{ unset($_SESSION['grupo_formularios']);}
+	}else{ $leyenda_filtro_grupo ="<legend>Formularios</legend>"; unset($_SESSION['grupo_formularios']);}
 $resultado_link = "<a href='#'  onclick=\"xajax_formulario_listado('$_SESSION[grupo_formularios]','$div'); \"><i class='fa fa-list'></i> Formularios</a> ";
 $respuesta->addAssign("link_formulario","innerHTML",$resultado_link);
 
@@ -5928,7 +5975,7 @@ while( $row = mysql_fetch_array( $sql ) ) {
 if($row[$value]=="") {$resultado.="";}else{
 if($row[$value] ==="$valor"){$selected="selected";}else{$selected ="";}
 
-$resultado .= "<option value='$row[$value]' $selected > ".substr($row[$campo1], 0, 150 )." ".substr($row[$campo2], 0, 30 )."  </option>";
+$resultado .= "<option value='$row[$value]' $selected > ".substr($row[$campo1], 0, 150 )." ".substr($row[$campo2], 0, 30 )." [$row[$value]] </option>";
 															}
 														}
 $resultado .= "</select>";
