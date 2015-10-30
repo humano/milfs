@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Oct 27, 2015 at 04:34 PM
+-- Generation Time: Oct 30, 2015 at 08:37 AM
 -- Server version: 5.6.25-4
 -- PHP Version: 5.6.14-1
 
@@ -2804,6 +2804,21 @@ INSERT INTO `form_id` (`id`, `nombre`, `descripcion`, `activo`, `modificable`, `
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `form_parametrizacion`
+--
+
+CREATE TABLE `form_parametrizacion` (
+  `id` int(11) NOT NULL,
+  `tabla` varchar(32) NOT NULL,
+  `campo` varchar(32) NOT NULL,
+  `opcion` varchar(200) NOT NULL,
+  `descripcion` text NOT NULL,
+  `visible` set('0','1') NOT NULL DEFAULT '1'
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `form_tipo_campo`
 --
 
@@ -2842,21 +2857,6 @@ INSERT INTO `form_tipo_campo` (`id_tipo_campo`, `tipo_campo_nombre`, `tipo_campo
 (21, 'Base de datos', 'base', 1),
 (22, 'Timestamp', 'timestamp', 1),
 (23, 'Funcion', 'oculto', 1);
-
--- --------------------------------------------------------
-
---
--- Table structure for table `parametrizacion`
---
-
-CREATE TABLE `parametrizacion` (
-  `id` int(11) NOT NULL,
-  `tabla` varchar(32) NOT NULL,
-  `campo` varchar(32) NOT NULL,
-  `opcion` varchar(200) NOT NULL,
-  `descripcion` text NOT NULL,
-  `visible` set('0','1') NOT NULL DEFAULT '1'
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -2967,17 +2967,17 @@ ALTER TABLE `form_id`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `form_parametrizacion`
+--
+ALTER TABLE `form_parametrizacion`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `id` (`id`);
+
+--
 -- Indexes for table `form_tipo_campo`
 --
 ALTER TABLE `form_tipo_campo`
   ADD PRIMARY KEY (`id_tipo_campo`);
-
---
--- Indexes for table `parametrizacion`
---
-ALTER TABLE `parametrizacion`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `id` (`id`);
 
 --
 -- Indexes for table `usuarios`
@@ -3029,22 +3029,22 @@ ALTER TABLE `form_datos`
 -- AUTO_INCREMENT for table `form_grupo`
 --
 ALTER TABLE `form_grupo`
-  MODIFY `id_grupo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `id_grupo` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `form_id`
 --
 ALTER TABLE `form_id`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 --
+-- AUTO_INCREMENT for table `form_parametrizacion`
+--
+ALTER TABLE `form_parametrizacion`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+--
 -- AUTO_INCREMENT for table `form_tipo_campo`
 --
 ALTER TABLE `form_tipo_campo`
   MODIFY `id_tipo_campo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
---
--- AUTO_INCREMENT for table `parametrizacion`
---
-ALTER TABLE `parametrizacion`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `usuarios`
 --

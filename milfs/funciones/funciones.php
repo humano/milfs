@@ -1815,7 +1815,7 @@ function aplicacion_carrusel($nombre,$id,$plantilla){
 		$descripcion = remplacetas('form_id','id',$id,'descripcion',"") ;
 		$descripcion = $descripcion[0];
 
-		$campo_titulo = remplacetas('parametrizacion','campo',$id,'descripcion'," tabla='form_id' and  opcion = 'titulo'") ;
+		$campo_titulo = remplacetas('form_parametrizacion','campo',$id,'descripcion'," tabla='form_id' and  opcion = 'titulo'") ;
 	if($campo_titulo[0] !='') {$w_campo = "AND id_campo = '$campo_titulo[0]'";}
 		$campo_titulo = $campo_titulo[0];
 	$consulta ="SELECT *,GROUP_CONCAT(id  ORDER by timestamp desc ) as identificador FROM  form_datos WHERE form_id = '$id' $w_campo GROUP BY control order by contenido";
@@ -2220,7 +2220,7 @@ function lista_categorias($perfil,$categoria,$tipo) {
 
 $link=Conectarse(); 
 mysql_query("SET NAMES 'utf8'");
-		$categoria_campo = remplacetas('parametrizacion','campo',$perfil,'descripcion'," tabla='form_id' and  opcion = 'categoria:campo'") ;
+		$categoria_campo = remplacetas('form_parametrizacion','campo',$perfil,'descripcion'," tabla='form_id' and  opcion = 'categoria:campo'") ;
 		$categoria_campo = $categoria_campo[0];
 $consulta = "
 	SELECT md5(binary contenido) as md5_contenido, contenido FROM form_datos
@@ -2255,7 +2255,7 @@ while( $row = mysql_fetch_array( $sql ) ) {
 			$categoria = $categoria[2];
 		$identificador = $identificador[0];
 		*/
-										$icono = remplacetas('parametrizacion','campo',$perfil,'descripcion'," tabla='form_id' and  opcion = 'categoria:icon:$row[md5_contenido]'") ;
+										$icono = remplacetas('form_parametrizacion','campo',$perfil,'descripcion'," tabla='form_id' and  opcion = 'categoria:icon:$row[md5_contenido]'") ;
 								if($icono[0] =='') {
 								//$icon = "http://$_SERVER[HTTP_HOST]/milfs/images/pin.png ";
 								$icon = "https://raw.githubusercontent.com/humano/milfs/master/milfs/images/iconos/negro.png";
@@ -2506,7 +2506,7 @@ function contenido_aplicacion($id,$plantilla){
 $div = "contenedor";
 	$respuesta = new xajaxResponse('utf-8');
 	
-	$campo_titulo = remplacetas('parametrizacion','campo',$id,'descripcion'," tabla='form_id' and  opcion = 'titulo'") ;
+	$campo_titulo = remplacetas('form_parametrizacion','campo',$id,'descripcion'," tabla='form_id' and  opcion = 'titulo'") ;
 if($campo_titulo[0] !='') {$w_campo = "AND id_campo = '$campo_titulo[0]'";}
 $campo_titulo = $campo_titulo[0];
 $consulta ="SELECT *,GROUP_CONCAT(id  ORDER by timestamp desc ) as identificador FROM  form_datos WHERE form_id = '$id' $w_campo GROUP BY control order by contenido";
@@ -2548,7 +2548,7 @@ function contenido_aplicacion_nombre($nombre,$plantilla){
 	$id = $id[0];
 	if($id[0] =="") {$aviso = "<div class='alert-danger'><h2>No se ha definido una aplicación con el nombre <strong>$nombre</strong></h2> </div>";
 	return $aviso;}
-	$campo_titulo = remplacetas('parametrizacion','campo',$id,'descripcion'," tabla='form_id' and  opcion = 'titulo'") ;
+	$campo_titulo = remplacetas('form_parametrizacion','campo',$id,'descripcion'," tabla='form_id' and  opcion = 'titulo'") ;
 if($campo_titulo[0] !='') {$w_campo = "AND id_campo = '$campo_titulo[0]'";}
 $campo_titulo = $campo_titulo[0];
 $consulta ="SELECT *,GROUP_CONCAT(id  ORDER by timestamp desc ) as identificador FROM  form_datos WHERE form_id = '$id' $w_campo GROUP BY control order by contenido";
@@ -2581,7 +2581,7 @@ function contenido_parallax($id){
 $div = "contenedor";
 	$respuesta = new xajaxResponse('utf-8');
 	
-	$campo_titulo = remplacetas('parametrizacion','campo',$id,'descripcion'," tabla='form_id' and  opcion = 'titulo'") ;
+	$campo_titulo = remplacetas('form_parametrizacion','campo',$id,'descripcion'," tabla='form_id' and  opcion = 'titulo'") ;
 if($campo_titulo[0] !='') {$w_campo = "AND id_campo = '$campo_titulo[0]'";}
 $campo_titulo = $campo_titulo[0];
 $consulta ="SELECT *,GROUP_CONCAT(id  ORDER by timestamp desc ) as identificador FROM  form_datos WHERE form_id = '$id' $w_campo GROUP BY control order by contenido";
@@ -2662,7 +2662,7 @@ $div = "contenedor";
 	$nombre = remplacetas('form_id','id',$id,'nombre') ;
 	$respuesta = new xajaxResponse('utf-8');
 	
-	$campo_titulo = remplacetas('parametrizacion','campo',$id,'descripcion'," tabla='form_id' and  opcion = 'titulo'") ;
+	$campo_titulo = remplacetas('form_parametrizacion','campo',$id,'descripcion'," tabla='form_id' and  opcion = 'titulo'") ;
 if($campo_titulo[0] !='') {$w_campo = "AND id_campo = '$campo_titulo[0]'";}
 $campo_titulo = $campo_titulo[0];
 $consulta ="SELECT *,GROUP_CONCAT(id  ORDER by timestamp desc ) as identificador FROM  form_datos WHERE form_id = '$id' $w_campo GROUP BY control order by contenido";
@@ -2726,7 +2726,7 @@ $xajax->registerFunction("contenido_timeline");
 function contenido_listado($id){
 
 	$respuesta = new xajaxResponse('utf-8');
-	$campo_titulo = remplacetas('parametrizacion','campo',$id,'descripcion'," tabla='form_id' and  opcion = 'titulo'") ;
+	$campo_titulo = remplacetas('form_parametrizacion','campo',$id,'descripcion'," tabla='form_id' and  opcion = 'titulo'") ;
 if($campo_titulo[0] !='') {$w_campo = "AND id_campo = '$campo_titulo[0]'";}
 $campo_titulo = $campo_titulo[0];
 $consulta ="SELECT *,GROUP_CONCAT(id  ORDER by timestamp desc ) as identificador FROM  form_datos WHERE form_id = '$id' $w_campo GROUP BY control order by contenido";
@@ -3256,7 +3256,7 @@ if(is_numeric($tipo)) { $limit = "limit $tipo "; $class= "alert alert-info";}
 						ORDER BY form_contenido_campos.orden ASC $limit 
 						";
 						
-		$categoria_campo = remplacetas('parametrizacion','campo',$id,'descripcion'," tabla='form_id' and  opcion = 'categoria:campo'") ;
+		$categoria_campo = remplacetas('form_parametrizacion','campo',$id,'descripcion'," tabla='form_id' and  opcion = 'categoria:campo'") ;
 		$categoria_campo = $categoria_campo[0];
 		$id_empresa = remplacetas('form_id','id',$id,'id_empresa','') ;
 					
@@ -3349,10 +3349,10 @@ if (mysql_num_rows($sql)!='0'){
 				if($row[id_campo] == $categoria_campo){
 
 					
-					$categoria_filtro = remplacetas('parametrizacion','campo',$id,'descripcion',"tabla='form_id' and  opcion = 'categoria:filtro:$row[id_campo]'") ;
+					$categoria_filtro = remplacetas('form_parametrizacion','campo',$id,'descripcion',"tabla='form_id' and  opcion = 'categoria:filtro:$row[id_campo]'") ;
 						$filtro = $categoria_filtro;
 					$categoria_filtro = $categoria_filtro[0];
-								$icono = remplacetas('parametrizacion','campo',$id,'descripcion'," tabla='form_id' and  opcion = 'categoria:icon:$md5_contenido'") ;
+								$icono = remplacetas('form_parametrizacion','campo',$id,'descripcion'," tabla='form_id' and  opcion = 'categoria:icon:$md5_contenido'") ;
 								if($icono[0] =='') {
 								//$icon = "http://$_SERVER[HTTP_HOST]/milfs/images/pin.png";
 								$icon = "https://raw.githubusercontent.com/humano/milfs/master/milfs/images/iconos/negro.png";
@@ -3386,10 +3386,10 @@ if($contenido_original !="") {
 //if($id=="6" OR $id=="10") {
 	if($tipo !="" AND (!is_numeric($tipo)) AND $tipo !="metadatos" ) {
 ////Usa una plantilla apra cada id 
-$plantilla = remplacetas('parametrizacion','campo',$id,'descripcion'," tabla='form_id' and  opcion = 'plantilla:$tipo'") ;
+$plantilla = remplacetas('form_parametrizacion','campo',$id,'descripcion'," tabla='form_id' and  opcion = 'plantilla:$tipo'") ;
 if($plantilla[0] =="") {
 ///Usa una plantilla generica por nombre
-$plantilla = remplacetas('parametrizacion','opcion',"plantilla:$tipo",'descripcion',"campo = ''") ;
+$plantilla = remplacetas('form_parametrizacion','opcion',"plantilla:$tipo",'descripcion',"campo = ''") ;
 //$plantilla = remplacetas('parametrizacion','opcion',"plantilla:$tipo",'descripcion',"campo = '$id' ") ;
 }
 if($plantilla[0] !='') { $plantilla = $plantilla[0] ;}
@@ -3706,10 +3706,10 @@ function formulario_imprimir_linea($id,$control,$tipo) {
 						ORDER BY form_contenido_campos.orden ASC 
 						";
 						
-		$categoria_campo = remplacetas('parametrizacion','campo',$id,'descripcion'," tabla='form_id' and  opcion = 'categoria:campo'") ;
+		$categoria_campo = remplacetas('form_parametrizacion','campo',$id,'descripcion'," tabla='form_id' and  opcion = 'categoria:campo'") ;
 		$categoria_campo = $categoria_campo[0];	
 	
-		$titulo = remplacetas('parametrizacion','campo',$id,'descripcion'," tabla='form_id' and  opcion = 'titulo'") ;
+		$titulo = remplacetas('form_parametrizacion','campo',$id,'descripcion'," tabla='form_id' and  opcion = 'titulo'") ;
 		$titulo = $titulo[0];						
 
 $link=Conectarse(); 
@@ -3759,10 +3759,10 @@ $td .= "<td>$imagen</td>";
 				if($row[id_campo] == $categoria_campo){
 					$array[category]=$contenido;
 					
-					$categoria_filtro = remplacetas('parametrizacion','campo',$id,'descripcion',"tabla='form_id' and  opcion = 'categoria:filtro:$row[id_campo]'") ;
+					$categoria_filtro = remplacetas('form_parametrizacion','campo',$id,'descripcion',"tabla='form_id' and  opcion = 'categoria:filtro:$row[id_campo]'") ;
 						$filtro = $categoria_filtro;
 					$categoria_filtro = $categoria_filtro[0];
-								$icono = remplacetas('parametrizacion','campo',$id,'descripcion'," tabla='form_id' and  opcion = 'categoria:icon:$md5_contenido'") ;
+								$icono = remplacetas('form_parametrizacion','campo',$id,'descripcion'," tabla='form_id' and  opcion = 'categoria:icon:$md5_contenido'") ;
 								//$icono[0] =  $imagen_icon;
 								if($icono[0] =='') {
 								$icon = "images/pin.png";
@@ -4095,7 +4095,7 @@ $consulta = "
 $sql=mysql_query($consulta,$link);
 if (mysql_num_rows($sql)!='0'){
 
-		$categoria = remplacetas('parametrizacion','campo',$perfil,'descripcion'," opcion = 'categoria'") ;
+		$categoria = remplacetas('form_parametrizacion','campo',$perfil,'descripcion'," opcion = 'categoria'") ;
 		$categoria = $categoria[0];
 $resultado = "<label for='id_campo'>Campo</label>
 						<select onchange=\"xajax_formulario_campos_filtro('$perfil',(this.value),'filtro_$perfil'); \" class='form-control' name='id_campo' id='id_campo' >
@@ -6343,7 +6343,7 @@ function parametrizacion($array) {
 	$id= $array[id];
 	
 	if($accion =='grabar'){
-	$consulta= "INSERT INTO parametrizacion set tabla='$tabla', campo ='$campo',opcion ='$opcion' , descripcion ='$descripcion' ,visible='$visible'";
+	$consulta= "INSERT INTO form_parametrizacion set tabla='$tabla', campo ='$campo',opcion ='$opcion' , descripcion ='$descripcion' ,visible='$visible'";
 							} 
 	//						return $consulta;
 	$sql=mysql_query($consulta,$link);  
