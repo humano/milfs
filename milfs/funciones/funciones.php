@@ -1,6 +1,161 @@
 <?php
 date_default_timezone_set('America/Bogota');
 
+function mostrar_modal($form,$control,$plantilla){
+$respuesta = new xajaxResponse('utf-8');
+$datos = contenido_mostrar("$form","$control",'',"$plantilla");
+$div ="contenido_de_modal";
+$resultado = "<div class='container-fluid'>$datos</div>";
+			$div_contenido = "<div id='$div'>$div</div>";
+			$respuesta->addAssign("muestra_form","innerHTML","$div_contenido");
+			//$respuesta->addAssign("titulo_modal","innerHTML","Hola mundo");
+			//$respuesta->addAssign("pie_modal","innerHTML","$pie");
+			$respuesta->addAssign("$div","innerHTML","$resultado");
+			$respuesta->addscript("$('#muestraInfo').modal('toggle')");	
+
+			return $respuesta;
+
+}
+$xajax->registerFunction("mostrar_modal");
+
+function portal_filtro_cadena($formulario,$id_campo,$control){
+$cadena = 	remplacetas('form_datos','control',"$control",'contenido',"form_id = '$formulario' AND id_campo ='$id_campo' ") ;
+$consulta ="SELECT * FROM form_campos ,form_datos 
+				WHERE form_datos.form_id = '$formulario' AND form_campos.id = form_datos.id_campo AND form_datos.id_campo = '$id_campo' AND contenido = '$cadena[0]' 
+				GROUP BY  control ORDER BY contenido";
+$link=Conectarse(); 
+mysql_query("SET NAMES 'utf8'");
+$sql=mysql_query($consulta,$link);
+if (mysql_num_rows($sql)!=0){
+
+while( $row = mysql_fetch_array( $sql ) ) {
+	$datos = contenido_mostrar("$formulario","$row[control]",'',"");
+$listado .= "<div class='panel panel-default'>
+				<div class='panel-heading'><h3>$cadena[0]<a class='btn btn-info pull-right' target='api' href='http://$_SERVER[HTTP_HOST]/milfs/api.php?identificador=$row[control]' >{json}</a></h3> </div>
+				<div class='panel-body'>
+				
+					$datos
+				</div>
+				</div>
+";
+}
+$resultado = "	
+	<br>
+		 $listado 
+		
+";
+}
+$respuesta = new xajaxResponse('utf-8');
+$respuesta->addAssign("mostrar_contenido","innerHTML","$resultado");
+			return $respuesta;
+}
+$xajax->registerFunction("portal_filtro_cadena");
+
+
+
+function portal_filtro_campos($formulario,$id_campo){
+$formulario_descripcion = remplacetas('form_id','id',"$formulario",'descripcion',"") ;
+$formulario_nombre = remplacetas('form_id','id',"$formulario",'nombre',"") ;
+$campo_nombre = remplacetas('form_campos','id',"$id_campo",'campo_nombre',"") ;
+$campo_descripcion = remplacetas('form_campos','id',"$id_campo",'campo_descripcion',"") ;
+
+$consulta ="SELECT * FROM form_campos ,form_datos WHERE form_datos.form_id = '$formulario' AND form_campos.id = form_datos.id_campo AND form_datos.id_campo = '$id_campo'  GROUP BY  contenido ORDER BY contenido";
+$link=Conectarse(); 
+mysql_query("SET NAMES 'utf8'");
+$sql=mysql_query($consulta,$link);
+if (mysql_num_rows($sql)!=0){
+
+while( $row = mysql_fetch_array( $sql ) ) {
+$listado .= "<li class='list-group-item'><a href='#' onclick=\"xajax_portal_filtro_cadena('$formulario','$id_campo','$row[control]') \" title='$row[control]'>$row[contenido]</a></li>";
+}
+$resultado = "	
+		 <ul class='list-group'>
+		 <h4 ><span title='$formulario_descripcion[0]'>$formulario_nombre[0]</span> / <span title='$campo_descripcion[0]'>$campo_nombre[0]</span></h4>
+		 <li class='list-group-item'><a class='btn btn-block btn-info' target='api' href='http://$_SERVER[HTTP_HOST]/milfs/api.php?id=$formulario&tipo=simple' >{json}</a></li>
+		 $listado 
+		 </ul>
+";
+}
+return $resultado;
+}
+
+
+
+function portal_filtro_campos_select($formulario,$id_campo){
+$formulario_descripcion = remplacetas('form_id','id',"$formulario",'descripcion',"") ;
+$formulario_nombre = remplacetas('form_id','id',"$formulario",'nombre',"") ;
+$campo_nombre = remplacetas('form_campos','id',"$id_campo",'campo_nombre',"") ;
+$campo_descripcion = remplacetas('form_campos','id',"$id_campo",'campo_descripcion',"") ;
+
+$consulta ="SELECT * FROM form_campos ,form_datos WHERE form_datos.form_id = '$formulario' AND form_campos.id = form_datos.id_campo AND form_datos.id_campo = '$id_campo'  GROUP BY  contenido ORDER BY contenido";
+$link=Conectarse(); 
+mysql_query("SET NAMES 'utf8'");
+$sql=mysql_query($consulta,$link);
+if (mysql_num_rows($sql)!=0){
+
+while( $row = mysql_fetch_array( $sql ) ) {
+$listado .= "<option value = '$row[control]'>$row[contenido]</option>";
+}
+$resultado = "	
+		<select class='form-control' onchange=\"xajax_portal_filtro_cadena('$formulario','$id_campo',(this.value)) \" >
+		<option =''>$campo_nombre[0]</option>
+		 		 $listado 
+		 </select>
+";
+}
+return $resultado;
+}
+
+
+
+function portal_listado_campos($formulario){
+$formulario_descripcion = remplacetas('form_id','id',"$formulario",'descripcion',"") ;
+$formulario_nombre = remplacetas('form_id','id',"$formulario",'nombre',"") ;
+$consulta ="SELECT * FROM form_campos ,form_contenido_campos WHERE form_campos.id = form_contenido_campos.id_campo AND form_contenido_campos.id_form = '$formulario' ORDER BY form_contenido_campos.orden";
+$link=Conectarse(); 
+mysql_query("SET NAMES 'utf8'");
+$sql=mysql_query($consulta,$link);
+if (mysql_num_rows($sql)!=0){
+
+while( $row = mysql_fetch_array( $sql ) ) {
+$listado .= "<li class='list-group-item'><a href='?formulario=$formulario&campo=$row[id_campo]' title='$row[campo_descripcion]'>$row[campo_nombre]</a></li>";
+}
+$resultado = "	
+		 <ul class='list-group'>
+		 
+		 <legend title='$formulario_descripcion'>$formulario_nombre[0]</legend>
+		 <li class='list-group-item'><a class='btn btn-block btn-info' target='api' href='http://$_SERVER[HTTP_HOST]/milfs/api.php?id=$formulario&tipo=simple' >{json}</a></li>
+		 $listado
+		 
+		 </ul>
+";
+}
+return $resultado;
+}
+
+
+function portal_listado_formularios(){
+
+$consulta ="SELECT * FROM form_id WHERE publico = '1'";
+$link=Conectarse(); 
+mysql_query("SET NAMES 'utf8'");
+$sql=mysql_query($consulta,$link);
+if (mysql_num_rows($sql)!=0){
+
+while( $row = mysql_fetch_array( $sql ) ) {
+$listado .= "<li><a href='?formulario=$row[id]' title='$row[descripcion]'>$row[nombre]</a></li>";
+}
+$resultado = "	
+	<li class='dropdown'>
+	 <a href='#' class='dropdown-toggle' data-toggle='dropdown' role='button' aria-haspopup='true' aria-expanded='false'>Set de datos<span class='caret'></span></a>
+		 <ul class='dropdown-menu'>
+		 $listado
+		 </ul>
+   </li>";
+}
+return $resultado;
+}
+
 
 function insertar_linea($tabla,$key,$campo,$valor,$control,$orden,$div){
 	$respuesta = new xajaxResponse('utf-8');
