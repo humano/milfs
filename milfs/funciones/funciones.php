@@ -4997,7 +4997,8 @@ $resultado_link = "<a href='#'  onclick=\"xajax_formulario_listado('$_SESSION[gr
 $respuesta->addAssign("link_formulario","innerHTML",$resultado_link);
 
 
-$divider = 3;
+$divider = 1;
+$columnas = intval(12/$divider);
 				$listado_grupos = select('form_grupo','grupo','grupo',"xajax_formulario_listado((this.value),'contenido')","AGRUPADO",'');
 				$listado_grupos ="
 				<div class='input-group'>
@@ -5020,6 +5021,7 @@ $divider = 3;
 							$listado_grupos
 							</div>
 							$leyenda_filtro_grupo
+				
 							";
 							
 if (mysql_num_rows($sql)!='0' ){
@@ -5027,10 +5029,14 @@ if (mysql_num_rows($sql)!='0' ){
 
 		while( $row = mysql_fetch_array( $sql ) ) {
 			$id= $row['id'];
+			$C = $id;
+						
 		$cantidad =	formulario_contar($row['id']);
-		if($cantidad >0) {$cantidad ="<tr><td>Llenado: <b>$cantidad veces</b></td></tr>";}else{$cantidad = "";}
+		if($cantidad >0) {$cantidad ="<li class='list-group-item'>Llenado: $cantidad veces</li>";}else{$cantidad = "";}
 		$propietario = 	remplacetas('usuarios','id',$row['propietario'],'email',"") ;
 		$estado = 	remplacetas('form_id','id',$id,'publico',"") ;
+		$nombre_formulario = 	remplacetas('form_id','id',$id,'nombre',"") ;
+		$descripcion_formulario = 	remplacetas('form_id','id',$id,'descripcion',"") ;
 		$estado = "<tr><td>
 							<div class='input-group '>
 								<span class='input-group-addon'>Contenido privado</span>
@@ -5051,93 +5057,135 @@ if (mysql_num_rows($sql)!='0' ){
 		
 		
 		$primer = 	formulario_uso("$id",'','primer') ;
-		if($primer[0] !='') {$primer = "<tr><td>Primer registro: <a onclick=\"xajax_formulario_modal('$id','','$primer[1]',''); \"><b>".date ( "Y-m-d h:i:s" , $primer[0])."</b></a></td></tr>";}else{$primer='';}
+		if($primer[0] !='') {$primer = "<li class='list-group-item'>Primer registro: <a onclick=\"xajax_formulario_modal('$id','','$primer[1]',''); \"> ".date ( "Y-m-d h:i:s" , $primer[0])."</a></li>";}else{$primer='';}
 		$ultimo = 	formulario_uso("$id",'','ultimo') ;
-		if($ultimo[0] !='') {$ultimo = "<tr><td>Último registro: <a onclick=\"xajax_formulario_modal('$id','','$ultimo[1]',''); \"><b>".date ( "Y-m-d h:i:s" , $ultimo[0])."</b></a></td></tr>";}else{$ultimo='';}
+		if($ultimo[0] !='') {$ultimo = "<li class='list-group-item'>Último registro: <a onclick=\"xajax_formulario_modal('$id','','$ultimo[1]',''); \"> ".date ( "Y-m-d h:i:s" , $ultimo[0])."</a></li>";}else{$ultimo='';}
 		
 		$nombre = editar_campo("form_id",$row['id'],"nombre","","","");
 		$orden = editar_campo("form_id",$row['id'],"orden","","","");
 		$descripcion = editar_campo("form_id",$row['id'],"descripcion","","","");
 		$geo = buscar_campo_tipo($id,"14");
-		if($geo[0] !='') { $mapa= "<tr><td><a href='".$_SESSION['url']."/map.php?id=$id' target='mapa'><i class='fa fa-globe'></i> Mapa</a></td></tr>";}else {$mapa='';}
+		if($geo[0] !='') { $mapa= "<li class='list-group-item'><a href='".$_SESSION['url']."/map.php?id=$id' target='mapa'><i class='fa fa-globe'></i> Mapa</a></li>";}else {$mapa='';}
 		
 		if($i % $divider==0) {
 
-		$resultado .= "
+$item .= "
 		
-						<div class='row '  id='grid' style=''>
+					
 
 							";
 								}
 			$i++;
 			$grupo_actual = remplacetas('form_grupo','id',$row['id'],'grupo',"") ;
 			if(is_null($grupo_actual[3])) {
+				$valores_grupo[id]=$row[id];
+				$valores_grupo[grupo]="";
 				$grupo = "
-				<div id = 'div_grupo_$row[id]'>
-					<form id='form_grupo_$row[id]' name='form_grupo_$row[id]' >
+		<div id = 'div_grupo_$row[id]'>
+				
+					<form id='form_grupo_$row[id]' name='form_grupo_$row[id]'>
 								<input name='grupo' id='grupo' type='text' placeholder='Grupo'> 
 								<input name='id' id='id' type='hidden' value='$row[id]'> 
 							<div class='btn btn-default btn-success' onclick=\"xajax_insertar_registro('form_grupo',xajax.getFormValues('form_grupo_$row[id]'),'div_grupo_$row[id]','grupo'); \"><i class='fa fa-save'></i></div>
 					</form>
-				</div>";
-							
+				</div> 
+				";
+		//	$grupo = "Grupo ".editar_campo("form_grupo",$row['id'],"grupo","","","");
 			}else 
 			{
-							$grupo = "Grupo ".editar_campo("form_grupo",$row['id'],"grupo","","","");
+							$grupo = "".editar_campo("form_grupo",$row['id'],"grupo","","","");
 			}
 
-$resultado .=  "<div class='col-sm-4' style=';'>
-						<div class='panel panel-default' style='' id= 'panel_$row[id]'>
-							 <div class='panel-heading'>
-							    <h3>$nombre <span class='badge pull-right'>ID $row[id]</span></h3>
-							    <p>$descripcion</p>
-							    Orden $orden
-							    $grupo 
+$item .=  "<!-- <div class='col-sm-$columnas' style=';'> -->
+						<div class='panel panel-default' >
+							 <div class='panel-heading'  id= 'encabezado_$row[id]' role='tab'>
+							 	<div class='panel-title container-fluid'>
+							 		
+								 		<div class='col-xs-6'>
+								 			<a class='btn btn-default ' href='$_SESSION[url]?form=$id' target='formulario'><i class='fa fa-share'></i></a>
+								    		<a class='btn btn-default' href='#' onclick=\"xajax_formulario_modal('$row[id]','','',''); \"><i class='fa fa-save'></i></a>
+								    		<a class='collapsed' role='button' data-toggle='collapse' data-parent='#acordion_grid' href='#collapse$row[id]' aria-expanded='false' aria-controls='collapse$row[id]'>
+												<h2>$nombre_formulario[0]<br><small>$descripcion_formulario[0]</small></h2>								    		
+								    		</a>
+								    		
+											
+							    		</div>
+							    		<div class='col-xs-5'>
+							    		<ul class='list-group'>
+											<li class='list-group-item'>Creación: $row[creacion] / $propietario[0]</li>
+											$cantidad
+											$ultimo
+											$primer
+											$mapa
+							    		</ul>
+							    		
+								    	</div> 	
+								    	<div class='col-xs-1 alert alert-info '>
+								    		<h2 class='text-center '>$row[id]</h2>
+								    	</div>
+								    
+							   </div>  
+							    
 							 </div>
-							 <div class='panel-body'>
-								<table class='table' >
-									$cantidad  
-									$ultimo
-									$primer
-									<tr><td>Creado por: <b>$propietario[0]</td></tr>
-									<tr><td>Creación: <b>$row[creacion]</b></td></tr>
-									$mapa $estado $modificable
-									<tr><td><div class='btn btn-block btn-default' onclick=\"xajax_agregar_campos('consultar_campos','contenido','$row[id]')\">Modificar campos</div></td></tr>
-								
-									<tr>
-										<td>
-											<div class='col-xs-6'>
-												<a class='btn btn-primary btn-block' href='#' onclick=\"xajax_formulario_modal('$row[id]','','',''); \">Llenar</a>
+							 <div id='collapse$row[id]' class='panel-collapse collapse' role='tabpanel' aria-labelledby='encabezado_$row[id]'>
+							 <div class='panel-body' >
+								<div class='container-fluid'>
+
+								<legend>Datos del formulario</legend>
+										<ul class='list-group'>
+											<li class='list-group-item'><h3><small>Nombre:</small>$nombre</h3></li>
+											<li class='list-group-item'><h4><small>Descripción:</small>$descripcion</h3></li>
+											<li class='list-group-item'><h4><small>Orden:</small>$orden <small>Grupo:</small> $grupo</h4></li>									
+										</ul>
+										</div>
+										<legend>Configuración de privacidad</legend>
+										<div class='row'>
+											<div class='col-md-6'>
+											$estado
 											</div>
-											<div class='col-xs-6'>
-												<a class='btn btn-warning btn-block' href='#' onclick=\"xajax_formulario_parametrizacion($row[id],'','contenido'); \">Parametrización</a>
+											<div class='col-md-6'>
+											 $modificable	
 											</div>
-										</td>
-									</TR>								
-									<TR><TD><div id='eliminar_$row[id]'> <a class='btn btn-danger btn-block' href='#' onclick=\"xajax_formulario_eliminar($row[id],''); \"><i class='fa fa-trash-o'></i> Eliminar</a></div></TD></TR>							
-									</table>	
-								
-							</div>
-							<div class='panel-footer'>
-								<div class='input-group '>
-									<span class='input-group-addon'>Link</span>
-									<input  onclick=\"this.select(); \"  type='text' class='form-control' placeholder='$_SESSION[url]/?id=$id' value='$_SESSION[url]/?id=$id'>
-								</div>
-							</div>
+										</div>
+										<legend>Acciones</legend>
+										<div class='row'>
+											<div class='col-md-3'>
+												<div class='btn btn-block btn-success' onclick=\"xajax_agregar_campos('consultar_campos','contenido','$row[id]')\">Agregar o quitar campos</div>
+											</div>
+											<div class='col-md-3'>
+													<a class='btn btn-primary btn-block' href='#' onclick=\"xajax_formulario_modal('$row[id]','','',''); \">Llenar</a>
+											</div>
+											<div class='col-md-3'>
+													<a class='btn btn-warning btn-block' href='#' onclick=\"xajax_formulario_parametrizacion($row[id],'','contenido'); \">Parametrización</a>
+											</div>
+											<div class='col-md-3'>
+												<div id='eliminar_$row[id]'> <a class='btn btn-danger btn-block' href='#' onclick=\"xajax_formulario_eliminar($row[id],''); \"><i class='fa fa-trash-o'></i> Eliminar</a></div>
+											</div>						
+										</div>
+									</div>
 						</div>
-					</div> ";
+						
+					<!-- </div> --> ";
 
 
 	if($i%$divider==0) {
-			$resultado .= "</div>	";
+			$item .= "</div>	";
 								}
 
 															}
 
 															
-	$resultado .="";
+	//$resultado .="";
 										}
+										
+		
 else{ $resultado .= "<div class='alert alert-warning' ><h2>Aún no se han diseñado formularios</h2></div> ";}
+
+		$resultado_formulario ="
+		<div class='panel-group' id='acordion_grid' role='tablist' aria-multiselectable='true'>
+		$item
+		</div>";
+		$resultado = "$resultado $resultado_formulario ";
 $respuesta->addAssign($div,"innerHTML",$resultado);
 
 return $respuesta;
@@ -6350,27 +6398,5 @@ function parametrizacion($array) {
 	if($sql){return "Campo grabado"; }else{return "Problema $consulta $array[tabla]";}
 	
 }
-function datos_array($identificador) {
 
-$link=Conectarse();
-mysql_query("SET NAMES 'UTF8'");
-$consulta ="SELECT * FROM form_datos WHERE control = '$identificador'
-GROUP BY id_campo ORDER BY timestamp DESC ";
-$sql = mysql_query($consulta,$link) or die("error al ejecutar consulta ");
-$array = array();
-$array[identificador] = "$identificador";
-while($row = mysql_fetch_array( $sql ))
-    {
-    $contenido = remplacetas('form_datos','id',$row[id],'contenido',"") ;
-    $id_campo = remplacetas('form_datos','id',$row[id],'id_campo',"") ;
-    $nombre_campo =
-remplacetas('form_campos','id',$id_campo[0],'campo_nombre',"") ;
-    //$array[id_campo] = $row[id_campo];
-    $array[$nombre_campo[0]] = "$contenido[0]";
-    //$array[] = $row;
-
-
-    }
-    return $array;
-}
 ?>
