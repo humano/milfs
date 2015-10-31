@@ -1372,7 +1372,7 @@ if($where =='AGRUPADO'){$group="group by $value ";}
 elseif($where != ''){$w = "AND  ".$where;}else{ $w="";}
 $busca = array("[","]");
 if( strpos( $onchange,'[') !== false ){$fila=str_replace($busca,'',$onchange);$onchange='';};
-$consulta = "SELECT * FROM $tabla WHERE 1 $w $group ORDER BY orden ";
+$consulta = "SELECT * FROM $tabla WHERE 1 $w  AND id_empresa='$_SESSION[id_empresa]' $group  ORDER BY orden ";
 $sql=mysql_query($consulta,$link);
 if($nombre==''){$name=$tabla."_".$value;}else{$name = "$nombre";}
 
