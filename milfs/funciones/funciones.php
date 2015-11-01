@@ -1,9 +1,451 @@
 <?php
 date_default_timezone_set('America/Bogota');
 
+
+function mapa_ficha($id) {
+
+	$descripcion = remplacetas('form_id','id',$id,'descripcion') ;
+	$nombre = remplacetas('form_id','id',$id,'nombre') ;
+	$id_empresa = remplacetas('form_id','id',$id,'id_empresa') ;
+	$id_empresa = $id_empresa[0];
+		$direccion =  remplacetas("empresa","id",$id_empresa,"direccion","");
+		$telefono =  remplacetas("empresa","id",$id_empresa,"telefono","");
+		$web =  remplacetas("empresa","id",$id_empresa,"web","");
+		$email =  remplacetas("empresa","id",$id_empresa,"email","");
+		$imagen =  remplacetas("empresa","id",$id_empresa,"imagen","");
+		$razon_social =  remplacetas("empresa","id",$id_empresa,"razon_social","");
+		$slogan =  remplacetas("empresa","id",$id_empresa,"slogan","");
+		$imagen = "<img class='img-round img-responsive ' style='width:100%' src='images/secure/?file=300/$imagen[0]'>";
+	$datos ="<h3>$nombre[0]</h3><strong>$descripcion[0]</strong> ";
+	$empresa = "<div class='small'>$razon_social[0] | <a href='$web[0]' target='web'>$web[0]</a> | $direccion[0] | $email[0] </div>";
+
+	//$prueba = json_decode($prueba);
+
+	$resultado ="
+	<div role='row' class='row center-block' >
+		<div class='row'>
+			<div class='col-xs-12'>$imagen</div>
+		</div>
+		<div class='row'>
+		<div class='col-xs-12'>
+			<h4 class='text-center'> $nombre[0]</h4>
+			<h5>$descripcion[0]</h5> 
+			<A target='milfs' HREF='https://github.com/humano/milfs'><small class='pull-right'>MILFS</small></A></div>
+$prueba
+		</div>
+		 <a class='btn btn-default btn-block' href='#' onclick=\"xajax_formulario_modal('$id') \">Agregar </a>
+		 <strong>$razon_social[0]</strong>
+	</div>
+		";
+	return $resultado;
+}
+
+function formulario_parametrizacion($perfil,$accion,$div,$form){
+	$respuesta = new xajaxResponse('utf-8');
+$nombre = remplacetas('form_id','id',$perfil,'nombre') ;
+if($accion =='categorias') {	
+	
+	}
+	elseif($accion =='grabar'){
+
+	}
+	else {
+		$listado ="
+<div>
+				<ul id='listado_parametrizacion' class='nav nav-tabs'  role='tablist'>
+					<li role='presentation' class=''>
+						<a  href='#'  aria-expanded='true' id='regresar' role='tab' data-toggle='tab' aria-controls='div_parametrizacion'  onclick=\"xajax_formulario_listado('','contenido'); \" class='' > <i class='fa fa-arrow-left'></i> </a>
+					</li>
+					<li role='presentation' class=''>
+						<a  href='#'  id='plantillas_tabs' role='tab' data-toggle='tab' aria-controls='div_parametrizacion'   class='' onclick=\"xajax_parametrizacion_plantilla('$perfil','div_parametrizacion','boton') \" >Plantillas</a>
+					</li>
+					<li role='presentation' class=' '>
+						<a  href='#' id='titulo_tabs' role='tab' data-toggle='tab' aria-controls='div_parametrizacion'   class='' onclick=\"xajax_parametrizacion_titulo('$perfil','div_parametrizacion','') \" >Títulos</a>
+					</li>
+					<li role='presentation' class=' '>
+						<a  href='#' id='categorias_tabs' role='tab' data-toggle='tab' aria-controls='div_parametrizacion'  class=''  onclick=\"xajax_parametrizacion_categoria('$perfil','categorias','div_parametrizacion') \" >Categorías</a>
+					</li>
+				</ul>
+			
+				<div class='tab-content' style ='min-height:350px;' >
+					<div role='tab-panel fade' class='tab-panel active' id='div_parametrizacion'>
+					<legend>Parametrización</legend>
+					<p>Parametrización del formulario <stron>$nombre[0]</strong>. Por favor seleccione una opción</p>
+					</div>
+				
+				</div>
+</div>
+			";
+	$respuesta->addAssign($div,"innerHTML",$listado);
+	return $respuesta;
+	}
+
+$link=Conectarse(); 
+mysql_query("SET NAMES 'utf8'");
+$consulta = "
+	SELECT md5(binary contenido) as md5_contenido, contenido FROM form_datos
+	WHERE form_id =  '$perfil' 
+	AND id_campo = '$campo'
+	GROUP BY contenido 
+	ORDER BY contenido asc";
+$sql=mysql_query($consulta,$link);
+if (mysql_num_rows($sql)!='0'){
+$resultado = "<label for='id_campo'>Filtro</label>
+						<select class='form-control' name='campo_filtro' id='campo_filtro' >
+							<option value=''>Todos</option>";
+while( $row = mysql_fetch_array( $sql ) ) {
+$resultado .= "		<option value='$row[md5_contenido]' title=''>$row[contenido]</option>";
+															}
+$resultado .= "	</select >";
+										}
+else{$resultado = 'nada';}
+
+if($div !="") {
+$respuesta->addAssign($div,"innerHTML",$resultado);
+return $respuesta;
+					}else{return $resultado;}
+	
+	}
+$xajax->registerFunction("formulario_parametrizacion");
+
+
+
+function lista_categorias($perfil,$categoria,$tipo) {
+$link=Conectarse(); 
+mysql_query("SET NAMES 'utf8'");
+		$categoria_campo = remplacetas('form_parametrizacion','campo',$perfil,'descripcion'," tabla='form_id' and  opcion = 'categoria:campo'") ;
+		$categoria_campo = $categoria_campo[0];
+$consulta = "
+	SELECT md5(binary contenido) as md5_contenido, contenido FROM form_datos
+	WHERE form_id =  '$perfil' 
+	AND id_campo = '$categoria_campo'
+	GROUP BY contenido 
+	ORDER BY contenido asc";
+
+$sql=mysql_query($consulta,$link);
+if (mysql_num_rows($sql)!='0'){
+$resultado = "<ul class='list-inline'>";
+while( $row = mysql_fetch_array( $sql ) ) {
+
+										$icono = remplacetas('form_parametrizacion','campo',$perfil,'descripcion'," tabla='form_id' and  opcion = 'categoria:icon:$row[md5_contenido]'") ;
+								if($icono[0] =='') {
+								$icon = "https://raw.githubusercontent.com/humano/milfs/master/milfs/images/iconos/negro.png";
+													}else{
+								
+								$icon = $icono[0];
+													}
+						$icono  = "$icon";
+$resultado .= "<li class ='' style=''><img class='img img-rounded' src='$icono' style='max-height:70px;'><br><div class='badge'>$row[contenido]</div></li>";
+															}
+$resultado .= "	</ul >";
+										}
+else{$resultado = 'nada';}
+
+return $resultado;
+}
+
+function parametrizacion_categoria($perfil,$accion,$div,$form){
+	$respuesta = new xajaxResponse('utf-8');
+$nombre = remplacetas('form_id','id',$perfil,'nombre') ;
+$categorias = lista_categorias($perfil,$categoria,$tipo);
+if($accion =='categorias') {	
+	$resultado = "
+		<br>
+		<p>La categorización se usa para filtrar los datos de un formulario en categorias que pueden ser usadas por ejemplo para diferenciar los datos en un mapa. 
+		<strong>Es necesario que el formulario que se va a categorizar tenga multiples datos grabados en el campo que se categoriza </strong> </p>
+		$categorias 
+		<form id='form_parametrizacion_categoria' name='form_parametrizacion_categoria' role='form' >
+		<input type='hidden' value='$perfil' id='perfil' name ='perfil'>
+		<input type='hidden' value='categoria' id='tipo' name ='tipo'>
+		<div id='parametrizacion'></div>	
+			<label for='icon'>Icono para la categoría</label>
+			<div class='input-group'>
+				
+				<span class='input-group-addon'>URL</span>
+			<input class='form-control' id='icon' name='icon' type='text'>
+			</div>
+			<br>
+			<div id='parametrizacion_validacion' name='parametrizacion_validacion' ></div>
+			<div class='btn btn-default btn-block'  onclick=\"xajax_parametrizacion_categoria('$perfil','grabar','$div',xajax.getFormValues('form_parametrizacion_categoria')) \" >Grabar</div>
+		</form>
+	";
+	$respuesta->addAssign($div,"innerHTML",$resultado);
+	$respuesta -> addScript("xajax_formulario_campos_select('$perfil','parametrizacion')");
+		return $respuesta;
+	}
+	elseif($accion =='grabar'){
+		if($form[tipo] =='categoria') {
+		$url_icon = "$form[icon]";
+		$es_imagen = es_imagen("$url_icon");
+		$altura = GetImageSize($url_icon);
+		$altura= $altura[1];
+		if($form[id_campo] =='') { $error = "Seleccione un campo";}
+		elseif($form[campo_filtro] =='') { $error = "Seleccione Filtro";}
+		elseif(!$es_imagen ) { $error = " [ $url_icon ] no es una imagen válida para el ícono";}
+		elseif($altura > 500 ) { $error = " El ícono no debe tener mas de 300 pixeles de alto.";}
+		elseif($form[icon] =='') {
+			 $error = "Escriba la dirección del ícono";
+			 							}
+			else {$error='';}
+		if( $error !='') {
+				$respuesta -> addAlert("$error $revisar_url ");
+		return $respuesta;
+		}else{
+			$categoria_icono[tabla] = "form_id";
+			$categoria_icono[campo] = "$form[perfil]";
+			$categoria_icono[opcion] = "$form[tipo]:icon:$form[campo_filtro]";
+			$categoria_icono[descripcion] = "$url_icon";
+			$categoria_icono[visible] = "1";
+			$categoria_icono[accion] = "grabar";
+			$grabar_icono = parametrizacion($categoria_icono);
+			
+			$categoria_campo[tabla] = "form_id";
+			$categoria_campo[campo] = "$form[perfil]";
+			$categoria_campo[opcion] = "$form[tipo]:campo";
+			$categoria_campo[descripcion] = "$form[id_campo]";
+			$categoria_campo[visible] = "1";
+			$categoria_campo[accion] = "grabar";
+			$grabar_campo = parametrizacion($categoria_campo);
+			
+			$categoria_filtro[tabla] = "form_id";
+			$categoria_filtro[campo] = "$form[perfil]";
+			$categoria_filtro[opcion] = "$form[tipo]:filtro:$form[id_campo]";
+			$categoria_filtro[descripcion] = "$form[campo_filtro]";
+			$categoria_filtro[visible] = "1";
+			$categoria_filtro[accion] = "grabar";
+			$grabar_filtro = parametrizacion($categoria_filtro);
+			
+			
+			$resultado =" <img src='$url_icon'>  $form[campo_filtro] $form[id_campo] ($altura ) [$grabar_icono]";
+		$respuesta->addAssign($div,"innerHTML",$resultado);
+		return $respuesta;
+		}
+		
+	}/// fin de parametrizacion categorias
+	}
+}
+$xajax->registerFunction("parametrizacion_categoria");
+
+
+function parametrizacion_plantilla_campos($formulario){
+$consulta ="SELECT * FROM form_campos ,form_contenido_campos WHERE form_campos.id = form_contenido_campos.id_campo AND form_contenido_campos.id_form = '$formulario' ORDER BY form_campos.campo_nombre";
+$link=Conectarse(); 
+mysql_query("SET NAMES 'utf8'");
+$sql=mysql_query($consulta,$link);
+if (mysql_num_rows($sql)!=0){
+$campo_imagen = buscar_campo_tipo($formulario,"15");
+$campo_imagen_nombre = $campo_imagen[1];
+$campo_imagen = $campo_imagen[0];
+while( $row = mysql_fetch_array( $sql ) ) {
+	if($row[id_campo] == $campo_imagen ) {$imagen ="<i class='fa fa-picture-o'></i>"; $identificador=" <img  class=\"img img-responsive img-rounded\" src=\"images/secure/?file=600/\$campo[$row[id_campo]]\"  />";}
+	else {$imagen=''; $identificador =" \$campo_limpio[$row[id_campo]] ";}
+$listado .= "<li class='list-group-item'><span style='cursor:move;'  draggable='true' id='$identificador ' ondragstart=\"evdragstart(event,this)\"  title=' $row[id_campo]'> $imagen $row[campo_nombre] [$row[id_campo]]</span></li>";
+
+}
+/*
+$campo_400[$row[id_campo]] 
+	$campo_80[$row[id_campo]] 
+	$campo_55[$row[id_campo]] 
+*/
+$resultado = "	
+
+<div style='max-height:400px; overflow:auto;'>
+
+		 <ul class='list-group' id='listado_elementos'>
+		 <li class='list-group-item'>
+		 
+		 			 	
+		 	</li>
+		 $listado 
+		 </ul>
+</div>
+";
+}
+return $resultado;
+}
+
+
+function parametrizacion_plantilla($formulario,$div,$valores) {
+	$respuesta = new xajaxResponse('utf-8');
+$campo_titulo = remplacetas('form_parametrizacion','campo',$formulario,'descripcion'," tabla='form_id' and  opcion = 'titulo'") ;
+$campo_titulo_nombre = remplacetas('form_campos','id',$campo_titulo[0],'campo_nombre',"") ;
+$link=Conectarse(); 
+$ultimo = 	formulario_uso("$formulario",'','ultimo') ;
+mysql_query("SET NAMES 'utf8'");
+if($valores =="boton") {
+$consulta ="SELECT * FROM form_parametrizacion  WHERE campo = '$formulario' AND `opcion` REGEXP '^plantilla:'  ORDER BY opcion";
+
+$sql=mysql_query($consulta,$link);
+if (mysql_num_rows($sql)!=0){
+
+while( $row = mysql_fetch_array( $sql ) ) {
+		$campos_opcion = explode(":",$row[opcion]);
+	$plantilla_nombre = $campos_opcion[1];
+$listado .= "<option value='$row[id]'>$row[opcion]</option>";
+$li .= "<tr>
+				<td>$plantilla_nombre</td>
+				<td><a href='#' onclick=\"xajax_parametrizacion_plantilla('$formulario','$div','$row[id]');\" ><i class='fa fa-pencil-square-o'></i></a></td>
+				<td><a  href='#'  onclick=\"xajax_mostrar_modal('$formulario','$ultimo[1]','$plantilla_nombre');\" ><i class='fa fa-eye'></i></a></td>
+			</tr>
+			";
+//mostrar_modal($form,$control,$plantilla)
+}
+$resultado = "	
+	<div class='input-group'>
+		<span class='input-group-addon'>Seleccione una plantilla</span>		 
+		 <select class='form-control' onchange=\"xajax_parametrizacion_plantilla('$formulario','$div',(this.value));\">
+		 <option value=''></option>
+		 $listado
+		 </select>
+		 <span class='input-group-btn'>
+		 <div onclick=\"xajax_parametrizacion_plantilla('$formulario','$div','formulario') ;\" class=' btn btn-success'><i class='fa fa-plus-square'></i> Nueva plantilla</div>
+		 </div>
+	</div>
+	
+";
+$lista  ="
+<br>
+<p>Las plantillas se usan para dar formato a los datos en el momento de presentarlos, se pueden usar etiquetas <b>HTML5</b>, <b>CSS3</b> y clases de <b>Bootstrap</b> </p>
+<table class='table table-striped'>
+<tr>
+				<th>Nombre</th>
+				<th>Editar</th>
+				<th>Ver</th>
+</tr>
+$li
+</table>
+<div onclick=\"xajax_parametrizacion_plantilla('$formulario','$div','formulario') ;\" class='btn btn-default btn-block'>Nueva plantilla <i class='fa fa-magic'></i> </div>
+";
+	$respuesta->addAssign("$div","innerHTML","$lista");
+	return $respuesta;
+	
+}
+else { 
+
+$resultado ="
+<br>
+<div class='alert alert-warning'>
+	<h1>Aún no se han definido plantillas para este formulario 
+	<div onclick=\"xajax_parametrizacion_plantilla('$formulario','$div','formulario') ;\" class='btn btn-success'><i class='fa fa-plus-square'></i>  Crear una plantilla</div>
+	</h1>
+</div>
+";
+	$respuesta->addAssign("$div","innerHTML","$resultado");
+	return $respuesta;
+}
+}
+
+elseif($valores =="formulario" OR is_numeric($valores)) {
+	$campos = parametrizacion_plantilla_campos("$formulario");
+	$descripcion = remplacetas('form_parametrizacion','id',$valores,'descripcion',"") ;
+	$opcion = remplacetas('form_parametrizacion','id',$valores,'opcion',"") ;
+	$campos_opcion = explode(":",$opcion[0]);
+	$plantilla_nombre = $campos_opcion[1];
+	include("includes/bootsrap_class_list.php");
+$resultado ="
+<br>
+<form id='form_plantilla' name='form_plantilla'>
+	<div class='row'>
+			<div class='col-xs-2'>
+			
+			</div>
+			<div class='col-xs-10'>
+				<input style=' padding:0px; border-radius:2px; height:25px;' type='color' name='favcolor' value='#2ec243' onchange=\" (document.getElementById('colores').innerHTML=('<div class=\' btn text-center\' ondragstart=\'evdragstart(event,this)\' draggable=\'true\' id= \'background-color:'+(this.value)+'; \' style=\'cursor:move; background-color:'+this.value+'\'> A </div> <div class=\'btn \' ondragstart=\'evdragstart(event,this)\' draggable=\'true\' id= \'color:'+(this.value)+'; \' style=\'border: solid 1px; cursor:move; color:'+this.value+'\' >  <strong>A</strong> </div>')); \">
+				<div style='display:inline;' id='colores'>
+				<div class='btn btn-default' style='cursor:move; background-color:#46a254; '  draggable='true' id= 'background-color:#46a254;  '  ondragstart=\"evdragstart(event,this)\"  > A </div>
+				<div class='btn btn-default' style='cursor:move; color:#46a254; '  draggable='true' id= 'color:#46a254;  '  ondragstart=\"evdragstart(event,this)\"  > A </div>
+				<div class='btn btn-default' style='cursor:move;'  draggable='true' id=' <div class=\"  \"> </div>  ' ondragstart=\"evdragstart(event,this)\"  title=' $row[id_campo]'> div</div>
+				<div class='btn btn-default' style='cursor:move;'  draggable='true' id=' <h1 > </h1>  ' ondragstart=\"evdragstart(event,this)\"  > H1 </div>
+				<div class='btn btn-default' style='cursor:move;'  draggable='true' id=' <h2 > </h2>  ' ondragstart=\"evdragstart(event,this)\"  > H2 </div>
+				<div class='btn btn-default' style='cursor:move;'  draggable='true' id=' <h3 > </h3>  ' ondragstart=\"evdragstart(event,this)\"  > H3 </div>
+				<div class='btn btn-default' style='cursor:move;'  draggable='true' id=' <ul >\n<li > </li>\n<li > </li>\n</ul>' ondragstart=\"evdragstart(event,this)\"  > <i class='fa fa-list-ul'></i></div>
+				<div class='btn btn-default' style='cursor:move;'  draggable='true' id=' <li > </li> ' ondragstart=\"evdragstart(event,this)\"  > &lt;li&gt;</div>
+				<div class='btn btn-default' style='cursor:move;'  draggable='true' id=' <img src =\" \" alt=\" \" title=\" \"  class=\"img img-responsive img-rounded\">  ' ondragstart=\"evdragstart(event,this)\"  title=' $row[id_campo]'><i class='fa fa-picture-o'></i></div>
+				<div class='btn btn-default' style='cursor:move;'  draggable='true' id=' class=\"fancy\" ' ondragstart=\"evdragstart(event,this)\"  title=' $row[id_campo]'>MB</div>
+			</div>
+	</div>
+		<div class='row'>
+			<div class='col-xs-2'>
+				<div style='max-height:400px; overflow:auto;'>
+				$listado_clases
+				</div>
+			</div>
+			<div class='col-xs-8'>
+			<textarea style= 'height:390px; ' id='text_contenedor'  name ='text_contenedor' class='form-control' placeholder='Puede arrastrar los valores aqui o escribir código HTML o CSS '>$descripcion[0]</textarea>
+			</div>
+			<div class='col-xs-2'>
+				$campos
+			</div>
+		</div>
+	<div class='row'>
+			<div class='col-xs-2'>
+			
+			</div>
+			<div class='col-xs-5'>
+				<div class='input-group' id='input_nombre_plantilla'>
+					<span class='input-group-addon'>Nombre:</span>
+					<input class='form-control' id='nombre_plantilla' name='nombre_plantilla'  value='$plantilla_nombre'>
+				</div>
+			
+			</div>
+			<div class='col-xs-3'>
+			<div class='btn btn-success' onclick=\"xajax_parametrizacion_plantilla('$formulario','$div',xajax.getFormValues(form_plantilla)) ;\" TITLE='GRABAR'><i class='fa fa-save'></i></div>
+			<div class='btn btn-warning' onclick=\"xajax_parametrizacion_plantilla('$formulario','$div','formulario') ;\" title='NUEVA' ><i class='fa fa-magic'></i></div>
+
+			<div class='btn btn-danger' onclick=\"xajax_limpia_div('$div') ;\" TITLE='CANCELAR' ><i class='fa fa-times-circle'></i></div>
+			</div>
+			
+	</div>
+</form>
+";
+
+}
+
+elseif(is_array($valores)) {
+	$texto=str_replace('"',"'",$valores[text_contenedor]);
+$plantilla = htmlentities($texto);
+if($valores[nombre_plantilla] == "") { 
+		$respuesta->addAlert("No ha especificado un nombre para la plantilla");	
+		$respuesta->addAssign("input_nombre_plantilla","className","input-group has-error");	
+		return $respuesta;	
+		}
+$limpiar ="DELETE FROM `form_parametrizacion` WHERE tabla = 'form_id' AND campo ='$formulario' AND opcion ='plantilla:$valores[nombre_plantilla]' LIMIT 1 ";
+$sql=mysql_query($limpiar,$link);
+$consulta="INSERT INTO form_parametrizacion set tabla = 'form_id' , campo ='$formulario', opcion ='plantilla:$valores[nombre_plantilla]', descripcion =\"$plantilla\", visible='1' ";
+$sql=mysql_query($consulta,$link);
+$ultimo = 	formulario_uso("$formulario",'','ultimo') ;
+$datos = contenido_mostrar("$formulario","$ultimo[1]",'',"$valores[nombre_plantilla]");
+$preview = " <legend>$valores[nombre_plantilla]</legend>  $datos ";
+			$div_contenido = "<div id='modal_$div'>$preview</div>";
+			$respuesta->addAssign("muestra_form","innerHTML","$div_contenido");
+			$respuesta->addAssign("titulo_modal","innerHTML","$resultado");
+			$respuesta->addAssign("pie_modal","innerHTML","$pie");
+			//$respuesta->addAssign("$div","innerHTML","$resultado");
+			$respuesta->addscript("$('#muestraInfo').modal('toggle')");	
+			
+
+		return $respuesta;
+
+}
+else{
+$resultado ="";
+}
+$resultado .= "";
+
+
+		$respuesta->addAssign("$div","innerHTML","$resultado");
+
+
+			return $respuesta;
+
+}
+$xajax->registerFunction("parametrizacion_plantilla");
+
+
 function parametrizacion_titulo($formulario,$div,$valores) {
 $campo_titulo = remplacetas('form_parametrizacion','campo',$formulario,'descripcion'," tabla='form_id' and  opcion = 'titulo'") ;
 $campo_titulo_nombre = remplacetas('form_campos','id',$campo_titulo[0],'campo_nombre',"") ;
+$respuesta = new xajaxResponse('utf-8');
 $link=Conectarse(); 
 mysql_query("SET NAMES 'utf8'");
 if($valores =="") {
@@ -16,14 +458,18 @@ while( $row = mysql_fetch_array( $sql ) ) {
 $listado .= "<option value='$row[id_campo]'>$row[campo_nombre]  [$row[id_campo]]</option>";
 }
 $resultado = "	
+	<br>
+	<p>El campo titulo, se usa como indice del formulario en algunas visualizaciones como el <strong>timeline</strong></p>
+	<h3>Campo de Título actual<strong> $campo_titulo_nombre[0] [$campo_titulo[0]]</strong></h3>
+	<br>
 	<div class='input-group'>
-		<span class='input-group-addon'>Seleccione un campo</span>		 
+		<span class='input-group-addon'>Cambiar campo título</span>		 
 		 <select class='form-control' onchange=\"xajax_parametrizacion_titulo('$formulario','$div',(this.value));\">
 		 <option value=''></option>
 		 $listado
 		 </select>
 	</div>
-	<h2><small>Campo de Título actual</small> <br> $campo_titulo_nombre[0] [$campo_titulo[0]]</h2>
+	
 ";
 }
 }else {
@@ -37,11 +483,12 @@ if($sql){
 $resultado ="<div class='alert alert-success<h2><small> <br>Campo de Título actual</small>$campo_titulo_nombre[0] [$campo_titulo[0]]</h2></div>";
 
 }
-
+		$respuesta->addScript("xajax_parametrizacion_titulo('$formulario','$div','')");
+		return $respuesta;
 }
 
 
-$respuesta = new xajaxResponse('utf-8');
+
 		$respuesta->addAssign("$div","innerHTML","$resultado");
 
 
@@ -2275,231 +2722,8 @@ return $resultado;
 
 
 
-function mapa_ficha($id) {
 
-	$descripcion = remplacetas('form_id','id',$id,'descripcion') ;
-	$nombre = remplacetas('form_id','id',$id,'nombre') ;
-	$id_empresa = remplacetas('form_id','id',$id,'id_empresa') ;
-	$id_empresa = $id_empresa[0];
-		$direccion =  remplacetas("empresa","id",$id_empresa,"direccion","");
-		$telefono =  remplacetas("empresa","id",$id_empresa,"telefono","");
-		$web =  remplacetas("empresa","id",$id_empresa,"web","");
-		$email =  remplacetas("empresa","id",$id_empresa,"email","");
-		$imagen =  remplacetas("empresa","id",$id_empresa,"imagen","");
-		$razon_social =  remplacetas("empresa","id",$id_empresa,"razon_social","");
-		$slogan =  remplacetas("empresa","id",$id_empresa,"slogan","");
-		$imagen = "<img class='img-round img-responsive ' src='images/secure/?file=150/$imagen[0]'>";
-	$datos ="<h3>$nombre[0]</h3><strong>$descripcion[0]</strong> ";
-	$empresa = "<div class='small'>$razon_social[0] | <a href='$web[0]' target='web'>$web[0]</a> | $direccion[0] | $email[0] </div>";
-
-	//$prueba = json_decode($prueba);
-
-	$resultado ="
-		<div class='row'>
-			<div class='col-xs-12'>$imagen</div>
-		</div>
-		<div class='row'>
-		<div class='col-xs-12'>
-			<h4 class='text-center'> $nombre[0]</h4>
-			<h5>$descripcion[0]</h5> 
-			<A target='milfs' HREF='https://github.com/humano/milfs'><small class='pull-right'>MILFS</small></A></div>
-$prueba
-		</div>";
-	return $resultado;
-}
-
-function formulario_parametrizacion($perfil,$accion,$div,$form){
-	$respuesta = new xajaxResponse('utf-8');
-$nombre = remplacetas('form_id','id',$perfil,'nombre') ;
-if($accion =='categorias') {	
-	$resultado = "
-		<h2>Categorización </h2><h3> $nombre[0]</h3>
-		<form id='parametrizacion_form' name='parametrizacion_form' role='form' >
-		<input type='hidden' value='$perfil' id='perfil' name ='perfil'>
-		<input type='hidden' value='categoria' id='tipo' name ='tipo'>
-		<div id='parametrizacion'></div>	
-			<label for='icon'>Icono para la categoría</label>
-			<div class='input-group'>
-				
-				<span class='input-group-addon'>URL</span>
-			<input class='form-control' id='icon' name='icon' type='text'>
-			</div>
-			<br>
-			<div id='parametrizacion_validacion' name='parametrizacion_validacion' ></div>
-			<div class='btn btn-success btn-block'  onclick=\"xajax_formulario_parametrizacion('$perfil','grabar','$div',xajax.getFormValues('parametrizacion_form')) \" >Grabar</div>
-		</form>
-	";
-	$respuesta->addAssign($div,"innerHTML",$resultado);
-	$respuesta -> addScript("xajax_formulario_campos_select('$perfil','parametrizacion')");
-		return $respuesta;
-	}
-	elseif($accion =='grabar'){
-		if($form[tipo] =='categoria') {
-		$url_icon = "$form[icon]";
-		$es_imagen = es_imagen("$url_icon");
-		$altura = GetImageSize($url_icon);
-		$altura= $altura[1];
-		if($form[id_campo] =='') { $error = "Seleccione un campo";}
-		elseif($form[campo_filtro] =='') { $error = "Seleccione Filtro";}
-		elseif(!$es_imagen ) { $error = " [ $url_icon ] no es una imagen válida para el ícono";}
-		elseif($altura > 250 ) { $error = " El ícono no debe tener mas de 150 pixeles de alto.";}
-		elseif($form[icon] =='') {
-			 $error = "Escriba la dirección del ícono";
-			 							}
-			else {$error='';}
-		if( $error !='') {
-				$respuesta -> addAlert("$error $revisar_url ");
-		return $respuesta;
-		}else{
-			$categoria_icono[tabla] = "form_id";
-			$categoria_icono[campo] = "$form[perfil]";
-			$categoria_icono[opcion] = "$form[tipo]:icon:$form[campo_filtro]";
-			$categoria_icono[descripcion] = "$url_icon";
-			$categoria_icono[visible] = "1";
-			$categoria_icono[accion] = "grabar";
-			$grabar_icono = parametrizacion($categoria_icono);
-			
-			$categoria_campo[tabla] = "form_id";
-			$categoria_campo[campo] = "$form[perfil]";
-			$categoria_campo[opcion] = "$form[tipo]:campo";
-			$categoria_campo[descripcion] = "$form[id_campo]";
-			$categoria_campo[visible] = "1";
-			$categoria_campo[accion] = "grabar";
-			$grabar_campo = parametrizacion($categoria_campo);
-			
-			$categoria_filtro[tabla] = "form_id";
-			$categoria_filtro[campo] = "$form[perfil]";
-			$categoria_filtro[opcion] = "$form[tipo]:filtro:$form[id_campo]";
-			$categoria_filtro[descripcion] = "$form[campo_filtro]";
-			$categoria_filtro[visible] = "1";
-			$categoria_filtro[accion] = "grabar";
-			$grabar_filtro = parametrizacion($categoria_filtro);
-			
-			
-			$resultado =" <img src='$url_icon'>  $form[campo_filtro] $form[id_campo] ($altura ) [$grabar_icono]";
-		$respuesta->addAssign($div,"innerHTML",$resultado);
-		return $respuesta;
-		}
-		
-	}/// fin de parametrizacion categorias
-	}
-	else {
-		$listado ="<h2>Parametrización<small> $nombre[0]</small></h2>
-		<div class='panel-default' id='panel_titulo'>
-			<div class='panel-heading'>
-				<ul class='list-group' >
-					<li class='list-group-item'><a class='btn btn-success btn-block' onclick=\"xajax_parametrizacion_titulo('$perfil','parametrizacion_titulo','') \" >Título</a>
-					<p>Definir un campo para ser usado como índice o título en el formulario. </p></li>
-				</ul>
-			</div>
-			<div class='panel-body' >
-				<div class='container-fluid' id='parametrizacion_titulo'>
-				</div>
-			</div>
-		</div>
-		<div class='panel-default' id='panel_categoria'>
-			<div class='panel-heading'>
-				<ul class='list-group' >
-					<li class='list-group-item'><a class='btn btn-success btn-block' onclick=\"xajax_formulario_parametrizacion('$perfil','categorias','parametrizacion_categoria') \" >Categorías</a>
-					<p>Se selecciona campo del formulario como categoría y se asigna un ícono para representarla. </p></li>
-				</ul>
-			</div>
-			<div class='panel-body' >
-				<div class='container-fluid' id='parametrizacion_categoria'>
-				</div>
-			</div>
-		</div>
-			";
-	$respuesta->addAssign($div,"innerHTML",$listado);
-	return $respuesta;
-	}
-
-$link=Conectarse(); 
-mysql_query("SET NAMES 'utf8'");
-$consulta = "
-	SELECT md5(binary contenido) as md5_contenido, contenido FROM form_datos
-	WHERE form_id =  '$perfil' 
-	AND id_campo = '$campo'
-	GROUP BY contenido 
-	ORDER BY contenido asc";
-$sql=mysql_query($consulta,$link);
-if (mysql_num_rows($sql)!='0'){
-$resultado = "<label for='id_campo'>Filtro</label>
-						<select class='form-control' name='campo_filtro' id='campo_filtro' >
-							<option value=''>Todos</option>";
-while( $row = mysql_fetch_array( $sql ) ) {
-$resultado .= "		<option value='$row[md5_contenido]' title=''>$row[contenido]</option>";
-															}
-$resultado .= "	</select >";
-										}
-else{$resultado = 'nada';}
-
-if($div !="") {
-$respuesta->addAssign($div,"innerHTML",$resultado);
-return $respuesta;
-					}else{return $resultado;}
-	
-	}
-$xajax->registerFunction("formulario_parametrizacion");
-
-function lista_categorias($perfil,$categoria,$tipo) {
-
-$link=Conectarse(); 
-mysql_query("SET NAMES 'utf8'");
-		$categoria_campo = remplacetas('form_parametrizacion','campo',$perfil,'descripcion'," tabla='form_id' and  opcion = 'categoria:campo'") ;
-		$categoria_campo = $categoria_campo[0];
-$consulta = "
-	SELECT md5(binary contenido) as md5_contenido, contenido FROM form_datos
-	WHERE form_id =  '$perfil' 
-	AND id_campo = '$categoria_campo'
-	GROUP BY contenido 
-	ORDER BY contenido asc";
-/*
-	$consulta = "
-	SELECT opcion, GROUP_CONCAT(descripcion  ORDER by id desc ) as data  FROM `parametrizacion` WHERE `tabla` LIKE 'form_id' AND `campo` LIKE '$perfil' AND `opcion` LIKE 'categoria:icon:%%' group by descripcion
-	";
-	*/
-	/*
-						$categoria_filtro = remplacetas('parametrizacion','campo',$id,'descripcion',"tabla='form_id' and  opcion = 'categoria:filtro:$row[id_campo]'") ;
-						$filtro = $categoria_filtro;
-					$categoria_filtro = $categoria_filtro[0];
-								$icono = remplacetas('parametrizacion','campo',$id,'descripcion'," tabla='form_id' and  opcion = 'categoria:icon:$md5_contenido'") ;
-								if($icono[0] =='') {
-								$icon = "http://$_SERVER[HTTP_HOST]/milfs/images/pin.png ";
-													}else{
-								
-								$icon = $icono[0];
-													}
-						$icono  = "$icon"; 
-	*/
-$sql=mysql_query($consulta,$link);
-if (mysql_num_rows($sql)!='0'){
-$resultado = "<ul class='list-inline'>";
-while( $row = mysql_fetch_array( $sql ) ) {
-		/*	$identificador = explode(',',$row[data]);
-			$categoria = explode(':',$row[opcion]);
-			$categoria = $categoria[2];
-		$identificador = $identificador[0];
-		*/
-										$icono = remplacetas('form_parametrizacion','campo',$perfil,'descripcion'," tabla='form_id' and  opcion = 'categoria:icon:$row[md5_contenido]'") ;
-								if($icono[0] =='') {
-								//$icon = "http://$_SERVER[HTTP_HOST]/milfs/images/pin.png ";
-								$icon = "https://raw.githubusercontent.com/humano/milfs/master/milfs/images/iconos/negro.png";
-													}else{
-								
-								$icon = $icono[0];
-													}
-						$icono  = "$icon";
-$resultado .= "<li class ='' style=''><img src='$icono' style='max-height:100px;'><br><div class='badge'>$row[contenido]</div></li>";
-															}
-$resultado .= "	</ul >";
-										}
-else{$resultado = 'nada';}
-
-return $resultado;
-}
-
-function imprime_geojson($id,$id2){
+function imprime_geojson($id,$id2,$plantilla){
 	$id_form = mysql_seguridad($id);
 	$id_form2 = mysql_seguridad($id2);
 	$campo = buscar_campo_tipo($id_form,"14");
@@ -2533,21 +2757,21 @@ while( $row = mysql_fetch_array( $sql ) ) {
 														$lat = $campos[0];
 														$lon = $campos[1];
 														$zoom = $campos[2];	
-		$formulario = formulario_imprimir($row[id],$row[control],'');
+		$formulario = formulario_imprimir($row[id],$row[control],"$plantilla");
 
 		$marcador["type"] = "Point";
 		$marcador["coordinates"] = array($lat,$lon);
-		//$propiedades = formulario_imprimir_linea($row[id],$row[control],"array");//
+		$propiedades = formulario_imprimir_linea($row[id],$row[control],"array");//
 		//$propiedades[description] ="HOLA MUNDO";
 		$propiedades[description] ="<div class='container-fluid' id='contenedor_datos' >$formulario</div>";
 		$propiedades[sounds] ="";
 		$propiedades[url] ='';
 		$propiedades[icon][iconSize] =[100,100];
-		$propiedades[icon][shadowSize] =[70,70];
-		$propiedades[icon][shadowUrl] = "https://raw.githubusercontent.com/humano/milfs/master/milfs/images/iconos/negro.png";
+		//$propiedades[icon][shadowSize] =[70,70];
+		//$propiedades[icon][shadowUrl] = "https://raw.githubusercontent.com/humano/milfs/master/milfs/images/iconos/negro.png";
 		
 		//$propiedades[title] ='Hola mundo';
-		$propiedades[icon][iconUrl] = "https://raw.githubusercontent.com/humano/milfs/master/milfs/images/iconos/negro.png";
+		//$propiedades[icon][iconUrl] = "https://raw.githubusercontent.com/humano/milfs/master/milfs/images/iconos/negro.png";
 		$geometria .= "{\"type\":\"Feature\",\"geometry\":".json_encode($marcador,JSON_NUMERIC_CHECK|JSON_PRETTY_PRINT).",\"properties\":".json_encode($propiedades,JSON_NUMERIC_CHECK|JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT)."},";
 		$features[] = $marcador;
 															
@@ -3006,8 +3230,9 @@ if (mysql_num_rows($sql)!='0'){
 return $contenido.$control;
 
 }
+
 function contenido_mostrar($id,$control,$div,$plantilla){
-	
+
 	
 if($id=="") {
 				$value = 	remplacetas('form_datos','control',$control,'form_id',"") ;
@@ -3564,12 +3789,18 @@ if (mysql_num_rows($sql)!='0'){
 			}
 	$campo_nombre =  remplacetas('form_campos','id',$row[id_campo],'campo_nombre');
 	$nombre[$row[id_campo]] = $campo_nombre[0] ;
-
-	if($row[id_campo] =='0' and $tipo !=""){	$contenido = strip_tags($contenido);		}
+////buscar campo imagen
+$campo_imagen = buscar_campo_tipo($id,"15");
+//$campo_imagen_nombre = $campo_imagen[1];
+$campo_imagen = $campo_imagen[0];
+////
+	if($row[id_campo] == $campo_imagen AND $tipo !="" ){	$contenido = strip_tags($contenido);		}
 		$campo[$row[id_campo]]=$contenido;
 	$campo_400[$row[id_campo]] = substr($contenido,0, $length = 400)."... ";//$contenido;
 	$campo_80[$row[id_campo]] = substr($contenido,0, $length = 80);//$contenido;
 	$campo_55[$row[id_campo]] = substr($contenido,0, $length = 55);//$contenido;
+	$campo_limpio[$row[id_campo]] = $contenido = strip_tags($contenido);
+	
 	$campo["md5_".$row[id_campo]]=$md5_contenido;
 
 				if($row[id_campo] == $categoria_campo){
@@ -3618,7 +3849,7 @@ if($plantilla[0] =="") {
 $plantilla = remplacetas('form_parametrizacion','opcion',"plantilla:$tipo",'descripcion',"campo = ''") ;
 //$plantilla = remplacetas('parametrizacion','opcion',"plantilla:$tipo",'descripcion',"campo = '$id' ") ;
 }
-if($plantilla[0] !='') { $plantilla = $plantilla[0] ;}
+if($plantilla[0] !='') { $plantilla = html_entity_decode ( $plantilla[0] );}
 /*else {
 $plantilla = remplacetas('parametrizacion','opcion',"plantilla:$tipo",'descripcion',"") ;
 $plantilla= $plantilla[0];
@@ -4370,7 +4601,7 @@ $resultado .= "		<option value='$row[md5_contenido]' title=''>$row[contenido]</o
 															}
 $resultado .= "	</select >";
 										}
-else{$resultado = 'nada';}
+else{$resultado = "<p class='text-danger'><i class='fa fa-exclamation-triangle'></i>  No se encontraron resultados</p>";}
 
 if($div !="") {
 $respuesta->addAssign($div,"innerHTML",$resultado);

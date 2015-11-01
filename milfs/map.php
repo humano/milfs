@@ -11,6 +11,7 @@ $xajax->processRequests();
 if($_REQUEST[id2] =='') {$agregar= $_REQUEST[id];}else {$agregar = $_REQUEST[id2];}
 $formulario_nombre = remplacetas('form_id','id',$_REQUEST[id],'nombre') ;
 $agregar_nombre = remplacetas('form_id','id',$agregar,'nombre') ;
+$plantilla ="mapa";
 ?>
 
 <!DOCTYPE html>
@@ -27,35 +28,80 @@ $agregar_nombre = remplacetas('form_id','id',$agregar,'nombre') ;
     <link rel="shortcut icon" href="favicon-152.png">
 	<link rel="apple-touch-icon-precomposed" href="favicon-152.png">
 	<link href="css/font-awesome/css/font-awesome.css" rel="stylesheet">
- <link href="http://getbootstrap.com/examples/sticky-footer-navbar/sticky-footer-navbar.css" rel="stylesheet">
 
 <script src='https://api.tiles.mapbox.com/mapbox.js/v2.1.2/mapbox.js'></script>
 <link href='https://api.tiles.mapbox.com/mapbox.js/v2.1.2/mapbox.css' rel='stylesheet' />
+<link href='https://mapbox.com/base/latest/base.css' rel='stylesheet' />
 
 <!-- <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7/leaflet.css" /> -->
 <link href="css/bootstrap.min.css" rel="stylesheet">
 <link href="css/estilos.php?hghgSs" rel="stylesheet">
   <style type="text/css">
   body {  padding: 0; margin: 0;  }
-
-  .leaflet-popup-content {     width:600px !important; }
+ /* .leaflet-container h1{font-size:initial !important;}
+  .leaflet-container h2{font-size:30px; !important;}
+  */
+	.leaflet-popup-content {     width:600px !important; }
 
     body { margin:0; padding:0; }
-  #map { position:absolute; top:0; bottom:0; width:100%; }
+  #map { position:absolute; top:0; bottom:0; width:100%;  }
+  /* Sticky footer styles
+-------------------------------------------------- */
+html {
+  position: relative;
+  min-height: 100%;
+}
+body {
+  /* Margin bottom by footer height */
+  margin-bottom: 60px;
+}
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: auto;
+  /* Set the fixed height of the footer here */
+  height: auto;
+  z-index:200000
+}
+
+
+/* Custom page CSS
+-------------------------------------------------- */
+/* Not required for template or sticky footer method. */
+
+body > .container {
+  padding: 60px 15px 0;
+}
+.container .text-muted {
+  margin: 20px 0;
+}
+
+.footer > .container {
+  padding-right: 15px;
+  padding-left: 15px;
+}
+
+code {
+  font-size: 80%;
+}
   </style>
 
   <script src="http://code.jquery.com/jquery-2.1.0.min.js"></script>
 <!-- <link rel="points" type="application/json" href="json.php?id=<?php echo $_REQUEST["id"] ?>">  -->
 </head>
 <body>
-<div id='map'></div>
+ 
+<div id='map'> 
+<div class='footer' ><?php echo $categorias = lista_categorias($_REQUEST[id],'','') ; ?></div>
+</div>
+
 <script>
 L.mapbox.accessToken = 'pk.eyJ1IjoiZmNhc3Ryb3QiLCJhIjoiY2lnOWw1bmd1MG93eXVsbTJpcmluYTBxdCJ9.yG7C1rEH6-MpZBEEb68IVg';
 /* var map = L.mapbox.map('map', 'examples.map-i86nkdio')*/
 var map = L.mapbox.map('map', 'mapbox.streets')
     .setView([40, -74.50], 8);
 
-var geoJson = [ <?php echo imprime_geojson("$_REQUEST[id]","$_REQUEST[id2]");?> ];
+var geoJson = [ <?php echo imprime_geojson("$_REQUEST[id]","$_REQUEST[id2]","$plantilla");?> ];
 var myLayer = L.mapbox.featureLayer()
   .setGeoJSON(geoJson)
   .addTo(map);
@@ -79,9 +125,10 @@ myLayer.on('layeradd', function(e) {
 map.fitBounds(myLayer.getBounds());
 myLayer.setGeoJSON(geoJson);
 </script>
-<div  class="panel-map" id='panel_map_<?php echo $id ?>' style="">
-  <div role='row' class='row center-block' style="; "><?php echo mapa_ficha("$_REQUEST[id]");?></div>
-    <a class="btn btn-primary btn-block" href="#" onclick="xajax_formulario_modal('<?php echo $agregar ?>'); ">Agregar<br> <?php echo $agregar_nombre[0]; ?></a>
+
+<div  class="panel-map" id="panel_map_<?php echo $_REQUEST[id] ?>" >
+<?php echo mapa_ficha("$_REQUEST[id]");?>
+   
   </div>
   <!-- Modal -->
 

@@ -32,11 +32,7 @@ if (isset($_REQUEST['t'])) {$t = $_REQUEST['t'];} else {$t = "";}
 	<link rel="apple-touch-icon-precomposed" href="favicon-152.png">
 	<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha256-k2/8zcNbxVIh5mnQ52A0r3a6jAgMGxFJFE2707UxGCk= sha512-ZV9KawG2Legkwp3nAlxLIVFudTauWuBpC10uEafMHYL0Sarrz5A7G79kXh5+5+woxQ5HM559XX2UZjMJ36Wplg==" crossorigin="anonymous">
 	<?php if($form !='') { echo "<link href='css/embebido.css' rel='stylesheet'>";}else{ echo "<link href='css/estilos.php?dd' rel='stylesheet'>";} ?>
-<!-- 	<link href="css/estilos.php?dd" rel="stylesheet">
-	<link href="css/bootstrap.min.css" rel="stylesheet">
-	<link rel="stylesheet" type="text/css" media="screen" href="css/bootstrap.css">
-	<link rel="stylesheet" type="text/css" media="screen" href="css/bootstrap-markdown.css">
-	<link rel="stylesheet" type="text/css" media="screen" href="css/bootstrap-markdown.min.css"> -->
+
 	<link rel="stylesheet" type="text/css" media="screen" href="css/bootstrap.css">
 	<link rel="stylesheet" type="text/css" media="screen" href="css/bootstrap-markdown.css">
 	<link rel="stylesheet" type="text/css" media="screen" href="css/bootstrap-markdown.min.css">
@@ -50,29 +46,46 @@ if (isset($_REQUEST['t'])) {$t = $_REQUEST['t'];} else {$t = "";}
 
     <title>I<3MILFS</title>
 
-    <!-- Bootstrap core CSS -->
-    
-<!--     <script language="JavaScript" src="escritorio/librerias/scripts.js" type="text/javascript"></script> -->
-    <!-- Custom styles for this template -->
-    
-<!--     <link href="jumbotron.css" rel="stylesheet"> -->
-
-
-    <!-- Just for debugging purposes. Don't actually copy this line! -->
-    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-    <![endif]-->
 <?php
-    					//		if($_COOKIE['aviso'] != 'presentacion') {
-		//$onload = "onload = \"$('#muestraInfo').modal('toggle')\"";    	
-		//setcookie("aviso","presentacion",time()+60*60*24);
-					//	}
-					//($id,$form_respuesta,$control,$tipo)
+
 					if($id !='' OR $c ){$onload ="<script type=\"text/javascript\"> xajax_formulario_modal('".$id."','','".$c."','".$t."')</script>";}
 					
 ?>
+
+<script type="text/javascript">
+//Recoger elemento arrastrable//
+function evdragstart(ev,el) { //ev= el evento, el=elemento arrastrado.
+    cont1=el.parentNode; //guardamos el elemento padre del elemento en una variable.
+    ev.dataTransfer.setData("text",ev.target.id);	//guardamos datos del elemento. 
+}
+//mientras se arrastra:
+function evdragover (ev) { //ev=el evento.
+    ev.preventDefault(); //quitar comportamiento por defecto.
+}
+//Al soltar el elemento arrastrado
+function evdrop(ev,el) { //ev=el evento; el=receptor de soltado
+    ev.stopPropagation(); //impedir otras acciones 
+    ev.preventDefault(); //quitar comportamiento por defecto
+    var data=ev.dataTransfer.getData("text"); //recogemos datos del elemento
+    mielem=ev.target.appendChild(document.getElementById(data)); //obtenemos el elemento arrastrado
+    cont1.appendChild(mielem); //ponemos el elemento arrastrado en el mismo sitio donde estaba.
+    mielem2=mielem.cloneNode(true); //creamos una copia del elemento arrastrado.
+    mielem2.setAttribute("draggable","false"); //impedimos que el nuevo elemento pueda volver a arrastrarse
+    el.appendChild(mielem2); //colocamos la copia en el receptor de soltado
+}
+</script>
+<style>
+.modal-dialog {
+  width: 98%;
+  height: auto;
+  padding: 0;
+}
+
+.modal-content {
+  height: auto;
+}
+
+</style>
 </head>
 <body  >
 <!--      <script src="js/jquery.min.js"></script>
@@ -133,36 +146,7 @@ revisar_ingreso('');?>
 		</div>
 
 <?php
-/*session_start();
-// Comprobamos si existe la variable
-if ( !isset ( $_SESSION['grupo'] ) ) {
- // Si no existe 
- header("Location: includes/error.php");
-// echo "hola 2";
-} */
 
-/*if($_SESSION[prioridad] <= '2'){  }else{
- echo consultar_formulario();
- */
-/*
-formulario_importar("","");
- echo "<div id='importador' name='importador'>";
- echo "</div> ";
- */
-
-
-
-
-
-
-
-/*formulario_consultar('','');
-if($_REQUEST[id] !=''){$onload ="<script type=\"text/javascript\"> xajax_formulario_areas('despacho','$_REQUEST[id]')</script>";}
-?>
-<div id='despacho'  name='despacho' class='div_flotante'  style="top:500px; left:500px; position:absolute; "  ></div> 
-<?php echo "$onload "; 
-}///fin de la seguridad
-*/
 
 ?>
 
