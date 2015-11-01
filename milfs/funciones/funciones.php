@@ -3844,12 +3844,14 @@ if($contenido_original !="") {
 	if($tipo !="" AND (!is_numeric($tipo)) AND $tipo !="metadatos" ) {
 ////Usa una plantilla apra cada id 
 $plantilla = remplacetas('form_parametrizacion','campo',$id,'descripcion'," tabla='form_id' and  opcion = 'plantilla:$tipo'") ;
-if($plantilla[0] =="") {
+$plantilla = $plantilla[0];
+if($plantilla =="") {
 ///Usa una plantilla generica por nombre
 $plantilla = remplacetas('form_parametrizacion','opcion',"plantilla:$tipo",'descripcion',"campo = ''") ;
+$plantilla = $plantilla[0];
 //$plantilla = remplacetas('parametrizacion','opcion',"plantilla:$tipo",'descripcion',"campo = '$id' ") ;
 }
-if($plantilla[0] !='') { $plantilla = html_entity_decode ( $plantilla[0] );}
+if($plantilla !='') { $plantilla = html_entity_decode ( $plantilla );}
 /*else {
 $plantilla = remplacetas('parametrizacion','opcion',"plantilla:$tipo",'descripcion',"") ;
 $plantilla= $plantilla[0];
@@ -4222,7 +4224,7 @@ $td .= "<td>$imagen</td>";
 								$icono = remplacetas('form_parametrizacion','campo',$id,'descripcion'," tabla='form_id' and  opcion = 'categoria:icon:$md5_contenido'") ;
 								//$icono[0] =  $imagen_icon;
 								if($icono[0] =='') {
-								$icon = "images/pin.png";
+								//$icon = "https://raw.githubusercontent.com/humano/milfs/master/milfs/images/iconos/negro.png";
 													}else{
 								
 								$icon = $icono[0];
