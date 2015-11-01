@@ -2771,7 +2771,9 @@ while( $row = mysql_fetch_array( $sql ) ) {
 		//$propiedades[icon][shadowUrl] = "https://raw.githubusercontent.com/humano/milfs/master/milfs/images/iconos/negro.png";
 		
 		//$propiedades[title] ='Hola mundo';
-		//$propiedades[icon][iconUrl] = "https://raw.githubusercontent.com/humano/milfs/master/milfs/images/iconos/negro.png";
+		if($propiedades[icon][iconUrl] =="") {
+		$propiedades[icon][iconUrl] = "https://raw.githubusercontent.com/humano/milfs/master/milfs/images/iconos/negro.png";
+		}
 		$geometria .= "{\"type\":\"Feature\",\"geometry\":".json_encode($marcador,JSON_NUMERIC_CHECK|JSON_PRETTY_PRINT).",\"properties\":".json_encode($propiedades,JSON_NUMERIC_CHECK|JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT)."},";
 		$features[] = $marcador;
 															
