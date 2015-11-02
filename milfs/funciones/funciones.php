@@ -4727,6 +4727,7 @@ $w_campo = "id = '$id_campo_editar'";
 
 								}else {
 $id_empresa = $_SESSION['id_empresa'];
+$id_especialista = $_SESSION['id'];
 		$buscar_campo_nombre = 	remplacetas('form_campos','campo_nombre',$campo_nombre,'campo_nombre'," id_empresa = '$id_empresa' AND campo_area = '$campo_area' ") ;
 		if($buscar_campo_nombre[0] == $campo_nombre) { 
 		$respuesta->addAlert("El Nombre del campo ( $campo_nombre ) ya existe en la misma área ");
@@ -4739,8 +4740,20 @@ $consulta = "
 			(`id_especialista`, `campo_nombre`,`campo_descripcion`,`campo_tipo`, `campo_area`, `orden`, `activo`, `identificador`, `id_empresa`) 
   VALUES ('$id_especialista','$campo_nombre','$campo_descripcion','$campo_tipo','$campo_area','$campo_orden','1','$campo_identificador','$id_empresa')";
   $sql =mysql_query($consulta,$link);  
+  $ultimo_id = mysql_insert_id();
 $w_campo= "identificador = '$campo_identificador'";
-if($sql) {$campos_formulario ="<h2 class='alert alert-success'>El campo se creó con éxito</h2>"; }
+if($sql) {
+	$campos_formulario ="<form name='nuevo_campo' id='nuevo_campo' role='form'>
+		<input type='hidden' name='id_usuario' id='id_usuario' value=''>
+		<input type='hidden' name='div' id='div' value='contenido'> 
+	</form><h2 class='alert alert-success'>El campo se creó con éxito 
+	<div class='btn  btn-default' onclick=\"xajax_crear_campos_formulario(xajax.getFormValues('nuevo_campo'));\"><i class='fa fa-plus-square'></i> Crear un nuevo campo</div></h2>";
+	if($form['agregar_id_form'] !="") {
+		$respuesta->AddScript("xajax_agregar_campos('grabar_campos','contenido','$ultimo_id','$form[agregar_id_form]') ");
+		///$respuesta->addAssign("$div","innerHTML",$resultado);
+		return $respuesta;
+									}
+ }else {$campos_formulario = "<h1>Problemas al grabar el campo</h1> $consulta";}
 										}
 										
 if($id_campo_editar !=''){$id_form_campo = $id_campo_editar;}else {
@@ -4830,8 +4843,9 @@ return $respuesta;
 }
 $xajax->registerFunction("formulario_opciones_select");
 
-function crear_campos_formulario($form){
 
+
+function crear_campos_formulario($form,$id_form){
 $form = mysql_seguridad($form);
 $respuesta = new xajaxResponse('utf-8');
 if($form['div'] !="") { $div = $form['div'];}else{$div="div_campos";}
@@ -4858,6 +4872,7 @@ $especialista =$row['id_especialista'];
 $formulario ="manejo_campos_$id_campo_editar";
 $editar="<input type='hidden' name='editar' id='editar' value='editar'>
 			<input type='hidden' name='id_campo_editar' id='id_campo_editar' value='$id_campo_editar'>
+			
 			<input type='hidden' name='misma_area' id='misma_area' value='$area'>";
 $Campo_tipo_definido= $row['campo_tipo'];			
 }
@@ -4880,7 +4895,17 @@ $Tipo_campo .= " <option value='".$row['id_tipo_campo']."'>".$row['id_tipo_campo
 $Tipo_campo .="</select><div id='opciones_select' name='opciones_select'></div>";
 
 
+if($id_form !="") {
 
+$agregar_a_formulario = "
+<div class='checkbox'>
+	<label>
+		<input type='checkbox'  name='agregar_id_form' id='agregar_id_form' value='$id_form' checked>
+		Incluir este campo en el formulario actual
+	</label>
+</div>
+		";
+}else {$agregar_a_formulario = "";}
 
 $identificador = md5($_SESSION[id_usuario]."-".microtime());
 $areas = select('form_areas','id','nombre','',"id_empresa = '$_SESSION[id_empresa]'",'campo_area');
@@ -4927,7 +4952,8 @@ $resultado .= "<div name='formulario_campos_$area' id='formulario_campos_$area' 
 	
 
 	<input type='hidden' name='misma_area' id='misma_area' value='$area'>
-	<div class='btn btn-block btn-success' OnClick=\"xajax_formulario_campos_procesar(xajax.getFormValues('$formulario'))\" />	
+	$agregar_a_formulario
+	<div class='btn btn-block btn-default' OnClick=\"xajax_formulario_campos_procesar(xajax.getFormValues('$formulario'))\" />	
 	<i class='fa fa-floppy-o'></i> Grabar
 	</div>
 		<br><input type ='hidden' name='id_especialista' id='id_especialista' value='$especialista'>
@@ -5209,7 +5235,7 @@ $crear_nuevo ="<div name='atencion' id='atencion' style='display:inline'></div>
 		<input type='hidden' name='div' id='div' value='atencion'> 
 	</form> 
 			<div class='form-group'>
-				<div class='btn btn-block   btn-warning'  OnClick=\"xajax_crear_campos_formulario(xajax.getFormValues('nuevo_campo'));\"><i class='fa fa-plus-square'></i> Crear campo</div>
+				<div class='btn btn-block   btn-warning'  OnClick=\"xajax_crear_campos_formulario(xajax.getFormValues('nuevo_campo'),'$id');\"><i class='fa fa-plus-square'></i> Crear campo</div>
 			</div>
 
 ";
