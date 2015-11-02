@@ -1,6 +1,28 @@
 <?php
 date_default_timezone_set('America/Bogota');
 
+function parametrizacion_linea($tabla,$campo,$opcion,$descripcion,$div){
+		$respuesta = new xajaxResponse('utf-8');	
+
+
+	$link=Conectarse(); 
+mysql_query("SET NAMES 'utf8'");
+$limpiar ="DELETE FROM `form_parametrizacion` WHERE tabla = '".mysql_real_escape_string($tabla)."' AND campo ='".mysql_real_escape_string($campo)."' AND opcion ='".mysql_real_escape_string($opcion)."' LIMIT 1 ";
+$sql=mysql_query($limpiar,$link);
+$consulta="INSERT INTO form_parametrizacion set tabla = '".mysql_real_escape_string($tabla)."' , campo ='".mysql_real_escape_string($campo)."', opcion ='".mysql_real_escape_string($opcion)."', descripcion ='".mysql_real_escape_string($descripcion)."', visible='1' ";
+$sql=mysql_query($consulta,$link);
+if($sql) {
+	$resultado = "<srong class='text-success'>$descripcion</strong>";
+	$respuesta->addAssign("$div","innerHTML",$resultado);
+
+	}else {
+$respuesta->addAlert("$consulta");
+}
+//$respuesta->addAssign("confirmar_envio_email","innerHTML",$exito);
+return $respuesta;
+	}
+$xajax->registerFunction("parametrizacion_linea");
+
 function email_contenido($id,$control,$id_campo,$email_envio){	
 
 if($email_envio =="") {
@@ -65,8 +87,6 @@ $impresion
 		
 $respuesta->addAssign("confirmar_envio_email","innerHTML",$exito);
 return $respuesta;
-			
-	
 	}
 $xajax->registerFunction("email_contenido");
 
@@ -5622,6 +5642,7 @@ if (mysql_num_rows($sql)!='0' ){
 		$orden = editar_campo("form_id",$row['id'],"orden","","","");
 		$descripcion = editar_campo("form_id",$row['id'],"descripcion","","","");
 		$geo = buscar_campo_tipo($id,"14");
+		$email_envio = remplacetas('form_parametrizacion','campo',"$row[id]",'descripcion'," tabla='form_id' and  opcion = 'email'") ;
 		if($geo[0] !='') { $mapa= "<li class='list-group-item'><a href='".$_SESSION['url']."/map.php?id=$id' target='mapa'><i class='fa fa-globe'></i> Mapa</a></li>";}else {$mapa='';}
 		
 		if($i % $divider==0) {
@@ -5707,6 +5728,17 @@ $item .=  "<!-- <div class='col-sm-$columnas' style=';'> -->
 											<li class='list-group-item'><h3><small>Nombre:</small>$nombre</h3></li>
 											<li class='list-group-item'><h4><small>Descripción:</small>$descripcion</h3></li>
 											<li class='list-group-item'><h4><small>Orden:</small>$orden <small>Grupo:</small> $grupo</h4></li>									
+											<li class='list-group-item'>
+												<div id='div_email_envio_$row[id]'>
+													<div class='input-group' >
+														<span class='input-group-addon'>Definir un email para envío</span>
+														<input class='form-control' id='email_envio_$row[id]' name='email_envio_$row[id]' value='$email_envio[0]'>
+														<div class='input-group-btn'>
+															<div class='btn btn-default' onclick=\"xajax_parametrizacion_linea('form_id','$row[id]','email',document.getElementById('email_envio_$row[id]').value,'div_email_envio_$row[id]'); \"><i class='fa fa-save'></i></div>
+														</div>
+													</div>
+												</div>
+											</li>									
 										</ul>
 										</div>
 										<div class='row'>
@@ -6301,13 +6333,16 @@ $impresion = formulario_imprimir("$formulario[form_id]","$formulario[control]","
 		</div>
 	</div>";
 	
-	$mail ='1';
+//	$mail ='1';
 	}
 	
-if($mail =='1') {	
+//if($mail =='1') {	
 	
-			$propietario = 	remplacetas('form_id','id',$formulario[form_id],'propietario',"") ;
-			$propietario = 	remplacetas('usuarios','id',$propietario[0],'email',"") ;
+			//$propietario = 	remplacetas('form_id','id',$formulario[form_id],'propietario',"") ;
+			//$propietario = 	remplacetas('usuarios','id',$propietario[0],'email',"") ;
+			$email_envio = remplacetas('form_parametrizacion','campo',"$formulario[form_id]",'descripcion'," tabla='form_id' and  opcion = 'email'") ;
+			if($email_envio[0] !="") {
+				$impresion = formulario_imprimir("$formulario[form_id]","$formulario[control]","preview"); 
 			$id_empresa = 	remplacetas('form_id','id',$formulario[form_id],'id_empresa',"") ;
 			$id_empresa = $id_empresa[0];
 			
@@ -6325,11 +6360,11 @@ $headers .= "Content-type: text/html; charset=iso-8859-1\r\n";
 $headers .= "From: $razon_social[0] <$email[0]>\r\n"; 
 $headers .= "Reply-To: $email[0]\r\n"; 
 $headers .= "Return-path: $email[0]\r\n"; 
-$headers .= "Cc: $propietario[0]" . "\r\n";
+$headers .= "Cc: $email_envio[0]" . "\r\n";
 
 $asunto= "[MILFS] $nombre_formulario[0]";
 $cuerpo ="
-<h1>Formulario</h1>
+$impresion
 </p>Se ha completado el formulario <b>$nombre_formulario[0]</b></p>
 <p>Puede revisar los datos en <a href='http://$_SERVER[HTTP_HOST]/milfs?id=$formulario[form_id]&c=$formulario[control]'>http://$_SERVER[HTTP_HOST]/milfs?id=$formulario[form_id]&c=$formulario[control]</a></p>
 <p>Saludos de MILFS</p>
@@ -6337,6 +6372,7 @@ $cuerpo ="
 			if(mail("$email[0]","$asunto","$cuerpo","$headers")){ $exito .=""; }else {$exito .="error enviando correo";}
 			//$exito .= "$email[0] $headers ";
 		}
+	///	}
 		$respuesta->addAssign("div_$control","innerHTML","$exito ");
 		return $respuesta;														
 		}

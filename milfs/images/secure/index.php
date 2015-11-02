@@ -11,7 +11,8 @@ if(!isset($_GET['file']) ){
 	 header("Location: ../sinimagen.jpg");
 	 
 	}
-$dir="$_SESSION[path_images_secure]/";
+	include("includes/datos.php");
+$dir="$path_images_secure";
 if ((!$file=realpath($dir.$_GET['file']))
     || strpos($file,realpath($dir))!==0 || substr($file,-4)=='.php'){
  //header('HTTP/1.0 404 Not Found');
