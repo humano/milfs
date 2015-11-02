@@ -115,6 +115,7 @@ $link=Conectarse();
 mysql_query("SET NAMES 'utf8'");
 		$categoria_campo = remplacetas('form_parametrizacion','campo',$perfil,'descripcion'," tabla='form_id' and  opcion = 'categoria:campo'") ;
 		$categoria_campo = $categoria_campo[0];
+		if($categoria_campo >0 ) {
 $consulta = "
 	SELECT md5(binary contenido) as md5_contenido, contenido FROM form_datos
 	WHERE form_id =  '$perfil' 
@@ -139,8 +140,8 @@ $resultado .= "<li class ='' style=''><img class='img img-rounded' src='$icono' 
 															}
 $resultado .= "	</ul >";
 										}
-else{$resultado = 'nada';}
-
+else{$resultado = '';}
+}
 return $resultado;
 }
 
