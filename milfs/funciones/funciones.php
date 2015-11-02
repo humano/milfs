@@ -1,6 +1,75 @@
 <?php
 date_default_timezone_set('America/Bogota');
 
+function email_contenido($id,$control,$id_campo,$email_envio){	
+
+if($email_envio =="") {
+	$email = 	remplacetas('form_datos','control',"$control",'contenido',"form_id = '$id' AND id_campo ='$id_campo' ") ;
+	$formulario = 
+
+	"
+<div id='confirmar_envio_email'>
+	<div class='input-group' id='input_email_envio' >
+		<span class='input-group-addon'><i class='fa fa-envelope'></i></span>
+			<input class='form-control' type='email' id='email_envio' name='email_envio' value='$email[0]' >
+		<div class='input-group-btn'>
+			<div class='btn btn-warning' onclick=\"xajax_email_contenido('$id','$control','$id_campo',(document.getElementById('email_envio').value)); \">Enviar</div>
+		</div>
+	</div>
+</div>	";
+return $formulario; 
+	}
+	$respuesta = new xajaxResponse('utf-8');	
+	
+		$validar = validar_email($email_envio);
+					if($validar == '0') {  		
+	$respuesta->addAssign("input_email_envio","className"," input-group has-error  ");
+	$respuesta->addScript("document.getElementById('email_envio').focus(); ");	
+	$respuesta->addAlert("Se necesita un email válido");	
+	return $respuesta;	
+												}
+			$propietario = 	remplacetas('form_id','id',$id,'propietario',"") ;
+			$propietario = 	remplacetas('usuarios','id',$propietario[0],'email',"") ;
+			$id_empresa = 	remplacetas('form_id','id',$id,'id_empresa',"") ;
+			$id_empresa = $id_empresa[0];
+			$encabezado = empresa_datos("$id_empresa",'encabezado');
+		$direccion =  remplacetas("empresa","id",$id_empresa,"direccion","");
+		$telefono =  remplacetas("empresa","id",$id_empresa,"telefono","");
+		$web =  remplacetas("empresa","id",$id_empresa,"web","");
+		$email =  remplacetas("empresa","id",$id_empresa,"email","");
+		$imagen =  remplacetas("empresa","id",$id_empresa,"imagen","");
+		$razon_social =  remplacetas("empresa","id",$id_empresa,"razon_social","");
+		$slogan =  remplacetas("empresa","id",$id_empresa,"slogan","");
+		$nombre_formulario =  remplacetas("form_id","id",$id,"nombre","");
+
+
+$headers = "MIME-Version: 1.0\r\n"; 
+$headers .= "Content-type: text/html; charset=iso-8859-1\r\n"; 
+$headers .= "From: $razon_social[0] <$email[0]>\r\n"; 
+$headers .= "Reply-To: $email[0]\r\n"; 
+$headers .= "Return-path: $email[0]\r\n"; 
+$headers .= "Cc: $propietario[0]" . "\r\n";
+$impresion = formulario_imprimir("$id","$control","email"); 
+
+$impresion ="
+$encabezado
+<div style='border 1px solid black; border-radius: 30px; '>$impresion</div>";
+$asunto= "[MILFS] $nombre_formulario[0]";
+$cuerpo ="
+$impresion
+</p>Se ha completado el formulario <b>$nombre_formulario[0]</b></p>
+<p>Puede revisar los datos en <a href='http://$_SERVER[HTTP_HOST]/milfs?id=$id&c=$control'>http://$_SERVER[HTTP_HOST]/milfs?id=$id&c=$control</a></p>
+<p>Saludos de MILFS</p>
+";
+			if(mail("$email_envio","$asunto","$cuerpo","$headers")){ $exito .="<strong class='text-suggest'>Se envió un email a $email_envio</strong>"; }else {$exito .="error enviando correo";}
+		
+$respuesta->addAssign("confirmar_envio_email","innerHTML",$exito);
+return $respuesta;
+			
+	
+	}
+$xajax->registerFunction("email_contenido");
+
 
 function mapa_ficha($id) {
 
@@ -5805,6 +5874,20 @@ elseif($campo_tipo_accion == 'email'){$render = "<code>Escriba un email válido<
 		//	$gps = leer_exif($file);
 		$render= "<input value='$value' type='hidden' id='".$id_campo."[".$item."]' name='".$id_campo."[".$item."]' class='form-control' placeholder='$campo_descripcion' > "; //subir_imagen('',$id_campo[$item]);
 		$cols='12';	}
+		elseif($campo_tipo_accion == 'checkbox'){
+					$predefinidos = 	remplacetas('form_campos_valores','id_form_campo',$id_campo,'campo_valor',"") ;
+
+						$campos = explode(":",$predefinidos[0]);
+														$valor_predefinido = $campos[0];
+														$checked = $campos[1];
+						if($value !="") { $checked ="1" ; $valor_predefinido = $value ;}
+						if($checked =='1') {	$checked ="checked" ;}
+		$render= "
+		<div class='checkbox'>
+			<input value='$valor_predefinido' $checked  type='checkbox' id='".$id_campo."[".$item."]' name='".$id_campo."[".$item."]'  placeholder='$campo_descripcion' >
+			<label>$valor_predefinido</label>
+		</div> "; //subir_imagen('',$id_campo[$item]);
+			}
 		
 		elseif($campo_tipo_accion == 'html'){
 			$render = "
@@ -5874,7 +5957,7 @@ elseif($campo_tipo_accion == 'email'){$render = "<code>Escriba un email válido<
 	</div>
 	";
 }
-	if($item == 0) { $label = "<label class='control-label ' for='$id_campo"."_".$item."' title='$id_campo'> <span class='text-$obligatorio'>$campo_nombre</span>  </label>";}
+	if($item == 0) { $label = "<label class='' for='$id_campo"."_".$item."' title='$id_campo'> <span class='text-$obligatorio'>$campo_nombre</span>  </label>";}
 				else {$label = "<label class=' sr-only' for='$id_campo"."_".$item."'>$campo_nombre $campo_obligatorio</label>";}
 				///// CAMPOS QUE NO SE MOSTRARAN		
 				if($campo_tipo_accion == 'imagen'){
@@ -6195,7 +6278,15 @@ if($tipo == "embebido"  )
 	$mail='0';
 	}
 	else{
+		$campo_envio = buscar_campo_tipo($formulario[form_id],"13");
+		if($campo_envio[0] != "") {
+$envio =	email_contenido("$formulario[form_id]","$formulario[control]","$campo_envio[0]",'');		
+		}
+		
+
+$impresion = formulario_imprimir("$formulario[form_id]","$formulario[control]","preview"); 
 		$exito ="
+		$impresion
 	<div class='alert alert-success'><h2><i class='fa fa-check-square-o'></i>
 		 Gracias por llenar el formulario $formulario[form_nombre] </h2>
 		 <div class='row'>
@@ -6205,9 +6296,7 @@ if($tipo == "embebido"  )
 			 	</a>
 			 </div>
 			 <div class='col-xs-6'>
-			 	<a href ='?id=$formulario[form_id]&c=$formulario[control]' class='btn btn-block btn-success'>
-			 		Ver los datos grabados
-			 	</a>
+			 	$envio
 			 </div>
 		</div>
 	</div>";
@@ -6307,7 +6396,7 @@ function formulario_modal($id,$form_respuesta,$control,$tipo) {
 	$pie .= empresa_datos("$id_empresa",'pie');
 	$formulario_descripcion = remplacetas('form_id','id',$id,'descripcion','') ;
 	$formulario_nombre = remplacetas('form_id','id',$id,'nombre','') ;
-	$cabecera ="$encabezado<h3>".$formulario_nombre['0']."</h3><p>".$formulario_descripcion['0']."</p>  ";
+	$cabecera ="<h3>".$formulario_nombre['0']."</h3><p>".$formulario_descripcion['0']."</p>  ";
 
 		$nuevo_formulario = "<a href ='?id=$id'>Llenar otro formulario </a>";
 if($control !='' AND  $tipo =='' ) {
@@ -6349,22 +6438,21 @@ if (mysql_num_rows($sql)!='0'){
 	$encabezado = empresa_datos("$id_empresa",'encabezado');
 	$pie = empresa_datos("$id_empresa",'pie');
 	$cabecera = "
-	<div>$encabezado </div>
 	<div class='alert alert-info'  >
 		<div class='row'>
-		<div class='col-xs-4'>	
-			<img src='http://qwerty.co/qr/?d=http://$_SERVER[HTTP_HOST]/milfs?id=$id'>
+			<div class='col-md-2 hidden-xs'>	
+				<img class='img img-responsive'  src='http://qwerty.co/qr/?d=http://$_SERVER[HTTP_HOST]/milfs?id=$id'>
+			</div>
+			<div class='col-md-10 col-xs-12'>
+			<h1>$nombre <br><small>$descripcion</small></h1>
+					<div class='input-group'>
+					  <span class='input-group-addon'><a href='http://$_SERVER[HTTP_HOST]/milfs?id=$id'><i class='fa fa-share-square-o'></i></a></span>
+					  <input  onclick=\"this.select(); \"  type='text' class='form-control' placeholder='http://$_SERVER[HTTP_HOST]/milfs?id=$id' value='http://$_SERVER[HTTP_HOST]/milfs?id=$id'>
+					</div>
+			</div>
 		</div>
-		<div class='col-xs-8'>
-		<h1>$nombre</h1><p>$descripcion</p>
-		</div>
-	</div>
-	<label >Compartir este formulario</label>
-	<div class='input-group'>
-  <span class='input-group-addon'><a href='http://$_SERVER[HTTP_HOST]/milfs?id=$id'><i class='fa fa-share-square-o'></i></a></span>
-  <input  onclick=\"this.select(); \"  type='text' class='form-control' placeholder='http://$_SERVER[HTTP_HOST]/milfs?id=$id' value='http://$_SERVER[HTTP_HOST]/milfs?id=$id'>
-</div>	
-</div>";
+			
+	</div>";
 
 $campo_imagen = buscar_campo_tipo($id,"15");
 $campo_imagen_nombre = $campo_imagen[1];
@@ -6421,12 +6509,14 @@ $muestra_form .="
 	</div>
 		</form>
 		</div>";
+		$muestra_form = "<div class='container'>$muestra_form</div>";
 if($tipo=='campos') {
 	return $solo_campos;
 }
 if($tipo=='embebido') {
 	return $muestra_form;
 }
+
 $respuesta->addAssign("muestra_form","innerHTML","$muestra_form");
 $respuesta->addAssign("titulo_modal","innerHTML","$cabecera");
 $respuesta->addAssign("pie_modal","innerHTML","$pie");
