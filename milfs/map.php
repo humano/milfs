@@ -23,7 +23,6 @@ $plantilla ="mapa";
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
-    <meta name="author" content="fredyrivera" >
      <?php $xajax->printJavascript("xajax/");  ?>
     <link rel="shortcut icon" href="favicon-152.png">
 	<link rel="apple-touch-icon-precomposed" href="favicon-152.png">
@@ -44,15 +43,14 @@ $plantilla ="mapa";
 background:rgba(255,255,255,1)  ;
 
 }
-@media (min-width: 800px) {
+@media (max-width: 800px) {
     .panel-map{
         max-width: 970px;
     }
-    .listado_categorias{
-			max-height: 70px;    
-    }
+   
+  
 }
-@media (min-width: 1200px) {
+@media (min-width: 800px) {
     .panel-map{
         max-width: 200px;
     }
@@ -73,14 +71,7 @@ body {
   margin-bottom: 60px;
   padding: 0; margin: 0; 
 }
-.footer {
-  position: absolute;
-  bottom: 2px;
-  width: auto;
-  /* Set the fixed height of the footer here */
-  height: auto;
-  z-index:5000
-}
+
 
 
 /* Custom page CSS
@@ -94,11 +85,29 @@ body > .container {
   margin: 20px 0;
 }
 
+.footer {
+  position: absolute;
+  bottom: 3px;
+	width: 95%;
+	margin: 0 auto;
+	
+	 height: 120px;
+  
+  /* Set the fixed height of the footer here */
+
+   z-index: 999999;
+}
 .footer > .container {
   padding: 2px;
   background-color: white;
   border-radius: 3px;
-  width: auto;
+  width: 90%;
+  height: 120px;
+  overflow-x: scroll;
+  
+  
+  
+ 
 }
 
 code {
@@ -121,7 +130,11 @@ code {
 <body>
  
 <div id='map'> 
-<div class='footer' ><div  style=" " class='container'><?php echo $categorias = lista_categorias($_REQUEST[id],'','') ; ?></div></div>
+<div class='footer' id='contenedor_pie' >
+	<div  style=" " class='container' >
+	<a href="#" onclick="xajax_limpia_div('contenedor_pie'); "><span class='pull-right'><i class='fa fa-times'></i></span></a>
+	<?php echo $categorias = lista_categorias($_REQUEST[id],'','') ; ?>
+	</div></div>
 </div>
 
 <script>
@@ -156,6 +169,7 @@ myLayer.setGeoJSON(geoJson);
 </script>
 
 <?php echo mapa_ficha("$_REQUEST[id]");?>
+
    
 
 <!-- Modal -->

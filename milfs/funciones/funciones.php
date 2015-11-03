@@ -112,27 +112,28 @@ function mapa_ficha($id) {
 
 	$resultado ="
 	<div style='border-radius:10px  ;
-		
+			vertical-align: top;
 			background-color:white  ;
 			right:5px  ;
-			/*z-index:10000  ;*/
 			position:absolute  ;
 			top:5px;
 			padding:5px  ;'  
 			class='panel-map' id='panel_map_$id' >
-	<div role='row' class='row center-block' >
-		<div class='col-xs-4 col-md-12'>
-		$imagen
-		</div>
-		<div class='col-xs-8 col-md-12'>
-			<h4 class='text-center'> $nombre[0]<small>
-			$descripcion[0]</h4> 
-			
-		</div>
-		<div class='col-xs-8 col-md-12'>
-			<p>$razon_social[0]</p>
-			<A target='milfs' HREF='https://github.com/humano/milfs'><small class='pull-right'>MILFS</small></A>
-		</div>
+					<A href='#' onclick=\"xajax_limpia_div('panel_map_$id'); \"><span class='pull-right'><i class='fa fa-times'></i></span></A>
+			<div role='row' class='row center-block' >
+				<div class='col-xs-4 col-md-12'>
+				$imagen
+				</div>
+				<div class='col-xs-8 col-md-12'>
+					<h4 class='text-center'> $nombre[0]<small>
+					$descripcion[0]</h4> 
+					
+				</div>
+				<div class='col-xs-8 col-md-12'>
+					<p>$razon_social[0]</p>
+					<A target='milfs' HREF='https://github.com/humano/milfs'><small class='pull-right'>MILFS</small></A>
+				</div>
+			</div>
 	</div>
 		";
 	return $resultado;
@@ -223,7 +224,7 @@ $consulta = "
 
 $sql=mysql_query($consulta,$link);
 if (mysql_num_rows($sql)!='0'){
-$resultado = "<ul class='list-inline'>";
+$resultado = "<div class='' style='vertical-align: top; text-align:center;'>";
 while( $row = mysql_fetch_array( $sql ) ) {
 
 										$icono = remplacetas('form_parametrizacion','campo',$perfil,'descripcion'," tabla='form_id' and  opcion = 'categoria:icon:$row[md5_contenido]'") ;
@@ -234,10 +235,10 @@ while( $row = mysql_fetch_array( $sql ) ) {
 								$icon = $icono[0];
 													}
 						$icono  = "$icon";
-						$contenido= substr($row[contenido],0, $length = 100);
-$resultado .= "<li class ='' style='' title='$row[contenido]'><div style='max-width:60px;'><img class='img img-rounded img-responsive' src='$icono' style='max-height:50px;'><small>$contenido</small></div></li>";
+						$contenido= substr($row[contenido],0, $length = 15);
+$resultado .= "<div class='' style='width:50px; heigth:100px; float:left; vertical-align: top; margin: 5px; text-align:center'><img style=' height:50px;' class='' src='$icono' style=''><small>$contenido</small></div>";
 															}
-$resultado .= "	</ul >";
+$resultado .= "	</div >";
 										}
 else{$resultado = '';}
 }
