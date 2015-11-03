@@ -11,12 +11,12 @@ if(!isset($_GET['file']) ){
 	 header("Location: ../sinimagen.jpg");
 	 
 	}
-	include("includes/datos.php");
-$dir="$path_images_secure";
+	include("../../includes/datos.php");
+$dir="$path_images_secure/";
 if ((!$file=realpath($dir.$_GET['file']))
     || strpos($file,realpath($dir))!==0 || substr($file,-4)=='.php'){
  //header('HTTP/1.0 404 Not Found');
-  header('Location: ../sinimagen.jpg');
+  header("Location: ../sinimagen.jpg?$dir");
   exit();
 }
 $ref=$_SERVER['HTTP_REFERER'];

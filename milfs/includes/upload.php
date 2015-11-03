@@ -30,9 +30,8 @@ if (($tipo == 'image/jpeg' or $tipo =='image/png') AND $size  <= $upload_size ) 
 $name = MD5(time())."$ext";
 $nombre= "$_SESSION[path_images_secure]/full/".$name;
 $imagenX = $_FILES[fileUpload][tmp_name];
-/*$coordenadas = leer_exif($imagenX);
-if($coordenadas !='') { $alerta = "alert('Se han detectado coordenadas en los metadatos de la imagen y se ubicará el mapa en ese lugar.($coordenadas) ');";}
-*/
+$coordenadas = leer_exif($imagenX);
+if($coordenadas !='') { $alerta = "alert('Se han detectado coordenadas en los metadatos de la imagen y se ubicará el mapa en ese lugar.');";}
 //if (!copy($_FILES['fileUpload']['tmp_name'],"$nombre"))
 if (!move_uploaded_file($_FILES['fileUpload']['tmp_name'],$nombre))
 //move_uploaded_file($tmp_name, "$uploads_dir/$name");
@@ -48,10 +47,10 @@ else{
 	echo generar_miniatura($name,"300");
 	echo generar_miniatura($name,"600");
 	///$name= "$name?$coordenadas"
-echo " <script>parent.resultadoUpload(0, '$name','$_SESSION[url]/','$imagen','$coordenadas'); $alerta </script> ";
+echo " <script>parent.resultadoUpload(0, '$name','$_SESSION[url]','$imagen','$coordenadas'); $alerta </script> ";
 }
 }
-else echo "<script>parent.resultadoUpload(2,'','$_SESSION[url]/','$imagen');</script> ";
+else echo "<script>parent.resultadoUpload(2,'','$_SESSION[url]','$imagen');</script> ";
 
 }
 else{

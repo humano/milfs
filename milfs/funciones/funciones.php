@@ -2578,13 +2578,13 @@ while( $row = mysql_fetch_array( $sql ) ) {
 	$identificador = explode(',',$row[identificador]);
 	$identificador = $identificador[0];
 	if($orden === 0) {$activo = "active";}else{$activo="";}
-	//$contenido_desplegado = contenido_mostrar("$row[form_id]","$row[control]",'',"$plantilla");
+	$contenido_desplegado = contenido_mostrar("$row[form_id]","$row[control]",'',"$plantilla");
 		$campo = buscar_campo_tipo($id,"15");
 	$id_campo = $campo[0];
 	$imagen = remplacetas('form_datos','control',$row[control],'contenido',"id_campo = '$id_campo'") ;
 	$items .= " <div class='item $activo'>
 						<div style='height:100%' class=''>
-							<img class='img img-responsive center-block' style='height:100%; display: table; margin: 0 auto;' src='http://$_SERVER[HTTP_HOST]/milfs/images/secure/?file=600/$imagen[0]'>
+							<!-- <img class='img img-responsive center-block' style='height:100%; display: table; margin: 0 auto;' src='http://$_SERVER[HTTP_HOST]/milfs/images/secure/?file=600/$imagen[0]'> -->
 							$contenido_desplegado
 						</div>
 					</div>";
@@ -2597,8 +2597,8 @@ $contenido .= "
     <!-- Carousel 
     ================================================== -->
     <div >
-    <h2>$nombre[0]</h2>
-    <p>$descripcion[0]</p>
+    <h3>$nombre[0] <small>$descripcion[0]</small></h3>
+    
     </div>
     <div id='myCarousel_$id' class='carousel slide' data-ride='carousel'>
       <!-- Indicators --> 

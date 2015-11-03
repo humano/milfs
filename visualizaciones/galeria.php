@@ -1,7 +1,26 @@
 <?php
-/// ESTE ARCHIVO DEBE ESTAR UN NIVEL POR ENCIMA DEL DIRECTORIO milfs 
 session_start();
-//ini_set('display_errors', 'On');
+if(isset($_REQUEST[debug])) {ini_set('display_errors', 'On');}
+/// ESTE ARCHIVO DEBE ESTAR UN NIVEL POR ENCIMA DEL DIRECTORIO milfs 
+$id_form="1";
+$plantilla ="galeria";
+/*
+EJEMPLO DE PLANTILLA PÁRA GALERIA
+
+ <div class='  ' style=' position:relative;  text-align:center;  border-radius : 5px; width:100%; height:100% '> 
+ <img  style=' height:100%; ' src ='/milfs/images/secure/?file=600/$campo_limpio[26] ' alt=' ' title=' '  class=''>  
+<div style=' margin-left: auto;
+        position:absolute;
+	margin-right: auto;
+	margin-top:30px;
+	left:0;
+	right:0;  bottom: 50px; 
+        width:400px; ' >
+    <h1> $campo_limpio[1]   $campo_limpio[3]  </h1>
+</div>
+ </div>
+
+*/
 require ('milfs/xajax/xajax.inc.php');
 $xajax = new xajax();
 require ('milfs/funciones/funciones.php');
@@ -48,30 +67,7 @@ $web = remplacetas('empresa','id','1','web') ;
 <!--   <link rel="points" type="application/json" href="json.php?id=<?php echo $_REQUEST["id"] ?>"> -->
 <link href="milfs/css/carousel.css" rel="stylesheet">
 <style type="text/css">
-body {
-  /*  background: url("") no-repeat center center fixed;
-    -webkit-background-size: cover;
-    -moz-background-size: cover;
-    -o-background-size: cover;
-    background-size: cover;
-    color: gray;
-    background-color: black;
-*/    
-    }
-.alert-info{
-color: #341208;
-border-color:  #341208;
-background-image: url("");
-}
 
-.jumbotron {
-/* background-image: url("milfs/images/secure/?file=full/<?php echo $logo[0];?>"); */
-background-size: cover;
-background-position: center;
-/* text-shadow:  1px 1px 1px rgba(255,255,255,0.8) ; */
-background-color: black;
-
-}
 
 .navbar-header > p { font-size:20px; color: white; font-family: "Open Sans",sans-serif; font-weight: normal;display:inline }
 .navbar-header > strong{ font-size:20px; color: #802a2a; font-weight: normal; font-family: "Open Sans",sans-serif; ;display:inline}
@@ -143,7 +139,7 @@ background-color: black;
 
     }
 </style>
-<?php if($_REQUEST[id] !='' AND $_REQUEST[c]){$onload ="<script type=\"text/javascript\"> xajax_formulario_modal('$_REQUEST[id]','','$_REQUEST[c]','$_REQUEST[t]')</script>";} ?>
+
 </head>
 <body>
   <body>
@@ -179,8 +175,7 @@ background-color: black;
           <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
             
-					<li><?php echo $ingresar; ?></li>
-              
+					              
             </ul>
 
           </div><!--/.nav-collapse -->
@@ -197,42 +192,14 @@ background-color: black;
 			<div class="col-sm-4">
 			</div>
 		</div>
-	<?php  
-	if(isset($_REQUEST[id])){ echo contenido_aplicacion("$_REQUEST[id]","contenido"); }
-	else{	
-	
-	//echo contenido_aplicacion_nombre("Portada","banner") ;
-	//echo aplicaciones_listado("","grid");} ?>
-	<div class="container" style="width:80%">
-	<?php echo aplicaciones_listado("","carrusel","");} 
-	?>
+
+	<div class="container" style="width:100%">
+	<?php echo aplicacion_carrusel("","$id_form","galeria") ?>
 	</div>
-<br></br>
+
 	</div>
-  <div  class="center-block" style="  z-index:10000; bottom:10px;">
-  <div role='row' class='row center-block' style="width:95% ; "><?php //echo aplicacion_datos("$_REQUEST[id]");?></div>
-  </div>
 
-<!-- Modal -->
 
-<div class='modal fade ' id='muestraInfo' tabindex='-1' role='dialog' aria-labelledby='myModalLabel' aria-hidden='true'>
-  <div class='modal-dialog' >
-    <div class='modal-content'>
-      <div class='modal-header' >
-        <button type='button' class='close' data-dismiss='modal' aria-hidden='true'>&times;</button>
-        <h4 class='modal-title' id='myModalLabel_info'><div id='titulo_modal'></div></h4>
-      </div>
-      <div class='modal-body'>
-
-       <div id='muestra_form'></div>
-      </div>
-      <div class='modal-footer' id='pie_modal'>
-        
-       
-      </div>
-    </div>
-  </div>
-</div>
 	       <div class='pie' style=" position: fixed; z-index: 10000;
   bottom: 0;
   width: 100%;
