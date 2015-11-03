@@ -111,19 +111,28 @@ function mapa_ficha($id) {
 	//$prueba = json_decode($prueba);
 
 	$resultado ="
+	<div style='border-radius:10px  ;
+		
+			background-color:white  ;
+			right:5px  ;
+			/*z-index:10000  ;*/
+			position:absolute  ;
+			top:5px;
+			padding:5px  ;'  
+			class='panel-map' id='panel_map_$id' >
 	<div role='row' class='row center-block' >
-		<div class='row'>
-			<div class='col-xs-12'>$imagen</div>
+		<div class='col-xs-4 col-md-12'>
+		$imagen
 		</div>
-		<div class='row'>
-		<div class='col-xs-12'>
-			<h4 class='text-center'> $nombre[0]</h4>
-			<h5>$descripcion[0]</h5> 
-			<A target='milfs' HREF='https://github.com/humano/milfs'><small class='pull-right'>MILFS</small></A></div>
-$prueba
+		<div class='col-xs-8 col-md-12'>
+			<h4 class='text-center'> $nombre[0]<small>
+			$descripcion[0]</h4> 
+			
 		</div>
-		 <a class='btn btn-default btn-block' href='#' onclick=\"xajax_formulario_modal('$id') \">Agregar </a>
-		 <strong>$razon_social[0]</strong>
+		<div class='col-xs-8 col-md-12'>
+			<p>$razon_social[0]</p>
+			<A target='milfs' HREF='https://github.com/humano/milfs'><small class='pull-right'>MILFS</small></A>
+		</div>
 	</div>
 		";
 	return $resultado;
@@ -225,7 +234,8 @@ while( $row = mysql_fetch_array( $sql ) ) {
 								$icon = $icono[0];
 													}
 						$icono  = "$icon";
-$resultado .= "<li class ='' style=''><img class='img img-rounded' src='$icono' style='max-height:70px;'><br><div class='badge'>$row[contenido]</div></li>";
+						$contenido= substr($row[contenido],0, $length = 100);
+$resultado .= "<li class ='' style='' title='$row[contenido]'><div style='max-width:60px;'><img class='img img-rounded img-responsive' src='$icono' style='max-height:50px;'><small>$contenido</small></div></li>";
 															}
 $resultado .= "	</ul >";
 										}
@@ -2856,7 +2866,7 @@ while( $row = mysql_fetch_array( $sql ) ) {
 		$propiedades[description] ="<div class='container-fluid' id='contenedor_datos' >$formulario</div>";
 		$propiedades[sounds] ="";
 		$propiedades[url] ='';
-		$propiedades[icon][iconSize] =[100,100];
+		$propiedades[icon][iconSize] =[60,60];
 		//$propiedades[icon][shadowSize] =[70,70];
 		//$propiedades[icon][shadowUrl] = "https://raw.githubusercontent.com/humano/milfs/master/milfs/images/iconos/negro.png";
 		

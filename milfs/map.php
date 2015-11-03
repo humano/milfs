@@ -27,24 +27,41 @@ $plantilla ="mapa";
      <?php $xajax->printJavascript("xajax/");  ?>
     <link rel="shortcut icon" href="favicon-152.png">
 	<link rel="apple-touch-icon-precomposed" href="favicon-152.png">
-	<link href="css/font-awesome/css/font-awesome.css" rel="stylesheet">
 
-<script src='https://api.tiles.mapbox.com/mapbox.js/v2.1.2/mapbox.js'></script>
-<link href='https://api.tiles.mapbox.com/mapbox.js/v2.1.2/mapbox.css' rel='stylesheet' />
+<script src='https://api.mapbox.com/mapbox.js/v2.2.2/mapbox.js'></script>
+<link href='https://api.mapbox.com/mapbox.js/v2.2.2/mapbox.css' rel='stylesheet' />
+<link href='https://api.mapbox.com/mapbox.js/plugins/leaflet-markercluster/v0.4.0/MarkerCluster.Default.css' rel='stylesheet' />
 <link href='https://mapbox.com/base/latest/base.css' rel='stylesheet' />
 
-<!-- <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7/leaflet.css" /> -->
-<link href="css/bootstrap.min.css" rel="stylesheet">
-<link href="css/estilos.php?hghgSs" rel="stylesheet">
-  <style type="text/css">
-  body {  padding: 0; margin: 0;  }
- /* .leaflet-container h1{font-size:initial !important;}
-  .leaflet-container h2{font-size:30px; !important;}
-  */
+	<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha256-k2/8zcNbxVIh5mnQ52A0r3a6jAgMGxFJFE2707UxGCk= sha512-ZV9KawG2Legkwp3nAlxLIVFudTauWuBpC10uEafMHYL0Sarrz5A7G79kXh5+5+woxQ5HM559XX2UZjMJ36Wplg==" crossorigin="anonymous">
+	<link rel="stylesheet" type="text/css" media="screen" href="css/bootstrap.css">
+	<link rel="stylesheet" type="text/css" media="screen" href="css/bootstrap-markdown.css">
+	<link rel="stylesheet" type="text/css" media="screen" href="css/bootstrap-markdown.min.css">
+
+<!-- <link href="css/estilos.php?hghgSs" rel="stylesheet"> -->
+<style type="text/css">
+.navbar-default {
+background:rgba(255,255,255,1)  ;
+
+}
+@media (min-width: 800px) {
+    .panel-map{
+        max-width: 970px;
+    }
+    .listado_categorias{
+			max-height: 70px;    
+    }
+}
+@media (min-width: 1200px) {
+    .panel-map{
+        max-width: 200px;
+    }
+}
+
+        
 	.leaflet-popup-content {     width:600px !important; }
 
-    body { margin:0; padding:0; }
-  #map { position:absolute; top:0; bottom:0; width:100%;  }
+#map { position:absolute; top:0; bottom:0; width:100%;  }
   /* Sticky footer styles
 -------------------------------------------------- */
 html {
@@ -54,14 +71,15 @@ html {
 body {
   /* Margin bottom by footer height */
   margin-bottom: 60px;
+  padding: 0; margin: 0; 
 }
 .footer {
   position: absolute;
-  bottom: 0;
+  bottom: 2px;
   width: auto;
   /* Set the fixed height of the footer here */
   height: auto;
-  z-index:200000
+  z-index:5000
 }
 
 
@@ -77,22 +95,33 @@ body > .container {
 }
 
 .footer > .container {
-  padding-right: 15px;
-  padding-left: 15px;
+  padding: 2px;
+  background-color: white;
+  border-radius: 3px;
+  width: auto;
 }
 
 code {
   font-size: 80%;
 }
+.modal-dialog {
+  width: 98%;
+  height: auto;
+  padding: 0;
+}
+
+.modal-content {
+  height: auto;
+}
   </style>
 
-  <script src="http://code.jquery.com/jquery-2.1.0.min.js"></script>
+
 <!-- <link rel="points" type="application/json" href="json.php?id=<?php echo $_REQUEST["id"] ?>">  -->
 </head>
 <body>
  
 <div id='map'> 
-<div class='footer' ><?php echo $categorias = lista_categorias($_REQUEST[id],'','') ; ?></div>
+<div class='footer' ><div  style=" " class='container'><?php echo $categorias = lista_categorias($_REQUEST[id],'','') ; ?></div></div>
 </div>
 
 <script>
@@ -126,11 +155,10 @@ map.fitBounds(myLayer.getBounds());
 myLayer.setGeoJSON(geoJson);
 </script>
 
-<div  class="panel-map" id="panel_map_<?php echo $_REQUEST[id] ?>" >
 <?php echo mapa_ficha("$_REQUEST[id]");?>
    
-  </div>
-  <!-- Modal -->
+
+<!-- Modal -->
 
 <div class='modal fade ' id='muestraInfo' tabindex='-1' role='dialog' aria-labelledby='myModalLabel' aria-hidden='true'>
   <div class='modal-dialog' >
@@ -140,8 +168,9 @@ myLayer.setGeoJSON(geoJson);
         <h4 class='modal-title' id='myModalLabel_info'><div id='titulo_modal'></div></h4>
       </div>
       <div class='modal-body'>
-      
+
        <div id='muestra_form'></div>
+      
       </div>
       <div class='modal-footer' id='pie_modal'>
         
@@ -153,8 +182,12 @@ myLayer.setGeoJSON(geoJson);
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-     <script src="js/jquery.min.js"></script> 
-    <script src="js/bootstrap.min.js"></script>
-    <script src="js/scripts.js"></script>
+	      <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+			<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+			<script src="js/markdown.js"></script>
+			<script src="js/to-markdown.js"></script>
+			<script src="js/bootstrap-markdown.js"></script>
+	      <script src="js/scripts.js"></script>
+
 </body>
 </html>
