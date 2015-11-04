@@ -1,6 +1,30 @@
 <?php
 date_default_timezone_set('America/Bogota');
 
+function datos_array($identificador) {
+
+$link=Conectarse();
+mysql_query("SET NAMES 'UTF8'");
+$consulta ="SELECT * FROM form_datos WHERE control = '$identificador'
+GROUP BY id_campo ORDER BY timestamp DESC ";
+$sql = mysql_query($consulta,$link) or die("error al ejecutar consulta ");
+$array = array();
+$array[identificador] = "$identificador";
+while($row = mysql_fetch_array( $sql ))
+    {
+    $contenido = remplacetas('form_datos','id',$row[id],'contenido',"") ;
+    $id_campo = remplacetas('form_datos','id',$row[id],'id_campo',"") ;
+    $nombre_campo =
+remplacetas('form_campos','id',$id_campo[0],'campo_nombre',"") ;
+    //$array[id_campo] = $row[id_campo];
+    $array[$nombre_campo[0]] = "$contenido[0]";
+    //$array[] = $row;
+
+
+    }
+    return $array;
+}
+
 function parametrizacion_linea($tabla,$campo,$opcion,$descripcion,$div){
 		$respuesta = new xajaxResponse('utf-8');	
 
