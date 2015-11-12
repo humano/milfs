@@ -1,6 +1,310 @@
 <?php
 date_default_timezone_set('America/Bogota');
 
+function contar_valores_formulario($campo,$key,$valor){
+$consulta = "SELECT distinct($campo) as cantidad FROM form_datos WHERE $key LIKE '$valor' ";
+$link=Conectarse();
+mysql_query("SET NAMES 'UTF8'");
+$sql=mysql_query($consulta,$link);
+if (mysql_num_rows($sql)!='0'){
+$resultado = mysql_num_rows($sql);
+//$resultado = mysql_result($sql,0,"cantidad");
+}
+//$resultado .= " $consulta";
+return $resultado;
+}
+
+
+function listar_campos_formulario($id_form,$tipo){
+$consulta = "SELECT distinct(id_campo),campo_nombre  FROM form_datos,form_campos WHERE form_id = '$id_form' AND form_datos.id_campo = form_campos.id ";
+$link=Conectarse();
+mysql_query("SET NAMES 'UTF8'");
+$sql=mysql_query($consulta,$link);
+if (mysql_num_rows($sql)!='0'){
+while( $row = mysql_fetch_array( $sql ) ) {
+	if($tipo=="nombres"){
+$resultado[] = "$row[campo_nombre]";}
+	elseif($tipo=="select"){
+		$option .= "<option value='$row[id_campo]'>$row[campo_nombre]</option>";
+	}
+	else{
+//$resultado .= " $row[id_campo] ";
+$resultado[] = $row[id_campo];
+}
+}
+if($tipo=="select"){ 
+$resultado = "
+	<select class='form-control' id='id_campo' name ='id_campo'>
+		<option value='' >Campo</option>
+		$option
+	</select>";
+
+}
+//$resultado = mysql_result($sql,0,"cantidad");
+}
+//$resultado .= " $consulta";
+return $resultado;
+}
+
+
+//($formulario,$div,$registros,$pagina,$formato)
+function consultar_formulario($form,$registros,$pagina,$tipo){
+$respuesta = new xajaxResponse('utf-8');
+//if(is_array($form)) {$id_form = $form['id_form'];}else { $id_form = $form;}
+$id_empresa = $_SESSION[id_empresa];
+if(is_array($form)) {
+	$fecha_inicio = $form["inicio"];
+	if($fecha_inicio =="" ) { $fecha_inicio ="2000-01-01";}
+	$fin = $formulario["fin"];
+	if( $fin !="") { $fechas = " AND timestamp BETWEEN UNIX_TIMESTAMP('$fecha_inicio') AND UNIX_TIMESTAMP('$fin 23:59:59')";}
+	$id_form = $form['id_form'];
+	$id_campo = $form['id_campo'];
+	$busqueda = $form['busqueda'];
+if($busqueda !=''){$busca ="AND contenido LIKE '%%$form[busqueda]%%'";}else{$busca ='';}
+if($id_campo !=''){$campo ="AND id_campo = '$id_campo'";}else{$campo ='';}
+}else{
+$id_form = $form;
+}
+$consulta_principal = "SELECT control,id,form_id FROM form_datos WHERE form_id = '$id_form' AND form_datos.id_empresa = '$id_empresa' $busca $campo $fechas GROUP BY form_datos.control ORDER BY form_datos.id DESC ";
+$link=Conectarse();
+mysql_query("SET NAMES 'UTF8'");
+$sql_total=mysql_query($consulta_principal,$link);
+$total_registros =	mysql_num_rows($sql_total);//formulario_contar($id_form);
+/// PAGINACION
+				if ($pagina =='') {$inicio = 0; $pagina = 1; }
+				else { $inicio = ($pagina - 1) * $registros;}
+				if($total_registros < $registros) { $limite ="";}
+				else{$limite ="  LIMIT $inicio, $registros ";}
+				if($tipo == "csv" ) {$consulta_limite = "$consulta_principal";}
+				else{$consulta_limite = $consulta_principal.$limite;}
+				$sql=mysql_query($consulta_limite,$link);
+				
+//$sql=mysql_query($consulta_principal,$link);
+if (mysql_num_rows($sql)!='0'){
+	
+/////// FILTRO
+
+$fecha = time (); 
+	$ahora  = date ( "Y-m-d" , $fecha ); 
+	$campos = listar_campos_formulario($id_form,"select");
+	$peticion = "
+		<form class='form' role='form' name='peticion' id='peticion' action='' target='rss' method='post'>
+
+
+					<div class='row'>
+						<div class='col-lg-3'>
+							<div class='input-group'>
+								<span class='input-group-addon'>Inicio</span>
+								<input value = '2000-01-01' type='date' name='inicio'  id='inicio' class='form-control' title='YYYY-MM-DD'>
+							</div>
+						</div>
+						<div class='col-lg-3'>
+							<div class='input-group'>
+								<span class='input-group-addon'>Fin</span>
+								<input type='date' name='fin'  id='fin' class='form-control'  title='YYYY-MM-DD' value='$ahora' >
+							</div>
+						</div>
+
+						<div class='col-lg-2'>
+							<div class='input-group'>
+								<span class='input-group-addon'>Frase</span>
+								<input value='$busqueda' type=text name='busqueda'  id='busqueda' placeholder='Cadena de busqueda' class='form-control'  >
+							</div>
+						</div>
+						<div class='col-lg-3'>
+							<div class='input-group'>
+								<span class='input-group-addon'><i class='fa fa-filter'></i></span>
+							$campos
+							</div>
+						</div>
+						<div class='col-lg-1'>
+							<input type='hidden' value='$id_form' id='id_form' name ='id_form'>
+							<div class='btn btn-default' OnClick=\"xajax_consultar_formulario(xajax.getFormValues('peticion'),'10','','filtro');\"><i class='fa fa-search'></i></div>
+						</div>
+					</div>
+
+
+		</form> 
+
+	";
+/////// FILTRO	
+	
+$boton_borrar = "
+
+		<a class='btn btn-default' onclick=\"xajax_borrar_tmp('div_resultados'); xajax_limpia_div('div_resultados');\"><i class='fa fa-trash-o'></i></a>
+	
+		 ";
+
+				if($formato!='csv'){ 
+	$boton_exportar = "	<a class='btn btn-default' OnClick=\"xajax_consultar_formulario(xajax.getFormValues('peticion'),'','','csv');\">Exportar <i class='fa fa-file-text-o'></i></a>";}
+						
+						        $link = "";
+ // $page = $_GET['page'];
+ $page= $pagina;
+  $pages= ceil($total_registros / $registros); //13; // Hardcoded for testing purpose
+  $limit=10  ;
+    if ($pages >=1 && $page <= $pages)
+    {
+        $counter = 1;
+        $link = "";
+        if (($page -1) > 0)           {
+           	 $link .= "<li><a title='Cambiar a la página 1'  onClick=\"xajax_consultar_formulario(xajax.getFormValues('peticion'),'$registros','1','');\"' style='cursor:pointer'><i class='fa fa-step-backward'></i></a> </li>
+           					<li><a title='Cambiar a la página ".($pagina-1)."'  onClick=\"xajax_consultar_formulario(xajax.getFormValues('peticion'),'$registros','".($pagina-1)."','');\"' style='cursor:pointer'><i class='fa fa-backward'></i></a> </li>";
+           }
+
+        for ($x=$page; $x<=$pages;$x++)
+        {
+
+
+            if($counter < $limit){
+                    	 if ($page == $x){
+					$link .=  "<li class='active'><a title='Cambiar a la pagina $x' onClick=\"xajax_consultar_formulario(xajax.getFormValues('peticion'),'$registros','$x','');\"' style='cursor:pointer'>$x</a> </li>";
+													}else{
+                $link .= "<li class=''><a title='Cambiar a la pagina $x' onClick=\"xajax_consultar_formulario(xajax.getFormValues('peticion'),'$registros','$x','');\"' style='cursor:pointer'>$x</a> </li>";
+													}
+												}
+            $counter++;
+        }
+        if ($page < ($pages - ($limit/2)))
+
+         { $link .= "<li><a  title='Cambiar a la pagina ".($pagina+1)."' onClick=\"xajax_consultar_formulario(xajax.getFormValues('peticion'),'$registros','".($pagina+1)."','');\"' style='cursor:pointer'><i class='fa fa-forward'></i></a></li>
+         				<li class=''><a title='Cambiar a la pagina $pages' onClick=\"xajax_consultar_formulario(xajax.getFormValues('peticion'),'$registros','$pages','');\"' style='cursor:pointer'><i class='fa fa-step-forward'></i> </a></li>"; }
+    }
+
+   $paginacion = "<ul class='pagination  '>$link</ul>";
+						
+						
+		
+	
+	$encabezado = " <div class='row'>
+	<div class='col-sm-12'>
+						$peticion
+						</div>
+						</div>
+						<div class='row' id='botonera'>
+							<div class='col-sm-12'>
+								<ul class='pagination'>
+									<li  role='presentation'><span>$total_registros registros</span></li>
+									<li role='presentation'>$boton_borrar</li>
+									<li role='presentation'>$boton_exportar</li>
+		
+								</ul>
+								     $paginacion
+							</div>
+						</div>";
+						
+	$total_registros = mysql_num_rows($sql);
+	$nombres_campos = listar_campos_formulario("$id_form","nombres");
+	foreach($nombres_campos as $campo_nombre=>$nombre){
+		$listado_nombres .= "<th>$nombre</th>"; 
+	}
+	$listado_nombres = "<tr><th class='actions' ></th><th>Identificador</th><th></th>$listado_nombres </tr>";
+$listado_campos = listar_campos_formulario("$id_form");
+
+while( $row = mysql_fetch_array( $sql ) ) {
+//$cantidad_campos = contar_valores_formulario("id_campo","control","$row[control]");
+
+$listado_campos = listar_campos_formulario("$id_form");
+
+foreach($listado_campos as $campo=>$valor){
+	$contenido = remplacetas('form_datos','control',$row[control],'contenido',"id_campo ='$valor' ") ;
+$listado_campos .= "<td>$contenido[0]</td>";
+
+	 }
+	 if (!is_array($listado_campos)){$listado_campos="<td>$listado_campos</td>";}else {$listado_campos=$listado_campos;}
+	 	$menu ="<td nowrap style='width:100px;' class='actions' >
+
+							<div class='btn-toolbar '>
+							<div class='btn-group btn-group'>
+								<a class='btn btn-default' target='form' href='?c=$row[control]'><i class='fa fa-eye'></i></a>
+								<a class='btn btn-default' target='form' href='?id=$row[form_id]&c=$row[control]&t=edit'><i class='fa fa-pencil'></i></a>
+								$imagen 
+							</div>
+							</div>
+
+						</td>";
+$lineas .= "		<tr>$menu<td>$row[control]</td>$listado_campos</tr>";
+
+															}
+
+$tabla ="
+	<table class='table table-condensed table-striped table-bordered table-responsive' >
+	<thead>$listado_nombres</thead>
+	<tbody >
+	$lineas
+	</tbody>
+	</table>";
+$resultado = "
+$encabezado
+
+<div class='container-fluid' style='overflow:auto; height:400px; ' id='div_resultados' >
+
+$tabla 
+	
+	</div>
+";
+										}
+else {
+$resultado ="<div class='alert alert-warning' ><h1>No hay resultados</h1> $consulta_limite</div>";
+$respuesta->addAlert("No hay resultados");
+return $respuesta;
+}
+if($tipo =="csv") {
+$html = str_get_html($tabla);
+    //    header('Content-type: application/ms-excel');
+    //    header('Content-Disposition: attachment; filename=sample.csv');
+	$nombre_archivo ="tmp/Prueba_Formulario_".mktime()."_".$_SESSION['id'].".csv";
+   //$fp = fopen("php://output", "w");
+	$fp=fopen($nombre_archivo , "w");
+        foreach($html->find('tr') as $element)
+        {
+            $td = array();
+            foreach( $element->find('th') as $row)  
+            {
+            	    if (strpos(trim($row->class), 'actions') === false && strpos(trim($row->class), 'checker') === false) {
+                $td [] = $row->plaintext;
+             }
+            }
+            if (!empty($td)) {
+				    fputcsv($fp, $td);
+				  }
+				  
+            $td = array();
+            foreach( $element->find('td') as $row)  
+            {
+            	     if (strpos(trim($row->class), 'actions') === false && strpos(trim($row->class), 'checker') === false) {
+                $td [] = $row->plaintext;
+             }
+            }
+            fputcsv($fp, $td);
+        }
+
+        fclose($fp);
+$boton_descarga ="<a class='btn btn-default btn-success' href='$nombre_archivo'>Descargar <i class='fa fa-cloud-download'></i></a>";
+			
+$datos ="$boton_descarga";
+}else {
+
+$datos = $resultado;
+}
+$div ="contenido_de_modal";
+$resultado = "<div class=''> $datos</div>";
+			$div_contenido = "<div id='$div' >$div</div>";
+			$respuesta->addAssign("muestra_form","innerHTML","$div_contenido");
+			//$respuesta->addAssign("titulo_modal","innerHTML","Hola mundo");
+			//$respuesta->addAssign("pie_modal","innerHTML","$pie");
+			
+		
+			$respuesta->addAssign("$div","innerHTML","$resultado");
+				if($tipo =="modal") {
+			$respuesta->addscript("$('#muestraInfo').modal('toggle')");	
+}
+			return $respuesta;
+
+}
+$xajax->registerFunction("consultar_formulario");
+
+
 function datos_array($identificador) {
 
 $link=Conectarse();
@@ -14,8 +318,7 @@ while($row = mysql_fetch_array( $sql ))
     {
     $contenido = remplacetas('form_datos','id',$row[id],'contenido',"") ;
     $id_campo = remplacetas('form_datos','id',$row[id],'id_campo',"") ;
-    $nombre_campo =
-remplacetas('form_campos','id',$id_campo[0],'campo_nombre',"") ;
+    $nombre_campo =  remplacetas('form_campos','id',$id_campo[0],'campo_nombre',"") ;
     //$array[id_campo] = $row[id_campo];
     $array[$nombre_campo[0]] = "$contenido[0]";
     //$array[] = $row;
@@ -1728,7 +2031,7 @@ if (mysql_num_rows($sql)!='0'){
 	while( $row = mysql_fetch_array( $sql ) ) {
 					 if( $row[obligatorio] == '1'){$obligatorio="*";}else {$obligatorio='X';}
 
-//$campos .= "<li>$row[id_campo]</li>";	
+		if($row[campo_tipo] =="24") { $row[multiple] = "1";}
 		if($row[multiple] ==='1' AND $tipo =='edit'){
 		$campos .= formulario_campos_render_multiple($row[id_campo],$perfil,$control_edit);
 										}else{
@@ -3825,26 +4128,33 @@ if(is_numeric($tipo)) { $limit = "limit $tipo "; $class= "alert alert-info";}
 
 																					}
 
-	if($id !='') {$w_id = "AND form_id = '$id'";}else {$w_id='';}
-	$control = mysql_seguridad($control);
-	$consulta = "SELECT *
+	//if($id !='') {$w_id = "AND form_id = '$id'";}else {$w_id='';}
+	if($id !='') {
+		$consulta = "SELECT *
 						FROM form_contenido_campos 
 						WHERE form_contenido_campos.id_form = '$id'
 						
 						ORDER BY form_contenido_campos.orden ASC $limit 
 						";
+	}else {
+	$consulta = "SELECT * FROM form_datos WHERE control = '$control' GROUP BY id_campo"	;
+	}
+	$control = mysql_seguridad($control);
+	
+$link=Conectarse(); 
+mysql_query("SET NAMES 'utf8'"); 
+$sql=mysql_query($consulta,$link);
+if($id !='') {$id = $id;}else {$id=mysql_result($sql,0,"form_id");}
+
+
 						
 		$categoria_campo = remplacetas('form_parametrizacion','campo',$id,'descripcion'," tabla='form_id' and  opcion = 'categoria:campo'") ;
 		$categoria_campo = $categoria_campo[0];
 		$id_empresa = remplacetas('form_id','id',$id,'id_empresa','') ;
 					
-$link=Conectarse(); 
-mysql_query("SET NAMES 'utf8'"); 
-$sql=mysql_query($consulta,$link);
- 
+
 
 if (mysql_num_rows($sql)!='0'){
-
 	mysql_data_seek($sql, 0);
 
 	while( $row = mysql_fetch_array( $sql ) ) {
@@ -4284,24 +4594,37 @@ $xajax->registerFunction("borrar_tmp");
 
 function formulario_imprimir_linea($id,$control,$tipo) {
 	$id = mysql_seguridad($id);
-	if($id !='') {$w_id = "AND form_id = '$id'";}
+	//if($id !='') {$w_id = "AND form_id = '$id'";}
 	$control = mysql_seguridad($control);
-	$consulta = "SELECT *
+/*	$consulta = "SELECT *
 						FROM form_contenido_campos 
 						WHERE form_contenido_campos.id_form = '$id'
 						ORDER BY form_contenido_campos.orden ASC 
 						";
+						*/
+	if($id !='') {
+		$consulta = "SELECT *
+						FROM form_contenido_campos 
+						WHERE form_contenido_campos.id_form = '$id'
 						
-		$categoria_campo = remplacetas('form_parametrizacion','campo',$id,'descripcion'," tabla='form_id' and  opcion = 'categoria:campo'") ;
-		$categoria_campo = $categoria_campo[0];	
-	
-		$titulo = remplacetas('form_parametrizacion','campo',$id,'descripcion'," tabla='form_id' and  opcion = 'titulo'") ;
-		$titulo = $titulo[0];						
+						ORDER BY form_contenido_campos.orden ASC $limit 
+						";
+	}else {
+	$consulta = "SELECT * FROM form_datos WHERE control = '$control' GROUP BY id_campo"	;
+	}
+						
+						
 
 $link=Conectarse(); 
 mysql_query("SET NAMES 'utf8'");
 $sql=mysql_query($consulta,$link);
- 
+if($id !='') {$id = $id;}else {$id=mysql_result($sql,0,"form_id");}
+		$categoria_campo = remplacetas('form_parametrizacion','campo',$id,'descripcion'," tabla='form_id' and  opcion = 'categoria:campo'") ;
+		$categoria_campo = $categoria_campo[0];	
+	
+		$titulo = remplacetas('form_parametrizacion','campo',$id,'descripcion'," tabla='form_id' and  opcion = 'titulo'") ;
+		$titulo = $titulo[0];
+		
 $timestamp=mysql_result($sql,0,"timestamp");
 $fecha  = date ( "Y-m-d h:i:s" , $timestamp);
 
@@ -4393,14 +4716,15 @@ $td .= "<td>$imagen</td>";
 
 	if($tipo=="titulos") {
 $td .= "<th> $contenido </th>";	
+
 	}else{
 		
 	$td .= "<td> $contenido </td>";
 	}
 															}
 
-	
-	$resultado .="$td";
+if($tipo=="titulos") {	$identificador ="<th>Identificador</th>"; }else {$identificador ="<td>$control</td>";}
+	$resultado .="$td $identificador ";
 }
 	if($tipo =='titulos_csv' or $tipo=='linea_csv') {
 	
@@ -4412,6 +4736,8 @@ return $csv;
 							}
 	return $resultado;
 }
+
+
 //	$contenido_desplegado = contenido_mostrar("$row[form_id]","$row[control]",'',"$plantilla");
 function mostrar_coincidencias_plantilla($id_form,$filtro,$valor,$plantilla) {
 
@@ -4647,6 +4973,8 @@ $respuesta->addAssign($div,"innerHTML",$resultado);
 return $respuesta;
 } $xajax->registerFunction("matriz_formulario");
 
+
+
 function remplacetas($tabla,$campo,$valor,$por,$and){
 
 $link=Conectarse(); 
@@ -4808,12 +5136,10 @@ return $respuesta;
 }
 $xajax->registerFunction("formulario_consultar");
 
-function formulario_campos_procesar($form){
+
+function formulario_campos_procesar($form,$tipo_accion){
 	//$form = mysql_seguridad($form);
 $respuesta = new xajaxResponse('utf-8');
-
-
-
 $campo_nombre = $form["campo_nombre"];
 if($campo_nombre =='') {
 $respuesta->addAlert("El Nombre del campo no puede estar vacío");
@@ -4835,7 +5161,7 @@ $id_campo_editar = $form["id_campo_editar"];
 $link=Conectarse(); 
 mysql_query("SET NAMES 'utf8'");
 
-if ($editar == 'editar'){
+if ($editar == 'editar' AND $tipo_accion =='editar'){
 mysql_query("
 						UPDATE `form_campos` 
 						SET `campo_nombre` = '$campo_nombre',
@@ -4858,7 +5184,7 @@ $id_especialista = $_SESSION['id'];
 		$respuesta->addAssign("grupo_campo_nombre","className"," input-group has-error  ");
 		return $respuesta;
 		}
-
+if($campo_identificador == "") { $campo_identificador = md5($_SESSION[id_usuario]."-".microtime()); }
 $consulta = "
 				INSERT INTO `form_campos` 
 			(`id_especialista`, `campo_nombre`,`campo_descripcion`,`campo_tipo`, `campo_area`, `orden`, `activo`, `identificador`, `id_empresa`) 
@@ -4867,21 +5193,29 @@ $consulta = "
   $ultimo_id = mysql_insert_id();
 $w_campo= "identificador = '$campo_identificador'";
 if($sql) {
+		$listado_campos = select('form_campos','id','campo_nombre',"xajax_formulario_crear_campo('',(this.value),'div_campos')","id_empresa = '$_SESSION[id_empresa]' AND activo = '1'",'campo_editar');
 	$campos_formulario ="<form name='nuevo_campo' id='nuevo_campo' role='form'>
 		<input type='hidden' name='id_usuario' id='id_usuario' value=''>
 		<input type='hidden' name='div' id='div' value='contenido'> 
 	</form><h2 class='alert alert-success'>El campo se creó con éxito 
-	<div class='btn  btn-default' onclick=\"xajax_crear_campos_formulario(xajax.getFormValues('nuevo_campo'));\"><i class='fa fa-plus-square'></i> Crear un nuevo campo</div></h2>";
+	<div class='btn  btn-default' onclick=\"xajax_crear_campos_formulario(xajax.getFormValues('nuevo_campo'));\"><i class='fa fa-plus-square'></i> Crear un nuevo campo</div>
+	<div class='input-group'><span class='input-group-addon'>Modificar campo</span> $listado_campos</div>
+	</h2>";
 	if($form['agregar_id_form'] !="") {
 		$respuesta->AddScript("xajax_agregar_campos('grabar_campos','contenido','$ultimo_id','$form[agregar_id_form]') ");
 		///$respuesta->addAssign("$div","innerHTML",$resultado);
-		return $respuesta;
+		//return $respuesta;
 									}
  }else {$campos_formulario = "<h1>Problemas al grabar el campo</h1> $consulta";}
 										}
 										
-if($id_campo_editar !=''){$id_form_campo = $id_campo_editar;}else {
-$id_form_campo = mysql_insert_id($link);}
+if($id_campo_editar !=''  AND $tipo_accion =='editar'){$id_form_campo = $id_campo_editar;}else {
+//$id_form_campo = mysql_insert_id($link);
+$id_form_campo = $ultimo_id;
+}
+//$respuesta->addAlert("( $campo_tipo / $id_form_campo / $ultimo_id / $form[opciones] ) $consulta");
+//$respuesta->addAssign("contenido","innerHTML","$consulta_campos_valores");
+//return $respuesta;
 if($campo_tipo == '23' ){
 $grabar_campos_valores = "(".$id_form_campo.",'".$form[opciones]."')";	
 }
@@ -4895,7 +5229,7 @@ foreach($opciones as $c=>$v){
 			//if($v !='') {$v = ucfirst(strtolower($v));
 			if($v !='') {$v = $v;
 			
-$grabar_campos_valores .= "($id_form_campo,'$v'),";			
+$grabar_campos_valores .= "( $id_form_campo ,'$v'),";			
 			}
  								
 										} 
@@ -4904,9 +5238,7 @@ $grabar_campos_valores =substr ("$grabar_campos_valores",0,-1);
 
 $borrar_campos_valores = "DELETE FROM `form_campos_valores` WHERE `id_form_campo` = '$id_form_campo'";
 $consulta_campos_valores = "INSERT INTO form_campos_valores (id_form_campo,campo_valor) VALUES ".$grabar_campos_valores."";			
-//$respuesta->addAlert("($campo_tipo) $consulta_campos_valores");
-//$respuesta->addAssign("contenido","innerHTML","$consulta_campos_valores");
-//return $respuesta;
+
   $sql_borrar_campos_valores =mysql_query($borrar_campos_valores,$link); 	
   $sql_campos_valores =mysql_query($consulta_campos_valores,$link);  							
 
@@ -5033,8 +5365,10 @@ $agregar_a_formulario = "
 
 $identificador = md5($_SESSION[id_usuario]."-".microtime());
 $areas = select('form_areas','id','nombre','',"id_empresa = '$_SESSION[id_empresa]'",'campo_area');
-$resultado .= "<div name='formulario_campos_$area' id='formulario_campos_$area' style='padding: 10px;' class='BC".$especialista."' >
-	<form role='form' name='$formulario' id ='$formulario'>
+$resultado .= "
+<div id='div_campos'>
+	<div name='formulario_campos_$area' id='formulario_campos_$area' style='padding: 10px;' class='BC".$especialista."' >
+	<form role='form' name='$formulario' id ='$formulario' style='' >
 	<div class='row'>
 
 			<div class='col-xs-4'>
@@ -5077,7 +5411,7 @@ $resultado .= "<div name='formulario_campos_$area' id='formulario_campos_$area' 
 
 	<input type='hidden' name='misma_area' id='misma_area' value='$area'>
 	$agregar_a_formulario
-	<div class='btn btn-block btn-default' OnClick=\"xajax_formulario_campos_procesar(xajax.getFormValues('$formulario'))\" />	
+	<div class='btn btn-block btn-default' OnClick=\"xajax_formulario_campos_procesar(xajax.getFormValues('$formulario'),'')\" />	
 	<i class='fa fa-floppy-o'></i> Grabar
 	</div>
 		<br><input type ='hidden' name='id_especialista' id='id_especialista' value='$especialista'>
@@ -5086,7 +5420,8 @@ $resultado .= "<div name='formulario_campos_$area' id='formulario_campos_$area' 
 		<input type ='hidden' name='campo_identificador' id='campo_identificador' value='$identificador $especialista'>
 	 	</form>
 			 	
-	 	</div>";
+	 	</div>
+</div>";
 $resultado = "
 <br>
 <div class='alert alert-warning'>
@@ -5119,7 +5454,7 @@ $consulta_campos ="SELECT id, campo_nombre, campo_descripcion, tipo_campo_accion
   $campos=mysql_query($consulta_campos,$link);
 if($campo ==''){
 	
-	$listado_campos = select('form_campos','id','campo_nombre',"xajax_formulario_crear_campo('',(this.value),'div_campos')","id_empresa = '$_SESSION[id_empresa]' AND activo = '1'",'campo_editar');
+	$listado_campos = select('form_campos','id','campo_nombre',"xajax_formulario_crear_campo('',(this.value),'$div')","id_empresa = '$_SESSION[id_empresa]' AND activo = '1'",'campo_editar');
 $areas = tabla_areas('form_areas','id','nombre,descripcion,estado,orden','',"",'Areas','');
 
 $campos_formulario = "
@@ -5177,6 +5512,7 @@ if($row[activo] =='1'){$activo = "<option value='1' selected >Activo: el campo p
 else{$activo = "<option value='0' selected >Inactivo: El campo NO se usará</option> ";}
 $formulario = "editar_campos";
 $areas = select('form_areas',"id",'nombre','',"id_empresa = '$_SESSION[id_empresa]'",'campo_area',"$row[campo_area]");
+
 $campos_formulario .= "
 <div id='formulario_campos_$misma_area'>
 <div class='alert alert-info' >
@@ -5184,6 +5520,7 @@ $campos_formulario .= "
 <input type='hidden' id='editar' name='editar' value='editar'>
 <input type='hidden' id='id_campo_editar' name='id_campo_editar' value='$campo'>
 <input type='hidden' name='misma_area' id='misma_area' value='$area'>
+
 	<div class='row'>
 		<div class='col-sm-4'>
 			<div id='grupo_campo_nombre' class='form-group'>
@@ -5222,10 +5559,13 @@ $campos_formulario .= "
 		</div>
 	</div>
 	<div class='row'>
-		<div class='col-sm-6'>
-			<div class='btn btn-block btn-success' OnClick=\"xajax_formulario_campos_procesar(xajax.getFormValues('$formulario'))\" /><i class='fa fa-floppy-o'></i>	Grabar</div>
+		<div class='col-sm-4'>
+			<div class='btn btn-block btn-success' OnClick=\"xajax_formulario_campos_procesar(xajax.getFormValues('$formulario'),'editar')\" /><i class='fa fa-floppy-o'></i>	Grabar</div>
 		</div>
-		<div class='col-sm-6'>
+		<div class='col-sm-4'>
+			<div title='Para clonar un campo debe cambiar el nombre' class='btn btn-block btn-warning' OnClick=\"xajax_formulario_campos_procesar(xajax.getFormValues('$formulario'),'clonar')\" /><i class='fa fa-clone'></i>	Clonar</div>
+		</div>
+		<div class='col-sm-4'>
 			<div class='btn btn-block btn-danger' OnClick=\"xajax_limpia_div('$div')\" ><i class='fa fa-times-circle'></i> Cancelar</div>
 		</div>
 	</div>
@@ -5309,6 +5649,11 @@ $resultado .= "<div class='row'>
 					</div>";
 
 while( $row = mysql_fetch_array( $sql ) ) 	{
+		/*	$multiple = remplacetas('form_parametrizacion','campo',"$id",'descripcion'," tabla='form_id' and  opcion = '$row[id]' AND descripcion REGEXP '^multiple:' ") ;
+			$multiple = explode(":",$multiple[0]);
+			$multiple = $multiple[1];*/
+			
+			//$multiple = $multiple[0];
 $resultado .= "<div class='row'>
 						<div class='col-md-4'>
 							<span class='label label-default'>$row[id_campo]</span> $row[campo_nombre]
@@ -5323,9 +5668,13 @@ $resultado .= "<div class='row'>
 						</div>
 						<div class='col-md-3' title='ORDEN'>
 							<div class='input-group '>
-								<span class='input-group-addon' id='orden_$row[control]' >$row[orden]</span>
+								<span class='input-group-addon' >
+								<input  type='number' value='$row[orden]' min='0' max='100' size='2' class='' id='input_orden_$row[control]'
+								onchange =\"xajax_actualizar_campo('form_contenido_campos','$row[id]','orden',(this.value),'','orden_$row[control]'); \"	>
+								</span>
 								<input  type='range' value='$row[orden]' min='0' max='100' class='form-control'
-								onchange =\"xajax_actualizar_campo('form_contenido_campos','$row[id]','orden',(this.value),'','orden_$row[control]'); \">
+								onchange =\"(document.getElementById('input_orden_$row[control]').value=(this.value));xajax_actualizar_campo('form_contenido_campos','$row[id]','orden',(this.value),'','orden_$row[control]'); \">
+								<span class='input-group-addon' id='orden_$row[control]' >$row[orden]</span>
 								
 							</div>
 						</div>
@@ -5569,6 +5918,7 @@ $respuesta->addAssign($div,"innerHTML",$resultado);
 return $respuesta;
 }$xajax->registerFunction("formulario_nuevo");
 
+
 function formulario_listado($filtro_grupo,$div){
 if ( !isset ( $_SESSION['id_empresa'] ) ) {
 	$respuesta = new xajaxResponse('utf-8');	
@@ -5642,7 +5992,7 @@ if (mysql_num_rows($sql)!='0' ){
 		while( $row = mysql_fetch_array( $sql ) ) {
 			$id= $row['id'];
 			$C = $id;
-						
+		
 		$cantidad =	formulario_contar($row['id']);
 		if($cantidad >0) {$cantidad ="<li class='list-group-item'>Llenado: $cantidad veces</li>";}else{$cantidad = "";}
 		$propietario = 	remplacetas('usuarios','id',$row['propietario'],'email',"") ;
@@ -5669,9 +6019,10 @@ if (mysql_num_rows($sql)!='0' ){
 		
 		
 		$primer = 	formulario_uso("$id",'','primer') ;
-		if($primer[0] !='') {$primer = "<li class='list-group-item'>Primer registro: <a onclick=\"xajax_formulario_modal('$id','','$primer[1]',''); \"> ".date ( "Y-m-d h:i:s" , $primer[0])."</a></li>";}else{$primer='';}
+		if($primer[0] !='') {$primer = "<li class='list-group-item'>Primer registro: <a onclick=\"xajax_formulario_modal('','','$primer[1]',''); \"> ".date ( "Y-m-d h:i:s" , $primer[0])."</a></li>";}else{$primer='';}
 		$ultimo = 	formulario_uso("$id",'','ultimo') ;
-		if($ultimo[0] !='') {$ultimo = "<li class='list-group-item'>Último registro: <a onclick=\"xajax_formulario_modal('$id','','$ultimo[1]',''); \"> ".date ( "Y-m-d h:i:s" , $ultimo[0])."</a></li>";}else{$ultimo='';}
+		$ultimo_control = $ultimo[1];
+		if($ultimo[0] !='') {$ultimo = "<li class='list-group-item'>Último registro: <a onclick=\"xajax_formulario_modal('','','$ultimo[1]',''); \"> ".date ( "Y-m-d h:i:s" , $ultimo[0])."</a></li>";}else{$ultimo='';}
 		
 		$nombre = editar_campo("form_id",$row['id'],"nombre","","","");
 		$orden = editar_campo("form_id",$row['id'],"orden","","","");
@@ -5700,6 +6051,7 @@ $item .= "
 								<input name='grupo' id='grupo' type='text' placeholder='Grupo'> 
 								<input name='id' id='id' type='hidden' value='$row[id]'> 
 							<div class='btn btn-default btn-success' onclick=\"xajax_insertar_registro('form_grupo',xajax.getFormValues('form_grupo_$row[id]'),'div_grupo_$row[id]','grupo'); \"><i class='fa fa-save'></i></div>
+							
 					</form>
 				</div> 
 				";
@@ -5717,7 +6069,9 @@ $item .=  "<!-- <div class='col-sm-$columnas' style=';'> -->
 								 		<div class='col-xs-6'>
 								 			<a class='btn btn-default ' href='$_SESSION[url]?form=$id' target='formulario'><i class='fa fa-share'></i></a>
 								    		<a class='btn btn-default' href='#' onclick=\"xajax_formulario_modal('$row[id]','','',''); \"><i class='fa fa-save'></i></a>
+								    		<div class='btn btn-default btn-success' onclick=\"xajax_consultar_formulario('$row[id]','10','','modal'); \">Consultas</div>
 								    		<a class='collapsed' role='button' data-toggle='collapse' data-parent='#acordion_grid' href='#collapse$row[id]' aria-expanded='false' aria-controls='collapse$row[id]'>
+								    		
 												<h2>$nombre_formulario[0]<br><small>$descripcion_formulario[0]</small></h2>								    		
 								    		</a>
 								    		
@@ -5941,20 +6295,6 @@ elseif($campo_tipo_accion == 'email'){$render = "<code>Escriba un email válido<
 		//	$gps = leer_exif($file);
 		$render= "<input value='$value' type='hidden' id='".$id_campo."[".$item."]' name='".$id_campo."[".$item."]' class='form-control' placeholder='$campo_descripcion' > "; //subir_imagen('',$id_campo[$item]);
 		$cols='12';	}
-		elseif($campo_tipo_accion == 'checkbox'){
-					$predefinidos = 	remplacetas('form_campos_valores','id_form_campo',$id_campo,'campo_valor',"") ;
-
-						$campos = explode(":",$predefinidos[0]);
-														$valor_predefinido = $campos[0];
-														$checked = $campos[1];
-						if($value !="") { $checked ="1" ; $valor_predefinido = $value ;}
-						if($checked =='1') {	$checked ="checked" ;}
-		$render= "
-		<div class='checkbox'>
-			<input value='$valor_predefinido' $checked  type='checkbox' id='".$id_campo."[".$item."]' name='".$id_campo."[".$item."]'  placeholder='$campo_descripcion' >
-			<label>$valor_predefinido</label>
-		</div> "; //subir_imagen('',$id_campo[$item]);
-			}
 		
 		elseif($campo_tipo_accion == 'html'){
 			$render = "
@@ -5977,6 +6317,40 @@ elseif($campo_tipo_accion == 'email'){$render = "<code>Escriba un email válido<
 			//$select = select('form_campos_valores','campo_valor','campo_valor','',"id_form_campo = $id_campo",$id_campo."[".$item."]");
 			$select = select_edit($id_campo,$id_form,$value,$id_campo."[".$item."]",$control);
 			$render = "$select ";}
+		elseif($campo_tipo_accion == 'radio'){
+			$select = radio_edit($id_campo,$id_form,$value,$id_campo."[".$item."]",$control);
+			$render = "$select ";
+			$cols='12';	
+			}
+		elseif($campo_tipo_accion == 'radio_agrupado_campos'){
+
+			$campos_valores = 	remplacetas('form_campos_valores','id_form_campo',$id_campo,'campo_valor',"") ;
+			$mensaje = 	remplacetas('form_campos','id',$id_campo,'campo_descripcion',"") ;
+			$campos = explode(":",$campos_valores[0]);
+				$titulos = explode(";",$campos[0]);
+				$campos_incluidos = explode(";",$campos[1]);
+				for($i=0;$i<count($titulos);$i++) $listado_titulos .= "<th>$titulos[$i]</th>"; 
+				for($i=0;$i<count($campos_incluidos);$i++) $listado_campos .= "".radio_agrupado_linea("$campos_incluidos[$i]",$id_form,$value,$campos_incluidos[$i]."[".$item."]",$control);//"<tr><td>$campos_incluidos[$i]</td></tr>"; 
+			//$select = radio_agrupado_linea($id_campo,$id_form,$value,$id_campo."[".$item."]",$control);
+			$render = "<table class='table table-condensed table-striped table-hover' >
+			<legend>$mensaje[0]</legend>
+								<tr><td></td>$listado_titulos</tr> 
+								$listado_campos
+							</table> ";
+			$cols='12';	
+			}
+		elseif($campo_tipo_accion == 'radio_agrupado_linea'){
+
+			//$select = select('form_campos_valores','campo_valor','campo_valor','',"id_form_campo = $id_campo",$id_campo."[".$item."]");
+			$select = radio_agrupado_linea($id_campo,$id_form,$value,$id_campo."[".$item."]",$control);
+			$render = "<table class='table table-condensed table-striped table-hover' >$select</table> ";
+			$cols='12';	
+			}
+		elseif($campo_tipo_accion == 'checkbox'){
+			
+			//$select = select('form_campos_valores','campo_valor','campo_valor','',"id_form_campo = $id_campo",$id_campo."[".$item."]");
+			$select = checkbox_edit($id_campo,$id_form,$value,$id_campo."[".$item."]",$control);
+			$render = "$select ";}
 		elseif($campo_tipo_accion == 'combo'){
 			//$select = select('form_campos_valores','campo_valor','campo_valor','',"id_form_campo = $id_campo",$id_campo."[".$item."]");
 			$select = combo_select($id_campo,$id_form,$value,$id_campo."[".$item."]",$control,"");
@@ -5992,6 +6366,14 @@ elseif($campo_tipo_accion == 'email'){$render = "<code>Escriba un email válido<
 		elseif($campo_tipo_accion == 'base'){
 			$select = buscador_base($id_campo,$id_form,$value,$id_campo."[".$item."]",$control,"");
 			$render = "$select ";}
+		elseif($campo_tipo_accion == 'vinculado'){
+			$vinculado = 	remplacetas('form_campos_valores','id_form_campo',$id_campo,'campo_valor',"") ;
+			$select = formulario_areas($vinculado[0],'campos');
+			$render = " <!-- vinculado  -->
+									$select
+								<!-- 	fin vinculado  --> ";
+			$cols='12';	
+		}
 		elseif($campo_tipo_accion == 'number'){
 			$render = "
 															<input value='$value' type='number' id='".$id_campo."[".$item."]' name='".$id_campo."[".$item."]' class=' has-warning form-control' placeholder='$campo_descripcion' > 
@@ -6108,8 +6490,11 @@ function formulario_valor_campo($perfil,$id_campo,$valor,$id_control,$orden){
 
 //if($id_control !=""){ $control ="AND `control` = '$id_control'";}else {$control ="";}
 $campo_multiple =  remplacetas("form_contenido_campos","id_campo",$id_campo,"multiple"," id_form ='$perfil'");
+$tipo_campo =  remplacetas("form_campos","id","$id_campo","campo_tipo","");
 $campo_multiple = $campo_multiple[0];
-if($campo_multiple !="1"){ $limite =" asc limit 1 ";}else {$limite =" asc ";}
+if($tipo_campo[0] =="24") {$campo_multiple = "1";}
+/// SI EL CAMPO ES MULTIPLE O CHECK BOX MUESTRA LAS MULTIPLES ENTRADAS
+if($campo_multiple !="1"  ){ $limite =" asc limit 1 ";}else {$limite =" asc ";}
 if(@$orden !=""){ $campo_orden =" AND orden ='$orden' ";}else {$campo_orden ="";}
 
 $link=Conectarse(); 
@@ -6160,7 +6545,7 @@ while( $row = mysql_fetch_array( $sql ) ) {
 	$identificador = explode(',',$row[identificador]);
 	$identificador = $identificador[0];
 	$contenido_campo = remplacetas('form_datos','id',$identificador,'contenido',"") ;
-	$contenido .= "$contenido_campo[0] <br> ";
+	$contenido .= "$contenido_campo[0] ";
 														}
 							}
 //							$contenido .="$consulta";
@@ -6351,9 +6736,12 @@ $envio =	email_contenido("$formulario[form_id]","$formulario[control]","$campo_e
 		}
 		
 
-$impresion = formulario_imprimir("$formulario[form_id]","$formulario[control]","preview"); 
+$impresion = formulario_imprimir("","$formulario[control]","preview"); 
+//$impresion = mostrar_identificador($formulario['control']);
 		$exito ="
-		$impresion
+	<!-- 	use plantilla:preview  -->
+		$impresion 
+	<!-- 	use plantilla:preview  -->
 	<div class='alert alert-success'><h2><i class='fa fa-check-square-o'></i>
 		 Gracias por llenar el formulario $formulario[form_nombre] </h2>
 		 <div class='row'>
@@ -6556,6 +6944,8 @@ $subir_imagen = subir_imagen('',"$campo_imagen"."[0]");
 
 			mysql_data_seek($sql, 0);
 	while( $row = mysql_fetch_array( $sql ) ) {
+		$tipo_campo =  remplacetas("form_campos","id","$row[id_campo]","campo_tipo","");
+		//if($tipo_campo[0] =="24") { $row[multiple] = "1";}
 		if($row[multiple] ==='1' AND $tipo =='edit'){
 		$campos = formulario_campos_render_multiple($row[id_campo],$id,$control_edit);
 										}else{
@@ -6700,8 +7090,107 @@ $resultado .= "</select>";
 
 return $resultado;
 }
+
+
+
+
+function radio_agrupado_linea($id_campo,$form_id,$valor,$name,$control){
+$link=Conectarse(); 
+mysql_query("SET NAMES 'utf8'");
+
+$consulta = "SELECT *  FROM form_campos_valores , form_campos WHERE form_campos_valores.id_form_campo = form_campos.id  AND  id_form_campo ='$id_campo' ";
+$sql=mysql_query($consulta,$link);
+$valor = remplacetas("form_datos","control","$control","contenido","id_campo ='$id_campo' ");
+if (mysql_num_rows($sql)!='0'){
+$nombre_linea = mysql_result($sql,0,"campo_nombre");
+$descripcion_linea = mysql_result($sql,0,"campo_descripcion");
+		mysql_data_seek($sql, 0);
+while( $row = mysql_fetch_array( $sql ) ) {
+if($row[campo_valor] ==="$valor[0]"){$selected="checked";}else{$selected ="";}
+$lineas .= "<td ><input type='radio' title='$row[campo_valor]' name='$name' id='$name' value='$row[campo_valor]' $selected > <label class='radio-inline sr-only'>$row[campo_valor]</label></td> ";
+															}
+$resultado .= "<tr><td><div style='width:200px;'>$nombre_linea</div></td>$lineas</tr>";
+										}else{$resultado = "<div class='alert alert-warning'><i class='fa fa-exclamation-triangle'></i> No hay resultados $consulta</div>";}
+
+return $resultado;
+}
+
+function radio_linea($id_campo,$form_id,$valor,$name,$control){
+$link=Conectarse(); 
+mysql_query("SET NAMES 'utf8'");
+
+$consulta = "SELECT *  FROM form_campos_valores , form_campos WHERE form_campos_valores.id_form_campo = form_campos.id  AND  id_form_campo ='$id_campo' ";
+$sql=mysql_query($consulta,$link);
+//	$value = remplacetas("form_datos","control","$control","contenido","id_campo ='$id_campo' ");
+if (mysql_num_rows($sql)!='0'){
+$nombre_linea = mysql_result($sql,0,"campo_nombre");
+$descripcion_linea = mysql_result($sql,0,"campo_descripcion");
+		mysql_data_seek($sql, 0);
+while( $row = mysql_fetch_array( $sql ) ) {
+if($row[campo_valor] ==="$valor"){$selected="checked";}else{$selected ="";}
+$lineas .= "<td ><label class='radio-inline sr-only'>$row[campo_valor]</label> <input type='radio' title='$row[campo_valor]' name='$name' id='$name' value='$row[campo_valor]' $selected ></td> ";
+															}
+$resultado .= "<tr><td><div style='width:200px;'>$nombre_linea</div></td>$lineas</tr>";
+										}else{$resultado = "<div class='alert alert-warning'><i class='fa fa-exclamation-triangle'></i> No hay resultados $consulta</div>";}
+
+return $resultado;
+}
+function radio_edit($id_campo,$form_id,$valor,$name,$control){
+$link=Conectarse(); 
+mysql_query("SET NAMES 'utf8'");
+
+$consulta = "SELECT *  FROM form_campos_valores WHERE id_form_campo ='$id_campo' ";
+$sql=mysql_query($consulta,$link);
+//	$value = remplacetas("form_datos","control","$control","contenido","id_campo ='$id_campo' ");
+if (mysql_num_rows($sql)!='0'){
+
+$resultado=" 
+	
+					" ;
+while( $row = mysql_fetch_array( $sql ) ) {
+if($row[campo_valor] ==="$valor"){$selected="checked";}else{$selected ="";}
+$resultado .= "<div class='radio' id='radio_$row[campo_valor]'  ><label><input type='radio'  name='$name' id='$name' value='$row[campo_valor]' $selected > $row[campo_valor]</label> </div>";
+															}
+$resultado .= "";
+										}else{$resultado = "<div class='alert alert-warning'><i class='fa fa-exclamation-triangle'></i> No hay resultados</div>";}
+
+return $resultado;
+}
  
 
+function checkbox_edit($id_campo,$form_id,$valor,$name,$control){
+$link=Conectarse(); 
+mysql_query("SET NAMES 'utf8'");
+
+$consulta = "SELECT *  FROM form_campos_valores WHERE id_form_campo ='$id_campo' ";
+$sql=mysql_query($consulta,$link);
+//	$value = remplacetas("form_datos","control","$control","contenido","id_campo ='$id_campo' ");
+if (mysql_num_rows($sql)!='0'){
+	$name = explode("[",$name);
+	$name = $name[0];
+	$fila="0";
+
+while( $row = mysql_fetch_array( $sql ) ) {
+	$value = remplacetas("form_datos","control","$control","contenido","id_campo ='$id_campo' and contenido ='$row[campo_valor]' ");
+	
+	$nombre= "$name"."[".$fila."]";
+//if($row[campo_valor] ==="$valor"){$selected="checked";}else{$selected ="";}
+if($value[0] ==="$row[campo_valor]"){$selected="checked";}else{$selected ="";}
+$resultado .= "<div class='checkbox' id='check_$row[campo_valor]'  >
+						<label>
+							<input type='checkbox'  name='$nombre' id='$nombre' value='$row[campo_valor]' $selected >
+							 $row[campo_valor] $selected 
+						</label> 
+					</div>";
+ $fila++;
+															}
+$resultado .= "";
+										}else{$resultado = "<div class='alert alert-warning'><i class='fa fa-exclamation-triangle'></i> No hay resultados</div>";}
+
+return $resultado;
+}
+ 
+ 
 function rango($tabla,$campo,$key,$valor,$selected,$nombre,$onchange){
 $link=Conectarse(); 
 mysql_query("SET NAMES 'utf8'");
@@ -6981,7 +7470,7 @@ function obtener_ip()
 function milfs(){
 	$crear_campos = formulario_crear_campo('','','');
 	$listado =  formulario_listado('','');
-	$consultas = formulario_consultar('','');
+	//$consultas = formulario_consultar('','');
 	$importador = formulario_importador('');
 	$limpiar_cache = borrar_tmp('');
 	$configuracion= configuracion('');
@@ -6994,7 +7483,7 @@ function milfs(){
         <li>$crear_campos</li>
         
         $listado
-        <li>$consultas</li>
+       <!--  <li>$consultas</li> -->
         <li>$importador</li>
         <li id='borra_tmp'>$limpiar_cache</li>
          <li><a  href='#'  data-target='#muestraInfo'  data-toggle='modal'><i class='fa fa-smile-o '></i> Presentación</a></li>

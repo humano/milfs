@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 4.5.0.2deb2
+-- version 4.5.1deb1
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Oct 30, 2015 at 08:37 AM
+-- Generation Time: Nov 11, 2015 at 09:25 PM
 -- Server version: 5.6.25-4
--- PHP Version: 5.6.14-1
+-- PHP Version: 5.6.14-1+b1
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -236,7 +236,11 @@ INSERT INTO `form_campos` (`id`, `id_especialista`, `id_empresa`, `campo_nombre`
 (70, 0, 1, 'Dc:imagen', 'Cuando el recurso es una imagen', 15, 0, 0, 1, '9311f72e48bc310eaae4f6fb20e72123', 0, ''),
 (71, 0, 1, 'Municipios Colombia', 'Combo select de los municipios de Colombia', 9, 0, 0, 1, '659f1f0dd0b16b94df7095523fd0c631', 0, ''),
 (72, 0, 1, 'Referido', 'Selecciona un contacto que ya esté incrito', 10, 0, 0, 1, '930227d7199cae1e3e305faa37655029', 0, ''),
-(73, 0, 1, 'Prueba', '', 8, 0, 0, 1, '38c3822a11580a33bf1ca6b2ddb3560b', 0, '');
+(73, 0, 1, 'Prueba', '', 8, 0, 0, 1, '38c3822a11580a33bf1ca6b2ddb3560b', 0, ''),
+(74, 1, 1, '¿Con que frecuencia consulta su email?', 'Cuantas veces al día o la semana el usuario consulta esta red o tecnología.', 27, 1, 0, 1, 'ff947ac7c413896a9200dbd2a7fe8925', 0, ''),
+(75, 1, 1, '¿Con que frecuencia consulta facebook?', 'Cuantas veces al día o la semana el usuario consulta esta red o tecnología.', 27, 1, 0, 1, 'c272f129cab45c170285d5bf6106c0dc', 0, ''),
+(76, 1, 1, '¿Con que frecuencia consulta sus mensajes de texto?', 'Cuantas veces al día o la semana el usuario consulta esta red o tecnología.', 27, 1, 0, 1, 'f8dcb78269dca737f5fc4c8fb4b1d024', 0, ''),
+(77, 1, 1, 'Uso de redes sociales ', 'Conque frecuencia usa estas tecnologías o redes', 28, 1, 0, 1, '151ed033e96b5593d419e23fc43518e9', 0, '');
 
 -- --------------------------------------------------------
 
@@ -2597,7 +2601,20 @@ INSERT INTO `form_campos_valores` (`id`, `id_form_campo`, `campo_valor`, `predet
 (2365, 72, 'id_form:1 key:1 limit:10', '0'),
 (2366, 73, '1', '0'),
 (2367, 73, '2', '0'),
-(2368, 73, '3', '0');
+(2368, 73, '3', '0'),
+(2369, 74, 'Mas de 5 veces al día', '0'),
+(2370, 74, 'Una vez al día', '0'),
+(2371, 74, 'Una vez a la semana', '0'),
+(2372, 74, 'Nunca', '0'),
+(2373, 75, 'Mas de 5 veces al día', '0'),
+(2374, 75, 'Una vez al día', '0'),
+(2375, 75, 'Una vez a la semana', '0'),
+(2376, 75, 'Nunca', '0'),
+(2377, 76, 'Mas de 5 veces al día', '0'),
+(2378, 76, 'Una vez al día', '0'),
+(2379, 76, 'Una vez a la semana', '0'),
+(2380, 76, 'Nunca', '0'),
+(2381, 77, 'Mas de 5 veces al día;Una vez al día;Una vez a la semana;Nunca:74;75;76', '0');
 
 -- --------------------------------------------------------
 
@@ -2678,7 +2695,8 @@ INSERT INTO `form_contenido_campos` (`id`, `id_campo`, `id_empresa`, `id_form`, 
 (80, 40, 1, 3, '0', '0', 0, '839ef2a3d76d302a51b38db6b282a236'),
 (81, 70, 1, 3, '0', '0', 0, 'ddc21d86e20ce79fc8caf51fba052031'),
 (82, 45, 1, 3, '0', '0', 0, '56254520aa30898d9a76cd30646bf33f'),
-(83, 18, 1, 3, '0', '0', 0, 'bcc4f7919bf1f6f6da22f3a732a7334a');
+(83, 18, 1, 3, '0', '0', 0, 'bcc4f7919bf1f6f6da22f3a732a7334a'),
+(84, 77, 1, 1, '0', '0', 0, 'e1b6d590ce60c79acb794422f1899a16');
 
 -- --------------------------------------------------------
 
@@ -2690,6 +2708,7 @@ CREATE TABLE `form_datos` (
   `id` int(11) NOT NULL,
   `id_campo` int(11) DEFAULT NULL,
   `form_id` int(3) DEFAULT NULL,
+  `proceso` int(11) DEFAULT NULL,
   `orden` int(11) NOT NULL DEFAULT '0',
   `id_usuario` int(11) DEFAULT NULL,
   `id_empresa` int(11) NOT NULL,
@@ -2703,61 +2722,61 @@ CREATE TABLE `form_datos` (
 -- Dumping data for table `form_datos`
 --
 
-INSERT INTO `form_datos` (`id`, `id_campo`, `form_id`, `orden`, `id_usuario`, `id_empresa`, `contenido`, `timestamp`, `ip`, `control`) VALUES
-(1, 70, 2, 0, 1, 1, '919667cc0724a21a78e221ba5d4524d0.png', 1424879698, NULL, 'feb16a589d41a37406fb5ed9d1c34f11'),
-(2, 69, 2, 0, 1, 1, 'https://www.youtube.com/watch?v=EAvWLo74alY', 1424879698, NULL, 'feb16a589d41a37406fb5ed9d1c34f11'),
-(3, 38, 2, 0, 1, 1, 'Yoga Cinco ritos tibetanos', 1424879698, NULL, 'feb16a589d41a37406fb5ed9d1c34f11'),
-(4, 39, 2, 0, 1, 1, 'Easy Five Tibetans Rites', 1424879698, NULL, 'feb16a589d41a37406fb5ed9d1c34f11'),
-(5, 40, 2, 0, 1, 1, 'Fundación VivirEnLaFinca.org', 1424879698, NULL, 'feb16a589d41a37406fb5ed9d1c34f11'),
-(6, 41, 2, 0, 1, 1, 'Janeth Urreste Castro', 1424879698, NULL, 'feb16a589d41a37406fb5ed9d1c34f11'),
-(7, 42, 2, 0, 1, 1, 'proyectos@vivirenlafinca.org', 1424879698, NULL, 'feb16a589d41a37406fb5ed9d1c34f11'),
-(8, 43, 2, 0, 1, 1, 'http://vivirenlafinca.org', 1424879698, NULL, 'feb16a589d41a37406fb5ed9d1c34f11'),
-(9, 44, 2, 0, 1, 1, 'Yoga', 1424879698, NULL, 'feb16a589d41a37406fb5ed9d1c34f11'),
-(10, 45, 2, 0, 1, 1, 'Ejercicios completos de la rutina de los "Cinco ritos tibetanos" explicados para su realización de forma fácil.', 1424879698, NULL, 'feb16a589d41a37406fb5ed9d1c34f11'),
-(11, 47, 2, 0, 1, 1, 'Full exercise routine "Five Tibetan Rites " explained for implementation easy.', 1424879698, NULL, 'feb16a589d41a37406fb5ed9d1c34f11'),
-(12, 48, 2, 0, 1, 1, 'Fundación Vivirenlafinca.org', 1424879698, NULL, 'feb16a589d41a37406fb5ed9d1c34f11'),
-(13, 49, 2, 0, 1, 1, 'fredy Rivera', 1424879698, NULL, 'feb16a589d41a37406fb5ed9d1c34f11'),
-(14, 50, 2, 0, 1, 1, '2010-03-01', 1424879698, NULL, 'feb16a589d41a37406fb5ed9d1c34f11'),
-(15, 51, 2, 0, 1, 1, 'Movingimage (imagen en movimiento)', 1424879698, NULL, 'feb16a589d41a37406fb5ed9d1c34f11'),
-(16, 52, 2, 0, 1, 1, 'Video/3gpp', 1424879698, NULL, 'feb16a589d41a37406fb5ed9d1c34f11'),
-(17, 53, 2, 0, 1, 1, 'https://www.youtube.com/watch?v=EAvWLo74alY', 1424879698, NULL, 'feb16a589d41a37406fb5ed9d1c34f11'),
-(18, 54, 2, 0, 1, 1, 'Spa', 1424879698, NULL, 'feb16a589d41a37406fb5ed9d1c34f11'),
-(19, 55, 2, 0, 1, 1, 'http://en.wikipedia.org/wiki/Five_Tibetan_Rites', 1424879698, NULL, 'feb16a589d41a37406fb5ed9d1c34f11'),
-(20, 61, 2, 0, 1, 1, 'http://creativecommons.org/licenses/by-sa/2.5/co/', 1424879698, NULL, 'feb16a589d41a37406fb5ed9d1c34f11'),
-(21, 62, 2, 0, 1, 1, 'All', 1424879698, NULL, 'feb16a589d41a37406fb5ed9d1c34f11'),
-(22, 64, 2, 0, 1, 1, 'Fredy Rivera y Janeth Urreste', 1424879698, NULL, 'feb16a589d41a37406fb5ed9d1c34f11'),
-(23, 65, 2, 0, 1, 1, 'Ejercicios prácticos', 1424879698, NULL, 'feb16a589d41a37406fb5ed9d1c34f11'),
-(24, 68, 2, 0, 1, 1, 'https://www.youtube.com/watch?v=EAvWLo74alY', 1424879699, NULL, 'feb16a589d41a37406fb5ed9d1c34f11'),
-(25, 1, 1, 0, 1, 1, 'Fredy', 1433516975, NULL, '5cc74e40b9af87c0bc6b56ca4796c073'),
-(26, 3, 1, 0, 1, 1, 'Rivera', 1433516975, NULL, '5cc74e40b9af87c0bc6b56ca4796c073'),
-(27, 4, 1, 0, 1, 1, 'Bermúdez', 1433516975, NULL, '5cc74e40b9af87c0bc6b56ca4796c073'),
-(28, 71, 1, 0, 1, 1, 'Cundinamarca Bogota', 1433516975, NULL, '5cc74e40b9af87c0bc6b56ca4796c073'),
-(29, 14, 1, 0, 1, 1, 'Amigo', 1433516975, NULL, '5cc74e40b9af87c0bc6b56ca4796c073'),
-(30, 18, 1, 0, 1, 1, '-74.091796875 4.576424935853651 7', 1433516975, NULL, '5cc74e40b9af87c0bc6b56ca4796c073'),
-(31, 11, 1, 0, 1, 1, 'QWERTY LTDA', 1433516975, NULL, '5cc74e40b9af87c0bc6b56ca4796c073'),
-(32, 9, 1, 0, 1, 1, 'Director de desarrollo MILFS', 1433516975, NULL, '5cc74e40b9af87c0bc6b56ca4796c073'),
-(33, 15, 1, 0, 1, 1, 'fredyrivera@qwerty.co', 1433516975, NULL, '5cc74e40b9af87c0bc6b56ca4796c073'),
-(34, 72, 1, 0, 1, 1, '5cc74e40b9af87c0bc6b56ca4796c073', 1433615534, NULL, '018f39193a26376e38273ef8a50e478a'),
-(35, 1, 1, 0, 1, 1, 'Pedro', 1433615534, NULL, '018f39193a26376e38273ef8a50e478a'),
-(36, 2, 1, 0, 1, 1, 'Miguel', 1433615534, NULL, '018f39193a26376e38273ef8a50e478a'),
-(37, 3, 1, 0, 1, 1, 'Picapiedra', 1433615534, NULL, '018f39193a26376e38273ef8a50e478a'),
-(38, 4, 1, 0, 1, 1, 'Marmol', 1433615534, NULL, '018f39193a26376e38273ef8a50e478a'),
-(39, 71, 1, 0, 1, 1, 'Cundinamarca Susa', 1433615534, NULL, '018f39193a26376e38273ef8a50e478a'),
-(40, 14, 1, 0, 1, 1, 'Amigo', 1433615534, NULL, '018f39193a26376e38273ef8a50e478a'),
-(41, 18, 1, 0, 1, 1, '-74.35546875 5.3425828520359735 7', 1433615534, NULL, '018f39193a26376e38273ef8a50e478a'),
-(42, 11, 1, 0, 1, 1, 'Carrangueros ltda.', 1433615534, NULL, '018f39193a26376e38273ef8a50e478a'),
-(43, 40, 3, 0, 1, 1, 'Fredy Rivera', 1445970121, NULL, '29b348c222e7de9801b0d25335c558f5'),
-(44, 70, 3, 0, 1, 1, '64b743d429e0509eddc0e1960129b832.jpg', 1445970121, NULL, '29b348c222e7de9801b0d25335c558f5'),
-(45, 45, 3, 0, 1, 1, 'Foto de la luna llena ocultandose frente a la Bahía de Santa Marta', 1445970121, NULL, '29b348c222e7de9801b0d25335c558f5'),
-(46, 18, 3, 0, 1, 1, '-74.21447575092316 11.240889047089198 18', 1445970121, NULL, '29b348c222e7de9801b0d25335c558f5'),
-(47, 40, 3, 0, 1, 1, 'Kleper', 1445972324, NULL, 'fc66982fa904e4cb4736c33e63e5d7aa'),
-(48, 70, 3, 0, 1, 1, 'a407403c43c4ff24e9b290de42dfb990.jpg', 1445972324, NULL, 'fc66982fa904e4cb4736c33e63e5d7aa'),
-(49, 45, 3, 0, 1, 1, 'Turistas sorprendidas', 1445972324, NULL, 'fc66982fa904e4cb4736c33e63e5d7aa'),
-(50, 18, 3, 0, 1, 1, '-75.58173179626465 6.267096243274073 14', 1445972324, NULL, 'fc66982fa904e4cb4736c33e63e5d7aa'),
-(51, 40, 3, 0, 1, 1, '@Fredy_Rivera', 1445972605, NULL, '34a799ec5c0f3a708468bd77cf54dcea'),
-(52, 70, 3, 0, 1, 1, 'd8da224187ec05d752734ae56438f346.jpg', 1445972605, NULL, '34a799ec5c0f3a708468bd77cf54dcea'),
-(53, 45, 3, 0, 1, 1, 'Amanecer en Santa Marta', 1445972605, NULL, '34a799ec5c0f3a708468bd77cf54dcea'),
-(54, 18, 3, 0, 1, 1, '-74.21447038650511 11.240873262562987 18', 1445972605, NULL, '34a799ec5c0f3a708468bd77cf54dcea');
+INSERT INTO `form_datos` (`id`, `id_campo`, `form_id`, `proceso`, `orden`, `id_usuario`, `id_empresa`, `contenido`, `timestamp`, `ip`, `control`) VALUES
+(1, 70, 2, NULL, 0, 1, 1, '919667cc0724a21a78e221ba5d4524d0.png', 1424879698, NULL, 'feb16a589d41a37406fb5ed9d1c34f11'),
+(2, 69, 2, NULL, 0, 1, 1, 'https://www.youtube.com/watch?v=EAvWLo74alY', 1424879698, NULL, 'feb16a589d41a37406fb5ed9d1c34f11'),
+(3, 38, 2, NULL, 0, 1, 1, 'Yoga Cinco ritos tibetanos', 1424879698, NULL, 'feb16a589d41a37406fb5ed9d1c34f11'),
+(4, 39, 2, NULL, 0, 1, 1, 'Easy Five Tibetans Rites', 1424879698, NULL, 'feb16a589d41a37406fb5ed9d1c34f11'),
+(5, 40, 2, NULL, 0, 1, 1, 'Fundación VivirEnLaFinca.org', 1424879698, NULL, 'feb16a589d41a37406fb5ed9d1c34f11'),
+(6, 41, 2, NULL, 0, 1, 1, 'Janeth Urreste Castro', 1424879698, NULL, 'feb16a589d41a37406fb5ed9d1c34f11'),
+(7, 42, 2, NULL, 0, 1, 1, 'proyectos@vivirenlafinca.org', 1424879698, NULL, 'feb16a589d41a37406fb5ed9d1c34f11'),
+(8, 43, 2, NULL, 0, 1, 1, 'http://vivirenlafinca.org', 1424879698, NULL, 'feb16a589d41a37406fb5ed9d1c34f11'),
+(9, 44, 2, NULL, 0, 1, 1, 'Yoga', 1424879698, NULL, 'feb16a589d41a37406fb5ed9d1c34f11'),
+(10, 45, 2, NULL, 0, 1, 1, 'Ejercicios completos de la rutina de los "Cinco ritos tibetanos" explicados para su realización de forma fácil.', 1424879698, NULL, 'feb16a589d41a37406fb5ed9d1c34f11'),
+(11, 47, 2, NULL, 0, 1, 1, 'Full exercise routine "Five Tibetan Rites " explained for implementation easy.', 1424879698, NULL, 'feb16a589d41a37406fb5ed9d1c34f11'),
+(12, 48, 2, NULL, 0, 1, 1, 'Fundación Vivirenlafinca.org', 1424879698, NULL, 'feb16a589d41a37406fb5ed9d1c34f11'),
+(13, 49, 2, NULL, 0, 1, 1, 'fredy Rivera', 1424879698, NULL, 'feb16a589d41a37406fb5ed9d1c34f11'),
+(14, 50, 2, NULL, 0, 1, 1, '2010-03-01', 1424879698, NULL, 'feb16a589d41a37406fb5ed9d1c34f11'),
+(15, 51, 2, NULL, 0, 1, 1, 'Movingimage (imagen en movimiento)', 1424879698, NULL, 'feb16a589d41a37406fb5ed9d1c34f11'),
+(16, 52, 2, NULL, 0, 1, 1, 'Video/3gpp', 1424879698, NULL, 'feb16a589d41a37406fb5ed9d1c34f11'),
+(17, 53, 2, NULL, 0, 1, 1, 'https://www.youtube.com/watch?v=EAvWLo74alY', 1424879698, NULL, 'feb16a589d41a37406fb5ed9d1c34f11'),
+(18, 54, 2, NULL, 0, 1, 1, 'Spa', 1424879698, NULL, 'feb16a589d41a37406fb5ed9d1c34f11'),
+(19, 55, 2, NULL, 0, 1, 1, 'http://en.wikipedia.org/wiki/Five_Tibetan_Rites', 1424879698, NULL, 'feb16a589d41a37406fb5ed9d1c34f11'),
+(20, 61, 2, NULL, 0, 1, 1, 'http://creativecommons.org/licenses/by-sa/2.5/co/', 1424879698, NULL, 'feb16a589d41a37406fb5ed9d1c34f11'),
+(21, 62, 2, NULL, 0, 1, 1, 'All', 1424879698, NULL, 'feb16a589d41a37406fb5ed9d1c34f11'),
+(22, 64, 2, NULL, 0, 1, 1, 'Fredy Rivera y Janeth Urreste', 1424879698, NULL, 'feb16a589d41a37406fb5ed9d1c34f11'),
+(23, 65, 2, NULL, 0, 1, 1, 'Ejercicios prácticos', 1424879698, NULL, 'feb16a589d41a37406fb5ed9d1c34f11'),
+(24, 68, 2, NULL, 0, 1, 1, 'https://www.youtube.com/watch?v=EAvWLo74alY', 1424879699, NULL, 'feb16a589d41a37406fb5ed9d1c34f11'),
+(25, 1, 1, NULL, 0, 1, 1, 'Fredy', 1433516975, NULL, '5cc74e40b9af87c0bc6b56ca4796c073'),
+(26, 3, 1, NULL, 0, 1, 1, 'Rivera', 1433516975, NULL, '5cc74e40b9af87c0bc6b56ca4796c073'),
+(27, 4, 1, NULL, 0, 1, 1, 'Bermúdez', 1433516975, NULL, '5cc74e40b9af87c0bc6b56ca4796c073'),
+(28, 71, 1, NULL, 0, 1, 1, 'Cundinamarca Bogota', 1433516975, NULL, '5cc74e40b9af87c0bc6b56ca4796c073'),
+(29, 14, 1, NULL, 0, 1, 1, 'Amigo', 1433516975, NULL, '5cc74e40b9af87c0bc6b56ca4796c073'),
+(30, 18, 1, NULL, 0, 1, 1, '-74.091796875 4.576424935853651 7', 1433516975, NULL, '5cc74e40b9af87c0bc6b56ca4796c073'),
+(31, 11, 1, NULL, 0, 1, 1, 'QWERTY LTDA', 1433516975, NULL, '5cc74e40b9af87c0bc6b56ca4796c073'),
+(32, 9, 1, NULL, 0, 1, 1, 'Director de desarrollo MILFS', 1433516975, NULL, '5cc74e40b9af87c0bc6b56ca4796c073'),
+(33, 15, 1, NULL, 0, 1, 1, 'fredyrivera@qwerty.co', 1433516975, NULL, '5cc74e40b9af87c0bc6b56ca4796c073'),
+(34, 72, 1, NULL, 0, 1, 1, '5cc74e40b9af87c0bc6b56ca4796c073', 1433615534, NULL, '018f39193a26376e38273ef8a50e478a'),
+(35, 1, 1, NULL, 0, 1, 1, 'Pedro', 1433615534, NULL, '018f39193a26376e38273ef8a50e478a'),
+(36, 2, 1, NULL, 0, 1, 1, 'Miguel', 1433615534, NULL, '018f39193a26376e38273ef8a50e478a'),
+(37, 3, 1, NULL, 0, 1, 1, 'Picapiedra', 1433615534, NULL, '018f39193a26376e38273ef8a50e478a'),
+(38, 4, 1, NULL, 0, 1, 1, 'Marmol', 1433615534, NULL, '018f39193a26376e38273ef8a50e478a'),
+(39, 71, 1, NULL, 0, 1, 1, 'Cundinamarca Susa', 1433615534, NULL, '018f39193a26376e38273ef8a50e478a'),
+(40, 14, 1, NULL, 0, 1, 1, 'Amigo', 1433615534, NULL, '018f39193a26376e38273ef8a50e478a'),
+(41, 18, 1, NULL, 0, 1, 1, '-74.35546875 5.3425828520359735 7', 1433615534, NULL, '018f39193a26376e38273ef8a50e478a'),
+(42, 11, 1, NULL, 0, 1, 1, 'Carrangueros ltda.', 1433615534, NULL, '018f39193a26376e38273ef8a50e478a'),
+(43, 40, 3, NULL, 0, 1, 1, 'Fredy Rivera', 1445970121, NULL, '29b348c222e7de9801b0d25335c558f5'),
+(44, 70, 3, NULL, 0, 1, 1, '64b743d429e0509eddc0e1960129b832.jpg', 1445970121, NULL, '29b348c222e7de9801b0d25335c558f5'),
+(45, 45, 3, NULL, 0, 1, 1, 'Foto de la luna llena ocultandose frente a la Bahía de Santa Marta', 1445970121, NULL, '29b348c222e7de9801b0d25335c558f5'),
+(46, 18, 3, NULL, 0, 1, 1, '-74.21447575092316 11.240889047089198 18', 1445970121, NULL, '29b348c222e7de9801b0d25335c558f5'),
+(47, 40, 3, NULL, 0, 1, 1, 'Kleper', 1445972324, NULL, 'fc66982fa904e4cb4736c33e63e5d7aa'),
+(48, 70, 3, NULL, 0, 1, 1, 'a407403c43c4ff24e9b290de42dfb990.jpg', 1445972324, NULL, 'fc66982fa904e4cb4736c33e63e5d7aa'),
+(49, 45, 3, NULL, 0, 1, 1, 'Turistas sorprendidas', 1445972324, NULL, 'fc66982fa904e4cb4736c33e63e5d7aa'),
+(50, 18, 3, NULL, 0, 1, 1, '-75.58173179626465 6.267096243274073 14', 1445972324, NULL, 'fc66982fa904e4cb4736c33e63e5d7aa'),
+(51, 40, 3, NULL, 0, 1, 1, '@Fredy_Rivera', 1445972605, NULL, '34a799ec5c0f3a708468bd77cf54dcea'),
+(52, 70, 3, NULL, 0, 1, 1, 'd8da224187ec05d752734ae56438f346.jpg', 1445972605, NULL, '34a799ec5c0f3a708468bd77cf54dcea'),
+(53, 45, 3, NULL, 0, 1, 1, 'Amanecer en Santa Marta', 1445972605, NULL, '34a799ec5c0f3a708468bd77cf54dcea'),
+(54, 18, 3, NULL, 0, 1, 1, '-74.21447038650511 11.240873262562987 18', 1445972605, NULL, '34a799ec5c0f3a708468bd77cf54dcea');
 
 -- --------------------------------------------------------
 
@@ -2771,6 +2790,15 @@ CREATE TABLE `form_grupo` (
   `grupo` text NOT NULL,
   `id_empresa` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `form_grupo`
+--
+
+INSERT INTO `form_grupo` (`id_grupo`, `id`, `grupo`, `id_empresa`) VALUES
+(1, 2, 'Documentacion', 1),
+(2, 3, 'Documentacion', 1),
+(3, 1, 'Datos', 1);
 
 -- --------------------------------------------------------
 
@@ -2826,6 +2854,7 @@ CREATE TABLE `form_tipo_campo` (
   `id_tipo_campo` int(11) NOT NULL,
   `tipo_campo_nombre` text NOT NULL,
   `tipo_campo_accion` text NOT NULL,
+  `descripcion` text NOT NULL,
   `activo` int(11) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -2833,30 +2862,35 @@ CREATE TABLE `form_tipo_campo` (
 -- Dumping data for table `form_tipo_campo`
 --
 
-INSERT INTO `form_tipo_campo` (`id_tipo_campo`, `tipo_campo_nombre`, `tipo_campo_accion`, `activo`) VALUES
-(1, 'Texto', 'text', 1),
-(2, 'Nota', 'textarea', 1),
-(3, 'Numérico', 'number', 1),
-(4, 'URL', 'url', 1),
-(5, 'Medio', 'media', 1),
-(6, 'Buscador', 'buscador', 1),
-(7, 'HTML', 'html', 1),
-(8, 'Select', 'select', 1),
-(9, 'Combo select', 'combo', 1),
-(10, 'Relación', 'relacion', 1),
-(11, 'Fecha', 'date', 1),
-(12, 'Email', 'email', 1),
-(13, 'Email envío', 'envio', 1),
-(14, 'Mapa', 'mapa', 1),
-(15, 'Imagen', 'imagen', 1),
-(16, 'Rango', 'rango', 1),
-(17, 'Texto limitado', 'limit', 1),
-(18, 'Password', 'password', 1),
-(19, 'Campo único', 'unico', 1),
-(20, 'Campo oculto', 'oculto', 1),
-(21, 'Base de datos', 'base', 1),
-(22, 'Timestamp', 'timestamp', 1),
-(23, 'Funcion', 'oculto', 1);
+INSERT INTO `form_tipo_campo` (`id_tipo_campo`, `tipo_campo_nombre`, `tipo_campo_accion`, `descripcion`, `activo`) VALUES
+(1, 'Texto', 'text', '', 1),
+(2, 'Nota', 'textarea', '', 1),
+(3, 'Numérico', 'number', '', 1),
+(4, 'URL', 'url', '', 1),
+(5, 'Medio', 'media', '', 1),
+(6, 'Buscador', 'buscador', '', 1),
+(7, 'HTML', 'html', '', 1),
+(8, 'Select', 'select', '', 1),
+(9, 'Combo select', 'combo', '', 1),
+(10, 'Relación', 'relacion', '', 1),
+(11, 'Fecha', 'date', '', 1),
+(12, 'Email', 'email', '', 1),
+(13, 'Email envío', 'envio', '', 1),
+(14, 'Mapa', 'mapa', '', 1),
+(15, 'Imagen', 'imagen', '', 1),
+(16, 'Rango', 'rango', '', 1),
+(17, 'Texto limitado', 'limit', '', 1),
+(18, 'Password', 'password', '', 1),
+(19, 'Campo único', 'unico', '', 1),
+(20, 'Campo oculto', 'oculto', '', 1),
+(21, 'Base de datos', 'base', '', 1),
+(22, 'Timestamp', 'timestamp', '', 1),
+(23, 'Funcion', 'oculto', '', 1),
+(24, 'Checkbox', 'checkbox', 'Casa,Carro,Beca:1', 1),
+(25, 'Radio', 'radio', 'Acepto,No acepto,No me importa', 1),
+(26, 'Formulario vinculado', 'vinculado', 'Escriba el ID del formulario que desea vincular y este aparecerá en lugar del campo.', 1),
+(27, 'Radio agrupado linea', 'radio_agrupado_linea', 'Rojo,Verde,Azul', 1),
+(28, 'Radio agrupado campos', 'radio_agrupado_campos', 'Escriba el listado de id_campo que va a agrupar eje. 175,180', 1);
 
 -- --------------------------------------------------------
 
@@ -3009,17 +3043,17 @@ ALTER TABLE `form_areas`
 -- AUTO_INCREMENT for table `form_campos`
 --
 ALTER TABLE `form_campos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=74;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=78;
 --
 -- AUTO_INCREMENT for table `form_campos_valores`
 --
 ALTER TABLE `form_campos_valores`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2369;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2382;
 --
 -- AUTO_INCREMENT for table `form_contenido_campos`
 --
 ALTER TABLE `form_contenido_campos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=84;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=85;
 --
 -- AUTO_INCREMENT for table `form_datos`
 --
@@ -3029,7 +3063,7 @@ ALTER TABLE `form_datos`
 -- AUTO_INCREMENT for table `form_grupo`
 --
 ALTER TABLE `form_grupo`
-  MODIFY `id_grupo` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_grupo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 --
 -- AUTO_INCREMENT for table `form_id`
 --
@@ -3044,7 +3078,7 @@ ALTER TABLE `form_parametrizacion`
 -- AUTO_INCREMENT for table `form_tipo_campo`
 --
 ALTER TABLE `form_tipo_campo`
-  MODIFY `id_tipo_campo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `id_tipo_campo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
 --
 -- AUTO_INCREMENT for table `usuarios`
 --
