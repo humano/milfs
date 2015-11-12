@@ -7,6 +7,7 @@ require ('funciones/funciones.php');
 require ('funciones/convert.php');
 require ('funciones/login.php');
 require ("includes/markdown.php");
+require ("includes/simple_html_dom.php");
 require ("funciones/conex.php");
 
 $xajax->processRequests(); 
@@ -52,7 +53,16 @@ if (isset($_REQUEST['t'])) {$t = $_REQUEST['t'];} else {$t = "";}
 					
 ?>
 
+<!--      <script src="js/jquery.min.js"></script>
+  <script src="js/bootstrap.js"></script> -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+  <script src="js/markdown.js"></script>
+  <script src="js/to-markdown.js"></script>
+  <script src="js/bootstrap-markdown.js"></script>
+      <script src="js/scripts.js"></script>
 <script type="text/javascript">
+ 
 //Recoger elemento arrastrable//
 function evdragstart(ev,el) { //ev= el evento, el=elemento arrastrado.
     cont1=el.parentNode; //guardamos el elemento padre del elemento en una variable.
@@ -88,14 +98,7 @@ function evdrop(ev,el) { //ev=el evento; el=receptor de soltado
 </style>
 </head>
 <body  >
-<!--      <script src="js/jquery.min.js"></script>
-  <script src="js/bootstrap.js"></script> -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
-  <script src="js/markdown.js"></script>
-  <script src="js/to-markdown.js"></script>
-  <script src="js/bootstrap-markdown.js"></script>
-      <script src="js/scripts.js"></script>
+
 <?php if($form !='') { echo formulario_embebido($form);}
 elseif($identificador !='') { echo mostrar_identificador($identificador);}
 else{
