@@ -3086,7 +3086,7 @@ AND   form_datos.form_id = `form_id`.id
 AND (form_id = '$datos[id]'  )
 $publico
 GROUP BY form_datos.control
-ORDER BY  form_datos.control  ,form_datos.timestamp ";
+ORDER BY  form_datos.timestamp  DESC";
 
 $sql = mysql_query($consulta,$link) or die("error al ejecutar consulta ");
  if (mysql_num_rows($sql)!='0'){
