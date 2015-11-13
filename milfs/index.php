@@ -12,8 +12,14 @@ require ("funciones/conex.php");
 
 $xajax->processRequests(); 
 //$xajax->debugOn('');
-if (isset($_REQUEST['form'])) {$form = $_REQUEST['form'];} else {$form = "";}
+$embebido =0;
+if (isset($_REQUEST['form'])) {
+	$form = $_REQUEST['form'];
+	$opciones["formato"]= $_REQUEST['formato'];	
+	} else {$form = "";}
+	if($form !='') {$embebido = 1;}
 if (isset($_REQUEST['identificador'])) {$identificador = $_REQUEST['identificador'];} else {$identificador = "";}
+	if($identificador !='') {$embebido = 1;}
 if (isset($_REQUEST['id'])) {$id = $_REQUEST['id'];} else {$id = "";}
 if (isset($_REQUEST['c'])) {$c = $_REQUEST['c'];} else {$c = "";}
 if (isset($_REQUEST['f'])) {$f = $_REQUEST['f'];} else {$f = "";}
@@ -32,7 +38,7 @@ if (isset($_REQUEST['t'])) {$t = $_REQUEST['t'];} else {$t = "";}
 	<link rel="shortcut icon" href="favicon-152.png">
 	<link rel="apple-touch-icon-precomposed" href="favicon-152.png">
 	<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha256-k2/8zcNbxVIh5mnQ52A0r3a6jAgMGxFJFE2707UxGCk= sha512-ZV9KawG2Legkwp3nAlxLIVFudTauWuBpC10uEafMHYL0Sarrz5A7G79kXh5+5+woxQ5HM559XX2UZjMJ36Wplg==" crossorigin="anonymous">
-	<?php if($form !='') { echo "<link href='css/embebido.css' rel='stylesheet'>";}else{ echo "<link href='css/estilos.php?dd' rel='stylesheet'>";} ?>
+	<?php if($form !='') { echo "<link href='css/embebidoXXX.css' rel='stylesheet'>";}else{ echo "<link href='css/estilos.php?dd' rel='stylesheet'>";} ?>
 
 	<link rel="stylesheet" type="text/css" media="screen" href="css/bootstrap.css">
 	<link rel="stylesheet" type="text/css" media="screen" href="css/bootstrap-markdown.css">
@@ -99,15 +105,16 @@ function evdrop(ev,el) { //ev=el evento; el=receptor de soltado
 </head>
 <body  >
 
-<?php if($form !='') { echo formulario_embebido($form);}
-elseif($identificador !='') { echo mostrar_identificador($identificador);}
-else{
+<?php if($embebido ==1) { 
+if($form!=''){	 echo formulario_embebido($form,$opciones);}
+elseif($identificador !='') { echo mostrar_identificador($identificador,$id);}
+else{}
+
+}else{
 
  ?>
 <?php echo @$onload; ?>
-<?php if(isset($_REQUEST['f'])){
-form_publico("$f");
-}
+<?php 
  if ( isset ( $_SESSION['id'] ) ) {	?>
 <div class="navbar navbar-inverse nav-bar-fixed-top " role="navigation">
   <div class="container-fluid">

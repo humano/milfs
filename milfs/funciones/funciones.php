@@ -1,6 +1,14 @@
 <?php
 date_default_timezone_set('America/Bogota');
 
+function form_publico($id){
+
+
+return $resultado;
+}
+
+
+
 function contar_valores_formulario($campo,$key,$valor){
 $consulta = "SELECT distinct($campo) as cantidad FROM form_datos WHERE $key LIKE '$valor' ";
 $link=Conectarse();
@@ -733,7 +741,7 @@ $resultado = "
 ";
 $lista  ="
 <br>
-<p>Las plantillas se usan para dar formato a los datos en el momento de presentarlos, se pueden usar etiquetas <b>HTML5</b>, <b>CSS3</b> y clases de <b>Bootstrap</b> </p>
+<p>Las plantillas se usan para dar formato a los datos en el momento de presentarlos, se puede usar etiquetas <b>HTML5</b>, <b>CSS3</b> y clases de <b>Bootstrap</b> </p>
 <table class='table table-striped'>
 <tr>
 				<th>Nombre</th>
@@ -928,9 +936,18 @@ $xajax->registerFunction("parametrizacion_titulo");
 
 function mostrar_modal($form,$control,$plantilla){
 $respuesta = new xajaxResponse('utf-8');
+if( $control == "") {
+	$datos = formulario_areas($form,"");
+}else {
 $datos = contenido_mostrar("$form","$control",'',"$plantilla");
+}
 $div ="contenido_de_modal";
-$resultado = "<div class='container-fluid'>$datos</div>";
+
+$resultado = "
+	<div class='container-fluid' style='padding:5px; border-radius:3px; background-color:white; max-width:600px; box-shadow: 2px 2px 5px #999; overflow:no;' id='contenedor_datos' >	
+		$datos
+	<br>
+	</div>";
 			$div_contenido = "<div id='$div'>$div</div>";
 			$respuesta->addAssign("muestra_form","innerHTML","$div_contenido");
 			//$respuesta->addAssign("titulo_modal","innerHTML","Hola mundo");
@@ -1186,8 +1203,9 @@ $link=Conectarse();
 return $resultado ;
 }
 
-function mostrar_identificador($control){
-$consulta = "	SELECT distinct(form_id) FROM form_datos WHERE control = '$control'	";
+function mostrar_identificador($control,$form){
+	if($form != "") {$id_form = "$form";}
+/*$consulta = "	SELECT distinct(form_id) FROM form_datos WHERE control = '$control'	";
 $link=Conectarse(); 
 	mysql_query("SET NAMES 'utf8'");
 	$sql =	mysql_query($consulta,$link);
@@ -1195,15 +1213,20 @@ $link=Conectarse();
 		$session = crear_session ('16',$control);
 		$resultado ="$session<div class='container-fluid'>";
 		mysql_data_seek($sql, 0);
-	while( $row = mysql_fetch_array( $sql ) ) {
-		$id_form = $row[form_id];
-		$impresion = formulario_imprimir("$row[form_id]","$control",""); 
-		//$descripcion = remplacetas('form_id','id',$id_form,'descripcion',"") ;
+	//while( $row = mysql_fetch_array( $sql ) ) {
+		$id_form = $row[form_id];*/
+		$impresion = formulario_imprimir("$id_form","$control",""); 
+		if($impresion !="") {
+		$descripcion = remplacetas('form_id','id',$id_form,'descripcion',"") ;
 		$nombre = remplacetas('form_id','id',$id_form,'nombre',"") ;
 		$resultado .= "<h2>$nombre[0]</h2><legend>$descripcion[0]</legend>$impresion<br>"; 
-															}
-															$resultado .= "</div>";
-										}
+	//														}
+$resultado = "<div class='container-fluid'>$resultado</div>";
+									}else{
+$resultado ="<div class='container alert alert-warning'><h1>No hay resultados</h1></div>";
+									}
+															
+								//		}
 return $resultado ;
 }
 
@@ -1825,18 +1848,15 @@ function buscar_datos($valores,$id_form,$plantilla,$div){
 	else {$valor=$valores;}
 if($valor =='') {
 $resultado="
-<div class='col-sm-3 col-md-3'>
-	<form class='navbar-form' role='search' id='formulario_buscar_datos' name='formulario_buscar_datos'>
-		<div class='form-group'>
+<div class='col-sm-5 col-md-5'>
+	<!-- <form class='navbar-form' role='search' id='formulario_buscar_datos' name='formulario_buscar_datos'> -->
 			<div class='input-group'>
-				
 				<input placeholder='Escribe para buscar' class='form-control' id='valor' name= 'valor'>
 				<div class='input-group-btn'>
-				<div class='btn btn-default' onclick =\"xajax_buscar_datos(xajax.getFormValues('formulario_buscar_datos'),'$id_form','$plantilla','$div'); \"><i class='glyphicon glyphicon-search'></i></div>
+				<div class='btn btn-default' onclick =\"xajax_buscar_datos((document.getElementById('valor').value),'$id_form','$plantilla','$div'); \"><i class='glyphicon glyphicon-search'></i></div>
 				</div>
 			</div>
-		</div>
-	</form>
+<!-- 	</form> -->
 </div>
 ";
 return $resultado;
@@ -1879,7 +1899,7 @@ if($i % $divider==0) {
 								}
 														}
 										}
-$resultado .="<div class='container-fluid'><h1>Resultados de: $valor</h1>$encontrados  </div>  ";						
+$resultado .="<div class='container-fluid'><h2>Resultados de: $valor</h2>$encontrados  </div>  ";						
 $respuesta = new xajaxResponse('utf-8');
 $respuesta->addAssign("$div","innerHTML",$resultado);
 			return $respuesta;
@@ -2099,25 +2119,26 @@ if (mysql_num_rows($sql)!='0'){
 	$encabezado = empresa_datos("$empresa",'encabezado');
 	$pie = empresa_datos("$empresa",'pie');
 	$cabecera = "
-	<div>$encabezado </div>
 	<div class='alert alert-info'  >
 		<div class='row'>
-		<div class='col-xs-4'>	
-			<img src='http://qwerty.co/qr/?d=http://$_SERVER[HTTP_HOST]/milfs?id=$id'>
+		<div class='col-md-3'>	
+			<img class='img img-responsive' src='http://qwerty.co/qr/?d=http://$_SERVER[HTTP_HOST]/milfs?id=$perfil'>
 		</div>
-		<div class='col-xs-8'>
-		<h1>$nombre</h1><p>$descripcion</p>
+		<div class='col-md-9'>
+		<h2>$nombre<small style='display:block;'>$descripcion</small></h2>
 		</div>
 	</div>
-	<label >Compartir este formulario</label>
-	<div class='input-group'>
-  <span class='input-group-addon'><a href='http://$_SERVER[HTTP_HOST]/milfs?id=$id'><i class='fa fa-share-square-o'></i></a></span>
-  <input  onclick=\"this.select(); \"  type='text' class='form-control' placeholder='http://$_SERVER[HTTP_HOST]/milfs?id=$id' value='http://$_SERVER[HTTP_HOST]/milfs?id=$id'>
-</div>	
+<!-- 	<label >Compartir este formulario</label>
+		<div class='input-group'>
+  			<span class='input-group-addon'><a href='http://$_SERVER[HTTP_HOST]/milfs?id=$id'><i class='fa fa-share-square-o'></i></a></span>
+  			<input  onclick=\"this.select(); \"  type='text' class='form-control' placeholder='http://$_SERVER[HTTP_HOST]/milfs?id=$perfil' value='http://$_SERVER[HTTP_HOST]/milfs?id=$perfil'> 
+		</div>	
+-->
 </div>";
 
 $campo_imagen = buscar_campo_tipo($perfil,"15");
 $campo_imagen_nombre = $campo_imagen[1];
+$campo_imagen_nombre = ucwords($campo_imagen_nombre);
 $campo_imagen = $campo_imagen[0];
 	
 	
@@ -2175,7 +2196,7 @@ while( $row = mysql_fetch_array( $sql ) ) {
 	//$producto = remplacetas('farmacia_cum','id',$row[id_producto],'fabricante_importador') ;
 	///// para pasar el parametro de medicamentos al formulario no pos se adiciona ".func_get_arg(2)."
 	$campos = formulario_area_campos($perfil,$row['campo_area']);
-$resultado_campos .= "<fieldset><legend>$area_nombre</legend>
+$resultado_campos .= "<fieldset class='fieldset-borde ' id ='fieldset_$area_nombre'><legend class='legend-area' id ='legend_$area_nombre'>$area_nombre</legend>
 $campos
 </fieldset>";
 															}
@@ -2189,7 +2210,7 @@ $muestra_form .="$resultado_campos <br><div class='row' id='respuesta_$control' 
 						<div onclick=\" xajax_formulario_grabar(xajax.getFormValues('$control'));\"  class='btn btn-block btn-success'>Grabar</div>
 		</div>
 		<div class='col-xs-6'>
-						<div onclick=\" xajax_limpia_div('muestra_form');xajax_limpia_div('titulo_modal'); \" data-dismiss='modal' class='btn btn-block btn-danger'>Cancelar</div>
+						<div onclick=\" xajax_limpia_div('muestra_form');\" data-dismiss='modal' class='btn btn-block btn-danger'>Cancelar</div>
 		</div>
 	</div>
 							";
@@ -2206,11 +2227,24 @@ $muestra_form .="
 		</div>";
 if($tipo=='campos') {
 	
-	return "$resultado_campos $imagen ";
+	$resultado = "$resultado_campos $imagen ";
+	return $resultado;
 }
 if($tipo=='embebido') {
-	return $muestra_form;
+$resultado = "
+$muestra_form
+<span>Poweredy by <a href='https://github.com/humano/milfs' target='milfs'>MILFS</a></span>
+";
+return $resultado;
+
 }
+
+$resultado = "
+$cabecera
+$muestra_form
+<span>Poweredy by <a href='https://github.com/humano/milfs' target='milfs'>MILFS</a></span>
+";
+return $resultado;
 
 /// fin cierre form
 									//	$resultado .= "$consulta";
@@ -2965,13 +2999,46 @@ return $contenido;
 
  
 function formulario_embebido($id){
-			$impresion = formulario_modal("$id",$form_respuesta,$control,"embebido");
+			//$impresion = formulario_modal("$id",$form_respuesta,$control,"embebido");
+			$impresion = formulario_areas($id,"embebido");
 
 			$formulario_nombre = remplacetas('form_id','id',$id,'nombre') ;
 			$formulario_descripcion = remplacetas('form_id','id',$id,'descripcion') ;
 
-			$muestra_form = "<div class='container-fluid' id='contenedor_datos' > <h1 class='formulario_nombre'>$formulario_nombre[0]</h1>
-			<h2 class='formulario_descripcion'>$formulario_descripcion[0] </h2>$impresion</div>Poweredy by <a href='https://github.com/humano/milfs' target='milfs'><!-- <img width='30px' src='http://qwerty.co/demo/images/logo.png'> --> MILFS</a>";
+			$muestra_form = "
+			<style>
+			fieldset.fieldset-borde {
+
+    border: 2px solid #EDEDED !important;
+        border-radius:3px;
+    padding: 0 1.4em 1.4em 1.4em !important;
+    margin: 0 0 1.5em 0 !important;
+    -webkit-box-shadow:  0px 0px 0px 0px #000;
+            box-shadow:  0px 0px 0px 0px #000;
+}
+
+    legend.legend-area {
+        font-size: 1.2em !important;
+        font-weight: bold !important;
+        text-align: left !important;
+        width:auto;
+        padding:0 10px;
+        border-bottom:none;
+    }
+			</style>
+<div style='width;100%; min-height:900px; padding: 0.3%; background-image: url(images/iron.jpg); background-attachment:fixed; background-color: gray ;'>
+	<div class='container-fluid' style=' border-radius:3px; background-color:white; max-width:600px; box-shadow: 2px 2px 5px #999; overflow:no;' id='contenedor_datos' >			
+			
+				<h1 class='formulario_nombre'>$formulario_nombre[0]</h1>
+				<h2 class='formulario_descripcion'>$formulario_descripcion[0] </h2>
+				$impresion
+			
+			
+
+	</div>
+	<br>
+	
+<div>	";
 			return $muestra_form ;
 }
 
@@ -4120,10 +4187,12 @@ $xajax->registerFunction("editar_campo");
 function formulario_imprimir($id,$control,$tipo) {
 
 if(is_numeric($tipo)) { $limit = "limit $tipo "; $class= "alert alert-info";}
+//if($control != "") { $w_control = "AND control = '$control' ";}
 	$id = mysql_seguridad($id);
+	$control = mysql_seguridad($control);
 		$publico = remplacetas('form_id','id',$id,'publico','') ;
 		if($publico[0] != "1" and (!isset ( $_SESSION[id]) )) {
-		$resultado ="<div class='aler alert-danger'><h1>Acceso restringido</h1> No se pueden consultar los datos.</div>";
+		$resultado ="<div class='alert alert-danger'><h1>Acceso restringido</h1> No se puede consultar los datos.</div>";
 		return $resultado;
 
 																					}
@@ -4131,9 +4200,10 @@ if(is_numeric($tipo)) { $limit = "limit $tipo "; $class= "alert alert-info";}
 	//if($id !='') {$w_id = "AND form_id = '$id'";}else {$w_id='';}
 	if($id !='') {
 		$consulta = "SELECT *
-						FROM form_contenido_campos 
-						WHERE form_contenido_campos.id_form = '$id'
-						
+						FROM form_contenido_campos , form_datos
+						WHERE form_contenido_campos.id_campo = form_datos.id_campo
+						AND form_datos.control = '$control'
+						AND form_contenido_campos.id_form = '$id'
 						ORDER BY form_contenido_campos.orden ASC $limit 
 						";
 	}else {
@@ -4276,7 +4346,7 @@ if($contenido_original !="") {
 														}
 	
 	//$resultado .=" </div>	<!-- <div class='badge pull-right'>Datos registrados el $fecha </div> -->	";
-}else {$resultado ="No hay datos ";}
+//}else {$resultado ="<div class='alert alert-warning'><h1>No se encontraron resultados</h1></div>"; return $resultado;}
 //if($id=="6" OR $id=="10") {
 	if($tipo !="" AND (!is_numeric($tipo)) AND $tipo !="metadatos" ) {
 ////Usa una plantilla apra cada id 
@@ -4306,6 +4376,9 @@ eval("\$plantilla = \"$plantilla \";");
 		<!-- <a class='btn btn-default pull-right' onclick=\"xajax_formulario_modal('$id','','$control',''); \"> Ampliar</a> 
 		<a target='_blank' href='index.php?id=$id&c=$control' class='btn btn-default pull-right'><i class='fa fa-share-square-o'></i> Compartir</a> -->";
 	return $resultado;
+	
+//	}else {$resultado ="<div class='alert alert-warning'><h1>No se encontraron resultados</h1></div>"; return $resultado;}
+	}else {$resultado =""; return $resultado;}
 }
 
 function formulario_respuesta($id,$control) {
@@ -4337,7 +4410,7 @@ function subir_imagen($respuesta,$id){
 
 ///vinculado con la funcion de javascript resultadoUpload(estado, file)  que esta en librerias/scripts.js
 //this.form.taget= 'ventana'; this.form.action = 'destinoEspecial.html'; this.form.submit()" 
-$javascript="includes/upload.php";
+$javascript="$_SESSION[url]/includes/upload.php";
 if ($id ==''){$id='imagen';}
 $size = ($_SESSION[upload_size]*1024*1024)." bytes";
 $resultado .="
@@ -5050,13 +5123,15 @@ $consulta = "
 	
 $sql=mysql_query($consulta,$link);
 if (mysql_num_rows($sql)!='0'){
-$resultado = "<label for='id_campo'>Filtro</label>
+$resultado = "<div class='input-group'>
+					<span class='input-group-addon'>Filtro <i class='fa fa-filter'></i> </span>
 						<select class='form-control' name='campo_filtro' id='campo_filtro' onchange=\"$onchange\"  >
 							<option value=''>Seleccione</option>";
 while( $row = mysql_fetch_array( $sql ) ) {
 $resultado .= "		<option value='$row[md5_contenido]' title=''>$row[contenido]</option>";
 															}
-$resultado .= "	</select >";
+$resultado .= "	</select >
+					</div>";
 										}
 else{$resultado = "<p class='text-danger'><i class='fa fa-exclamation-triangle'></i>  No se encontraron resultados</p>";}
 
@@ -6283,8 +6358,9 @@ $consulta ="
 																				 }
 elseif($campo_tipo_accion == 'email'){$render = "<code>Escriba un email válido</code>
 							<input value='$value' type='email' id='".$id_campo."[".$item."]' name='".$id_campo."[".$item."]' class='form-control' placeholder='$campo_descripcion' > ";}
-		elseif($campo_tipo_accion == 'envio'){$render = "<code>Se enviará un correo electrónico a este email</code>
-						<input value='$value' type='email' id='".$id_campo."[".$item."]' name='".$id_campo."[".$item."]' class='form-control' placeholder='$campo_descripcion' > ";}
+		elseif($campo_tipo_accion == 'envio'){$render = "
+						<input value='$value' type='email' id='".$id_campo."[".$item."]' name='".$id_campo."[".$item."]' class='form-control' placeholder='$campo_descripcion' > 
+						<code>Se enviará un email</code>";}
 		elseif($campo_tipo_accion == 'textarea'){
 			$render = "		<textarea cols='50' data-provide=\"markdown\"   rows='8' id='".$id_campo."[".$item."]' name='".$id_campo."[".$item."]' class='form-control' placeholder='$campo_descripcion' >$value</textarea> ";
 			$cols='12';													
@@ -6709,7 +6785,7 @@ if(($V !='' ) && (is_numeric($c)) AND $repetido !=1 ) {
 
 
 if($consulta_grabada =='1') {
-if($tipo == "embebido"  ) 
+if($tipo == "embebidoX"  ) 
 {
 		$exito ="
 	<div class='alert alert-success'><h2><i class='fa fa-check-square-o'></i>
@@ -6735,7 +6811,20 @@ if($tipo == "embebido"  )
 $envio =	email_contenido("$formulario[form_id]","$formulario[control]","$campo_envio[0]",'');		
 		}
 		
-
+if($tipo = "embebido") {
+$otro_formulario ="
+			 	<a href ='' class='btn btn-block btn-success'>
+			 		Llenar otro formulario
+			 	</a>
+";
+}else {
+	$otro_formulario = "
+			 	<a href ='?id=$formulario[form_id]' class='btn btn-block btn-success'>
+			 		Llenar otro formulario
+			 	</a>	
+	
+	";
+}
 $impresion = formulario_imprimir("","$formulario[control]","preview"); 
 //$impresion = mostrar_identificador($formulario['control']);
 		$exito ="
@@ -6746,9 +6835,7 @@ $impresion = formulario_imprimir("","$formulario[control]","preview");
 		 Gracias por llenar el formulario $formulario[form_nombre] </h2>
 		 <div class='row'>
 			 <div class='col-xs-6'>
-			 	<a href ='?id=$formulario[form_id]' class='btn btn-block btn-success'>
-			 		Llenar otro formulario
-			 	</a>
+				$otro_formulario
 			 </div>
 			 <div class='col-xs-6'>
 			 	$envio
@@ -6765,7 +6852,7 @@ $impresion = formulario_imprimir("","$formulario[control]","preview");
 			//$propietario = 	remplacetas('usuarios','id',$propietario[0],'email',"") ;
 			$email_envio = remplacetas('form_parametrizacion','campo',"$formulario[form_id]",'descripcion'," tabla='form_id' and  opcion = 'email'") ;
 			if($email_envio[0] !="") {
-				$impresion = formulario_imprimir("$formulario[form_id]","$formulario[control]","preview"); 
+				$impresion = formulario_imprimir("","$formulario[control]","preview"); 
 			$id_empresa = 	remplacetas('form_id','id',$formulario[form_id],'id_empresa',"") ;
 			$id_empresa = $id_empresa[0];
 			
@@ -6871,7 +6958,7 @@ if($control !='' AND  $tipo =='' ) {
 
 		$modificable = remplacetas('form_id','id',$id,'modificable') ;
 		if($modificable[0] != "1" and (!isset ( $_SESSION[id]) )) {
-		$resultado ="<div class='aler alert-danger'><h1>Acceso restringido</h1> No se pueden consultar los datos.</div>";
+		$resultado ="<div class='aler alert-danger'><h1>Acceso restringido</h1> No se puede consultar los datos.</div>";
 			$respuesta->addAssign("muestra_form","innerHTML","$resultado");
 			$respuesta->addAssign("titulo_modal","innerHTML","$cabecera");
 			$respuesta->addAssign("pie_modal","innerHTML","$pie");
