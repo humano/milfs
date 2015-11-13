@@ -329,6 +329,10 @@ while($row = mysql_fetch_array( $sql ))
     $nombre_campo =  remplacetas('form_campos','id',$id_campo[0],'campo_nombre',"") ;
     //$array[id_campo] = $row[id_campo];
     $array[$nombre_campo[0]] = "$contenido[0]";
+    $array['timestamp'] = "$row[timestamp]";
+    $array['proceso'] = "$row[proceso]";
+    $array['id'] = "$row[id]";
+    $array['orden'] = "$row[orden]";
     //$array[] = $row;
 
 
