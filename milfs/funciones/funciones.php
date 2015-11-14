@@ -964,7 +964,7 @@ $resultado = "
 }
 $xajax->registerFunction("mostrar_modal");
 
-function portal_filtro_cadena($formulario,$id_campo,$control){
+function portal_filtro_cadena($formulario,$id_campo,$control,$div,$plantilla){
 $cadena = 	remplacetas('form_datos','control',"$control",'contenido',"form_id = '$formulario' AND id_campo ='$id_campo' ") ;
 $consulta ="SELECT * FROM form_campos ,form_datos 
 				WHERE form_datos.form_id = '$formulario' AND form_campos.id = form_datos.id_campo AND form_datos.id_campo = '$id_campo' AND contenido = '$cadena[0]' 
@@ -975,7 +975,10 @@ $sql=mysql_query($consulta,$link);
 if (mysql_num_rows($sql)!=0){
 
 while( $row = mysql_fetch_array( $sql ) ) {
-	$datos = contenido_mostrar("$formulario","$row[control]",'',"");
+	
+	
+	$datos = contenido_mostrar("$formulario","$row[control]",'',"$plantilla");
+	if($plantilla == "") {
 $listado .= "<div class='panel panel-default'>
 				<div class='panel-heading'><h3>$cadena[0]<a class='btn btn-info pull-right' target='api' href='http://$_SERVER[HTTP_HOST]/milfs/api.php?identificador=$row[control]' >{json}</a></h3> </div>
 				<div class='panel-body'>
@@ -984,6 +987,7 @@ $listado .= "<div class='panel panel-default'>
 				</div>
 				</div>
 ";
+}else{$listado .= $datos; } 
 }
 $resultado = "	
 	<br>
@@ -991,15 +995,18 @@ $resultado = "
 		
 ";
 }
+
+if ($div ==""){$div="mostrar_contenido";}
+else {$div = "$div";}
 $respuesta = new xajaxResponse('utf-8');
-$respuesta->addAssign("mostrar_contenido","innerHTML","$resultado");
+$respuesta->addAssign("$div","innerHTML","$resultado");
 			return $respuesta;
 }
 $xajax->registerFunction("portal_filtro_cadena");
 
 
 
-function portal_filtro_campos($formulario,$id_campo){
+function portal_filtro_campos($formulario,$id_campo,$div,$plantilla){
 $formulario_descripcion = remplacetas('form_id','id',"$formulario",'descripcion',"") ;
 $formulario_nombre = remplacetas('form_id','id',"$formulario",'nombre',"") ;
 $campo_nombre = remplacetas('form_campos','id',"$id_campo",'campo_nombre',"") ;
@@ -1012,7 +1019,7 @@ $sql=mysql_query($consulta,$link);
 if (mysql_num_rows($sql)!=0){
 
 while( $row = mysql_fetch_array( $sql ) ) {
-$listado .= "<li class='list-group-item'><a href='#' onclick=\"xajax_portal_filtro_cadena('$formulario','$id_campo','$row[control]') \" title='$row[control]'>$row[contenido]</a></li>";
+$listado .= "<li class='list-group-item'><a href='#' onclick=\"xajax_portal_filtro_cadena('$formulario','$id_campo','$row[control]','$div') \" title='$row[control]'>$row[contenido]</a></li>";
 }
 $resultado = "	
 		 <ul class='list-group'>
@@ -1027,7 +1034,7 @@ return $resultado;
 
 
 
-function portal_filtro_campos_select($formulario,$id_campo){
+function portal_filtro_campos_select($formulario,$id_campo,$div,$plantilla){
 $formulario_descripcion = remplacetas('form_id','id',"$formulario",'descripcion',"") ;
 $formulario_nombre = remplacetas('form_id','id',"$formulario",'nombre',"") ;
 $campo_nombre = remplacetas('form_campos','id',"$id_campo",'campo_nombre',"") ;
@@ -1043,7 +1050,7 @@ while( $row = mysql_fetch_array( $sql ) ) {
 $listado .= "<option value = '$row[control]'>$row[contenido]</option>";
 }
 $resultado = "	
-		<select class='form-control' onchange=\"xajax_portal_filtro_cadena('$formulario','$id_campo',(this.value)) \" >
+		<select class='form-control' onchange=\"xajax_portal_filtro_cadena('$formulario','$id_campo',(this.value),'$div','$plantilla') \" >
 		<option =''>$campo_nombre[0]</option>
 		 		 $listado 
 		 </select>
@@ -4830,8 +4837,12 @@ $sql=mysql_query($consulta,$link);
 $control=mysql_result($sql,0,"control");
 if (mysql_num_rows($sql)!=0){
 mysql_data_seek($sql, 0);
-$resultado = contenido_mostrar("$id_form","$control",'',"$plantilla");
+while( $row = mysql_fetch_array( $sql ) ) 
+							{
+$resultado .= contenido_mostrar("$row[form_id]","$row[control]",'',"$plantilla");
+
 									}
+								}
 $respuesta = new xajaxResponse('utf-8');
 $respuesta->addAssign("mostrar_resultado","innerHTML",$resultado);
 			return $respuesta;

@@ -11,7 +11,7 @@ require ('milfs/funciones/login.php');
 require_once ('milfs/includes/markdown.php');
 require ("milfs/funciones/conex.php");
 $formulario ="5";
-$campo_filtro ="5";
+$campo_filtro ="74";
 $xajax->processRequests(); 
 $logo = remplacetas('empresa','id','1','imagen') ;
 $direccion = remplacetas('empresa','id','1','direccion') ;
@@ -109,7 +109,10 @@ color: black !important;
 		<div class='btn btn-success btn-block' onclick ="xajax_mostrar_modal('<?php echo $formulario; ?>','','');"> <i class='fa fa-plus-square'></i> Agregar </a></div>
 		</div>
 		<div class='col-sm-7 col-md-5' >
-		<?php echo formulario_campos_filtro("$formulario","$campo_filtro","","xajax_mostrar_coincidencias_plantilla('$formulario','$campo_filtro',(this.value),'grid'); "); ?>
+			<div class='input-group'>
+			<span class='input-group-addon'>Filtro <i class='fa fa-filter'></i> </span>
+		<?php echo portal_filtro_campos_select($formulario,"$campo_filtro","mostrar_resultado","grid");  ?>
+			</div>
 		</div>
 		<?php  echo buscar_datos("","$formulario","grid","mostrar_resultado"); ?>
 	</div>
