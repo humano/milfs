@@ -6492,7 +6492,7 @@ $consulta ="
 								}
 									$render .= "
 																		
-																		<iframe id='mapita' src='$_SESSION[url]/mapa.php?lat=$lat&lon=$lon&zoom=$zoom&id=".$id_campo."[".$item."]' width='100%' height='300px'></iframe>
+																		<iframe id='mapita' src='$_SESSION[url]mapa.php?lat=$lat&lon=$lon&zoom=$zoom&id=".$id_campo."[".$item."]' width='100%' height='300px'></iframe>
 																		<input   value='$value' type='text' id='".$id_campo."[".$item."]' name='".$id_campo."[".$item."]' class='form-control' placeholder='coordenadas' readonly >
 																		
 																				 ";
