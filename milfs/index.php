@@ -190,7 +190,7 @@ revisar_ingreso('');
        <div class="">
 	       <div class="container">
         <a href='http://QWERTY.co/milfs'>&copy; MILFS Un proyecto de http://QWERTY.co</a> Se distribuye bajo licencia GPL V3
-        <a href="#" data-target="#muestraInfo" data-toggle="modal"><i class="fa fa-smile-o "></i> Políticas de privacidad y protección de datos.</a>
+        <a href="?psi" target="_psi"><i class="fa fa-smile-o "></i> Políticas de privacidad y protección de datos.</a>
         	</div> 
       </div>
       <?php } ?>
