@@ -56,7 +56,7 @@ if (isset($_REQUEST['t'])) {$t = $_REQUEST['t'];} else {$t = "";}
 <?php
 
 					if($id !='' OR $c ){$onload ="<script type=\"text/javascript\"> xajax_formulario_modal('".$id."','','".$c."','".$t."')</script>";}
-					
+						if( isset($_REQUEST['psi'])){$onload ="<script type=\"text/javascript\"> xajax_mostrar_psi()</script>";}
 ?>
 
 <!--      <script src="js/jquery.min.js"></script>
@@ -108,6 +108,7 @@ function evdrop(ev,el) { //ev=el evento; el=receptor de soltado
 <?php if($embebido ==1) { 
 if($form!=''){	 echo formulario_embebido($form,$opciones);}
 elseif($identificador !='') { echo mostrar_identificador($identificador,$id);}
+//elseif($_REQUEST['psi'] !='') { include("psi.php") ; echo $aviso;}
 else{}
 
 }else{
@@ -135,7 +136,7 @@ else{}
 <?php }else{ } ?>
 
 
-
+<div id='debug'></div>
 	<div class='container'>
 		<div id='contenido'>
 		
@@ -149,7 +150,8 @@ else{}
 <?php if(isset($_REQUEST['change'])){
 echo cambiar_password_formato("$_REQUEST[change]");
 }
-revisar_ingreso('');?>		
+revisar_ingreso('');
+?>		
 
 <?php echo $pie; ?>
 <img class='img-responsive center-block' src="images/logo.png" alt="MILFS">
@@ -171,7 +173,7 @@ revisar_ingreso('');?>
         <h4 class='modal-title' id='myModalLabel_info'><div id='titulo_modal'></div></h4>
       </div>
       <div class='modal-body'>
-
+		<?php	include("psi.php") ;?>
        <div id='muestra_form'></div>
       </div>
       <div class='modal-footer' id='pie_modal'>
@@ -188,7 +190,7 @@ revisar_ingreso('');?>
        <div class="">
 	       <div class="container">
         <a href='http://QWERTY.co/milfs'>&copy; MILFS Un proyecto de http://QWERTY.co</a> Se distribuye bajo licencia GPL V3
-        <a target="_blank" href='http://qwerty.co/faq/category/19/privacidad-y-protecci%C3%B3n-de-datos.html'>Políticas de privacidad y protección de datos.</a> 
+        <a href="#" data-target="#muestraInfo" data-toggle="modal"><i class="fa fa-smile-o "></i> Políticas de privacidad y protección de datos.</a>
         	</div> 
       </div>
       <?php } ?>

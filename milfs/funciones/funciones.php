@@ -1,11 +1,133 @@
 <?php
 date_default_timezone_set('America/Bogota');
 
-function form_publico($id){
+function mostrar_psi(){
+$respuesta = new xajaxResponse('utf-8');
+include("psi.php");
+			//$div_contenido = "<div id='$div'>$div</div>";
+			$respuesta->addAssign("muestra_form","innerHTML","$aviso");
+			//$respuesta->addAssign("titulo_modal","innerHTML","Hola mundo");
+			//$respuesta->addAssign("pie_modal","innerHTML","$pie");
+			//$respuesta->addAssign("$div","innerHTML","$resultado");
+			$respuesta->addscript("$('#muestraInfo').modal('toggle')");	
 
+			return $respuesta;
 
-return $resultado;
 }
+$xajax->registerFunction("mostrar_psi");
+
+function multiempresa_crear($tabla,$formulario,$div) {
+$formulario = limpiar_caracteres($formulario);
+$link=Conectarse(); 
+	mysql_query("SET NAMES 'utf8'");
+	foreach($formulario as $c=>$v){ 
+	
+	$valores .= " $c = '".mysql_real_escape_string($v)."',";
+	}
+	$valores = "$valores id_responsable = '$_SESSION[id]'";
+	
+$respuesta = new xajaxResponse('utf-8');
+	
+	$insertar = "INSERT INTO $tabla set $valores";
+	$sql=mysql_query($insertar,$link);
+		if(mysql_affected_rows($link) != 0){
+
+														}
+if($div !='') {
+
+
+				}
+	$respuesta->addScript("javascript:xajax_multiempresa('empresa','$div')");
+									return $respuesta;					
+}
+$xajax->registerFunction("multiempresa_crear");
+
+	
+function multiempresa($tabla,$div){
+	if($_SESSION['id'] == 1) {
+	if($div =="") {
+		$div="contenido";		
+		$resultado ="<a class='btn btn-warning' title='Configuración' href='#' onclick= \"xajax_multiempresa('empresa','$div') \"><i class='fa fa-cogs'></i><i class='fa fa-cogs'></i> Configuración multiempresa</a>";
+		return $resultado;
+		}
+$link=Conectarse(); 
+
+mysql_query("SET NAMES 'utf8'");
+$id_empresa= $_SESSION['id_empresa'];
+$consulta = "SELECT * FROM empresa ";
+$sql=mysql_query($consulta,$link);
+
+$resultado="<table class='table table-striped table-responsive' >
+<legend>$name</legend>
+<tr ><th>Id</th><th>Nombre</th><th>Sigla</th><th>Email</th><th>Web</th><th>Dirección</th><th>Teléfono</th><th></th></tr>
+				" ;
+if (mysql_num_rows($sql)!='0'){
+	if($onchange !=''){$vacio ="";}else{$vacio ="<option value=''> >> Nuevo $descripcion << </option>";}
+
+$linea = 1;
+while( $row = mysql_fetch_array( $sql ) ) {
+$razon_social= editar_campo("empresa",$row['id'],"razon_social","","","");
+$sigla= editar_campo("empresa",$row['id'],"sigla","","","");
+$email= editar_campo("empresa",$row['id'],"email","","","");
+$web= editar_campo("empresa",$row['id'],"web","","","");
+$direccion= editar_campo("empresa",$row['id'],"direccion","","","");
+$telefono= editar_campo("empresa",$row['id'],"telefono","","","");
+$estado= editar_campo("empresa",$row['id'],"estado","","","");
+
+if($row[id] !=1) {$acciones = "<a  onclick=\" xajax_eliminar_campo('empresa','$row[id]','tr_$row[id]')\"><i class='fa fa-trash-o'></i> </a> Estado: $estado";}
+$resultado .= "<tr id ='tr_$row[id]'><td>$row[id]</td><td>$razon_social</td><td>$sigla</td><td>$email</td><td>$web</td><td>$direccion</td><td>$telefono</td><td class='danger'>$acciones </td></tr>";
+$linea++;
+															}
+
+
+										}else{
+	$resultado = "<div class='alert alert-warning'><i class='fa fa-exclamation-triangle'></i> No hay resultados</div>";
+	}
+
+$resultado .= "
+</table>
+<legend>Agregar empresa</legend>
+<div class='row'>
+<form role='form' id='agregar' name='agregar'>
+<input type='hidden' name='estado' id='estado' value='1'>
+
+<div class='col-xs-4'>
+	<div class='input-group'>
+		<span class='input-group-addon'>Nombre</span>
+		<input placeholder='Nombre de la nueva empresa' class='form-control' type='text' id='razon_social'  name='razon_social' >
+	</div>
+</div>
+<div class='col-xs-4'>
+	<div class='input-group'>
+		<span class='input-group-addon'><i class='fa fa-envelope'></i></span>
+		<input placeholder='Email de la nueva empresa'  class='form-control' type='text' id='email'  name='email' >
+	</div>
+</div>
+<div class='col-xs-3'>
+	<div class='input-group'>
+		<span class='input-group-addon'><i class='fa fa-globe'></i></span>
+		<input placeholder='Web de la nueva empresa'  class='form-control' type='text' id='web'  name='web' >
+	</div>
+</div>
+<div class='col-xs-1'>
+<div class='btn btn-default btn-success btn-block' onclick=\"xajax_multiempresa_crear('$tabla',xajax.getFormValues('agregar'),'$div'); \"><i class='fa fa-save'></i></div>
+</div>
+</form>
+</div>
+<br>
+
+";
+//return $resultado;
+   		//$respuesta = new xajaxResponse('utf-8');
+    		$respuesta = new xajaxResponse('utf-8');
+			$respuesta->addAssign("$div","innerHTML","$resultado");
+			return $respuesta;
+			}
+}
+$xajax->registerFunction("multiempresa");
+
+
+
 
 
 
@@ -3877,7 +3999,10 @@ $link ="<a title='Configuración' href='#' onclick=\"xajax_configuracion('mostra
 return $link;
 }elseif($accion=='mostrar') {
 	$respuesta = new xajaxResponse('utf-8');
-	$resultado ="<h1><i class='fa fa-cogs'></i> Configuración</h1>";
+	$multiempresa= multiempresa('');
+	$login = "<div title='agregar usuarios' class='btn btn-success' onclick=\"xajax_registro_express(xajax.getFormValues('login'),'nuevo');\"><i class='fa fa-plus'></i> <i class='fa fa-users'></i> Gestión de usuarios</div>";
+	$resultado ="<h1><i class='fa fa-cogs'></i> Configuración</h1>
+	$multiempresa $login";
 	$link=Conectarse(); 
 	mysql_query("SET NAMES 'utf8'");
 	$consulta = "SELECT * FROM empresa WHERE  id = '$_SESSION[id_empresa]' LIMIT 1";
@@ -3896,7 +4021,7 @@ return $link;
 		$apellido = editar_campo("usuarios","$_SESSION[id]","p_apellido","");
 		$email = editar_campo("usuarios","$_SESSION[id]","email","");
 		$username = editar_campo("usuarios","$_SESSION[id]","username","");
-
+		
 		$subir_imagen = subir_imagen();	
 		$subir_imagen .= "<input name='imagen' id='imagen' type='hidden' >
 						<div onclick = \"xajax_cambiar_imagen((document.getElementById('imagen').value),'empresa','$_SESSION[id_empresa]') \"; 
@@ -3917,13 +4042,12 @@ return $link;
 					
 					'>
 
-						<div style='position:relative; top:120px;';>
-								$subir_imagen
-						</div>
+
 				</div>
 				<div class='row'>
 					<div class='col-sm-6'>
 						<h2>Datos de la institución</h2>
+						
 						
 							<li>$empresa_razon_social</li>
 							<li>$empresa_slogan</li>
@@ -3946,6 +4070,9 @@ return $link;
 						
 					</div>
 				</div>
+										<div style='';>
+								$subir_imagen
+						</div>
 			
 					";
 
@@ -4009,7 +4136,7 @@ function eliminar_campo($tabla,$key,$div) {
 $respuesta = new xajaxResponse('utf-8');
 	$link=Conectarse(); 
 	mysql_query("SET NAMES 'utf8'");
-	$borrar = "DELETE FROM $tabla WHERE id = '$key'";
+	$borrar = "DELETE FROM $tabla WHERE id = '$key' limit 1";
 //	$edit = "UPDATE  $tabla SET  $campo =  '$valor' WHERE id = '$key' limit 1; ";
 	$sql=mysql_query($borrar,$link);
 		if(mysql_affected_rows($link) != 0){
@@ -4164,7 +4291,7 @@ else{
 		$valor=mysql_result($sql_consulta,0,"valor");
 		
 		/////// campos que no se muestran ///
-if($campo == 'id' OR $campo == 'id_usuario' OR $campo == 'id_empresa' OR $campo == 'id_grupo') {
+if($campo == 'id' OR $campo == 'id_usuario' OR $campo == 'id_grupo') {
 return ;
 }
 
@@ -6016,7 +6143,7 @@ $respuesta->addRedirect("index.php");
 return $respuesta;
 }
 		
-	$id_empresa= $_SESSION['id'];
+	$id_empresa= $_SESSION['id_empresa'];
 		if($div==''){
 					$div = "contenido";
 $resultado = "<li id='link_formulario'><a href='#'  onclick=\"xajax_formulario_listado('$_SESSION[grupo_formularios]','$div'); \"><i class='fa fa-list'></i> Formularios</a></li> ";
@@ -6051,7 +6178,7 @@ $respuesta->addAssign("link_formulario","innerHTML",$resultado_link);
 
 $divider = 1;
 $columnas = intval(12/$divider);
-				$listado_grupos = select('form_grupo','grupo','grupo',"xajax_formulario_listado((this.value),'contenido')","AGRUPADO",'');
+				$listado_grupos = select_empresa('form_grupo','grupo','grupo',"xajax_formulario_listado((this.value),'contenido')","AGRUPADO",'','',"$id_empresa");
 				$listado_grupos ="
 				<div class='input-group'>
 					<span class='input-group-addon'>Seleccione un grupo de formularios</span>
@@ -7154,15 +7281,48 @@ $consulta = "SELECT $value, $descripcion FROM $tabla WHERE 1 $w $group ORDER BY 
 $sql=mysql_query($consulta,$link);
 if($nombre==''){$name=$tabla."_".$value;}else{$name = "$nombre";}
 if (mysql_num_rows($sql)!='0'){
-	if($onchange !=''){$vacio ="<option value=''>Todos los valores</option>";}else{$vacio ="<option value=''> >> Nuevo $descripcion << </option>";}
+	if($onchange !=''){$vacio ="<option value=''>Todos los valores</option>";}else{$vacio ="<option value=''> </option>";}
 $resultado="<SELECT class='form-control' NAME='$name' id='$name' onchange=\"$onchange\" title='Seleccione $descripcion'  >
 <option value=''>$nombre</option>$vacio
 				" ;
 while( $row = mysql_fetch_array( $sql ) ) {
 if($row[$value]=="") {$resultado.="";}else{
 if($row[$value] ==="$valor"){$selected="selected";}else{$selected ="";}
+$mostrar_id = "[$row[$value]]";
+$resultado .= "<option value='$row[$value]' $selected > ".substr($row[$campo1], 0, 150 )." ".substr($row[$campo2], 0, 30 )." $mostrar_id </option>";
+															}
+														}
+$resultado .= "</select>";
+										}else{$resultado = "<div class='alert alert-warning'><i class='fa fa-exclamation-triangle'></i> No hay resultados</div>";}
 
-$resultado .= "<option value='$row[$value]' $selected > ".substr($row[$campo1], 0, 150 )." ".substr($row[$campo2], 0, 30 )." [$row[$value]] </option>";
+return $resultado;
+}
+
+function select_empresa($tabla,$value,$descripcion,$onchange,$where,$nombre,$valor,$id_empresa){
+$link=Conectarse(); 
+$campos = explode(",",$descripcion);
+$campo1 = $campos[0];
+$campo2 = $campos[1];
+$debug = "($tabla,$value,$descripcion,$onchange,$where)";
+mysql_query("SET NAMES 'utf8'");
+$id_empresa= $_SESSION['id_empresa'];
+if($where =='AGRUPADO'){$group="GROUP BY $value ";}
+elseif($where != ''){$w = "AND  ".$where;}else{ $w="";}
+$busca = array("[","]");
+if( strpos( $onchange,'[') !== false ){$fila=str_replace($busca,'',$onchange);$onchange='';};
+$consulta = "SELECT $value, $descripcion FROM $tabla WHERE id_empresa = '$id_empresa' $w $group ORDER BY $campo1   ";
+$sql=mysql_query($consulta,$link);
+if($nombre==''){$name=$tabla."_".$value;}else{$name = "$nombre";}
+if (mysql_num_rows($sql)!='0'){
+	if($onchange !=''){$vacio ="<option value=''>Todos los valores</option>";}else{$vacio ="<option value=''> </option>";}
+$resultado="<SELECT class='form-control' NAME='$name' id='$name' onchange=\"$onchange\" title='Seleccione $descripcion'  >
+<option value=''>$nombre</option>$vacio
+				" ;
+while( $row = mysql_fetch_array( $sql ) ) {
+if($row[$value]=="") {$resultado.="";}else{
+if($row[$value] ==="$valor"){$selected="selected";}else{$selected ="";}
+$mostrar_id = "[$row[$value]]";
+$resultado .= "<option value='$row[$value]' $selected > ".substr($row[$campo1], 0, 150 )." ".substr($row[$campo2], 0, 30 )." $mostrar_id </option>";
 															}
 														}
 $resultado .= "</select>";
@@ -7384,8 +7544,8 @@ if($pos == "") { //// si no es un email
 
 			$respuesta->addAssign("$campo","value","$pos");
 			$respuesta->addAssign("$campo_confirmacion","value","");
-			$respuesta->addAppend("$campo"."_grupo","className"," has-error ");
-			$respuesta->addAppend("$campo_confirmacion"."_grupo","className"," has-error ");
+			$respuesta->addAppend("$campo"."_grupo","className"," input-group  has-error ");
+			$respuesta->addAppend("$campo_confirmacion"."_grupo","className","input-group  has-error ");
 			$respuesta->addScript("document.getElementById('$campo').focus(); ");
 			//        document.getElementById('mobileno').focus(); 
 
@@ -7395,8 +7555,8 @@ if($pos == "") { //// si no es un email
 	
 			$respuesta->addAssign("$campo","className"," form-control  ");
 			$respuesta->addAssign("$campo_confirmacion","className"," form-control  ");
-			$respuesta->addAssign("$campo"."_grupo","className"," has-success ");
-			$respuesta->addAssign("$campo_confirmacion"."_grupo","className","  has-success ");
+			$respuesta->addAssign("$campo"."_grupo","className"," input-group has-success ");
+			$respuesta->addAssign("$campo_confirmacion"."_grupo","className"," input-group  has-success ");
 			}
 		return $respuesta;	
 }
@@ -7576,6 +7736,7 @@ function milfs(){
 	$importador = formulario_importador('');
 	$limpiar_cache = borrar_tmp('');
 	$configuracion= configuracion('');
+
 	$login = login_boton(''); 
 	$menu = 
 "    <!-- Collect the nav links, forms, and other content for toggling -->

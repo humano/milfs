@@ -1,4 +1,55 @@
 <?php
+
+
+	
+function usuarios_listado($tabla,$div){
+	
+	if($_SESSION['id'] == 1) { } else {$w_empresa = "WHERE id_empresa= '$_SESSION[id_empresa]' ";}
+
+$link=Conectarse(); 
+
+mysql_query("SET NAMES 'utf8'");
+
+$consulta = "SELECT * FROM $tabla $w_empresa ";
+$sql=mysql_query($consulta,$link);
+
+$resultado="<table class='table table-striped table-responsive' >
+<legend>$name</legend>
+<tr ><th>Id</th><th>Username</th><th>Nombre</th><th>Email</th><th>Documento</th><th>Empresa</th><th>Documento</th><th></th></tr>
+				" ;
+if (mysql_num_rows($sql)!='0'){
+	if($onchange !=''){$vacio ="";}else{$vacio ="<option value=''> >> Nuevo $descripcion << </option>";}
+
+$linea = 1;
+while( $row = mysql_fetch_array( $sql ) ) {
+$username= editar_campo("$tabla",$row['id'],"username","","","");
+$p_nombre= editar_campo("$tabla",$row['id'],"p_nombre","","","");
+$p_apellido= editar_campo("$tabla",$row['id'],"p_apellido","","","");
+$empresa_id= editar_campo("$tabla",$row['id'],"id_empresa","","","");
+
+
+
+
+if($row[id] !=1) {$acciones = "<a  onclick=\" xajax_eliminar_campo('$tabla','$row[id]','tr_$row[id]')\"><i class='fa fa-trash-o'></i></a>";}
+$resultado .= "<tr id ='tr_$row[id]'><td>$row[id]</td><td>$username</td><td>$p_nombre $p_apellido</td><td>$row[email]</td><td>$row[documento_numero]</td><td> $empresa_id </td><td>$row[documento_numero]</td><td class='danger'>$acciones </td></tr>";
+$linea++;
+															}
+
+
+										}else{
+	$resultado = "<div class='alert alert-warning'><i class='fa fa-exclamation-triangle'></i> No hay resultados</div>";
+	}
+
+	if($div =="") {
+		$div="contenido";		
+	//	$resultado ="<a class='btn btn-warning' title='Configuración' href='#' onclick= \"xajax_multiempresa('empresa','$div') \">Configuración multiempresa</a>";
+		return $resultado;
+		}
+	$respuesta->addScript("javascript:xajax_multiempresa('empresa','$div')");
+									return $respuesta;					
+}
+$xajax->registerFunction("usuarios_listado");
+
 function login_boton($formulario){
 		if($formulario =='x') {
 			session_destroy();
@@ -31,42 +82,52 @@ $xajax->registerFunction("login_boton");
 
 
 function registro_express($formulario,$accion) {
-	$formulario	= mysql_seguridad($formulario);
-//	if(is_array($formulario) ){$nombre_formulario = $formulario['nombre_formulario'];}else{$nombre_formulario = "$formulario";}
+	//$formulario	= mysql_seguridad($formulario);
+		require("includes/datos.php");
 	if($nombre_formulario =="") {$nombre_formulario = "login";}
-/*	
-	foreach($formulario as $c=>$v){ 
-
-//LISTA ELEMENTOS DE UN ARRAY
-if (is_array($v) ){
-	foreach($v as $C=>$V){
-			if($V != '') {$resultado .= "$$c =  \$formulario[$c][$C]; // <b>$V</b> </p>";}  
-								}
-									
-
-						} else {
-			if($v !='') {$resultado .= "$$c = \$formulario[$c]; // <b>$v</b> </p>";}
- 								}
-										
-										}  
-	*/
 	$boton ="<div class='btn btn-block btn-success' onclick=\"xajax_registro_express(xajax.getFormValues('$nombre_formulario'),'confirmar')\">Grabar </div>";
 $respuesta = new xajaxResponse('utf-8');
+
+
 	if($accion =='confirmar')
 	{
-		
-				$div = "registro_confirmacion_email";
-
-if($formulario[password_express_confirmar] =="" OR $formulario[password_express_confirmar] != $formulario[password_express] ){
-	$resultado ="<div class='alert alert-danger'>Por favor escribe y confirma una clave.</div> $boton";
-		   	$respuesta->addAssign("password_express"."_grupo","className"," input-group has-error ");
-	   		$respuesta->addAlert("Por favor escribe y confirma la clave");
-				$respuesta->addScript("document.getElementById('password_express').focus(); ");
-				$respuesta->addAssign("$div","innerHTML",$resultado);
-return $respuesta;
-
-				}
-		if($formulario[email_express_confirmar] !="") {
+	$div = "registro_confirmacion_email";
+	$email_existe =  remplacetas("$tabla_autenticacion","email",$formulario[email_express_confirmar],"email","");
+	$documento_existe =  remplacetas("$tabla_autenticacion","documento_numero",$formulario[documento_express],"documento_numero","");
+		if($email_existe[0] !="" or $formulario[email_express_confirmar] ==="") { 
+		$respuesta->addAlert("No se ha especificado un email o ya está en uso ");
+		$respuesta->addAssign("email_express_grupo","className"," input-group has-error ");
+		///$respuesta->addAssign("debug","innerHTML","<br><br>$email_existe[2]");
+		$respuesta->addScript("document.getElementById('email_express').focus(); ");
+		return $respuesta;
+		}
+		if($documento_existe[0] !=""  OR $formulario[documento_express] === "") { 
+		$respuesta->addAlert("No se ha proporcionado un documento único // $formulario[documento_express] // ");
+		$respuesta->addAssign("documento_express_grupo","className"," input-group has-error ");
+		$respuesta->addScript("document.getElementById('documento_express').focus(); ");
+		return $respuesta;
+		}
+		if( !isset($formulario[password_express_confirmar])   ){
+		$resultado ="<div class='alert alert-danger'>Por favor escribe  una clave. $formulario[password_express_confirmar] // $formulario[password_express]</div> $boton";
+		$respuesta->addAssign("password_express"."_grupo","className"," input-group has-error ");
+	   $respuesta->addAlert("Por favor escribe una la clave ");
+		$respuesta->addScript("document.getElementById('password_express').focus(); ");
+		$respuesta->addAssign("$div","innerHTML",$resultado);
+		return $respuesta;
+		}
+		if($formulario[password_express_confirmar] ==""    or $formulario[password_express_confirmar] !== $formulario[password_express] ){
+		$resultado ="<div class='alert alert-danger'>Por favor escribe y confirma una clave. $formulario[password_express_confirmar] // $formulario[password_express]</div> $boton";
+		$respuesta->addAssign("password_express"."_grupo","className"," input-group has-error ");
+	   $respuesta->addAlert("Por favor escribe y confirma la clave XXX");
+		$respuesta->addScript("document.getElementById('password_express').focus(); ");
+		$respuesta->addAssign("$div","innerHTML",$resultado);
+		return $respuesta;
+		}
+		if($formulario[email_express_confirmar] ==="") {
+		$resultado .= "$boton <div class='alert alert-danger'>No hay un email válido //  $formulario[email_express_confirmar] </div>";
+		$respuesta->addAssign("$div","innerHTML",$resultado);
+		return $respuesta;		
+									}else{
 			$email_envio = $formulario['email_express_confirmar'];
 
 		$rrn = rand(123,999);
@@ -82,22 +143,21 @@ return $respuesta;
 		
 $headers = "MIME-Version: 1.0\r\n"; 
 $headers .= "Content-type: text/html; charset=iso-8859-1\r\n"; 
-$headers .= "From: Comunidad QWERTY.co <comunidad@qwerty.co>\r\n"; 
-$headers .= "Reply-To: comunidad@qwerty.co\r\n"; 
-$headers .= "Return-path: comunidad@qwerty.co\r\n"; 
+$headers .= "From: $razon_social[0] <$email[0]>\r\n"; 
+$headers .= "Reply-To: $email[0]\r\n"; 
+$headers .= "Return-path: $email[0]\r\n"; 
 
 $asunto= "Código de validación";
 $cuerpo ="
 <div style='border: solid 1px; padding:20px ; border-radius: 10px; background-color:#E6F8E0 '>
-<h1>Comunidad QWERTY.co</h1>
+<h1>Registro</h1>
 
 <hr />
 <h3>Código de validación</h3>
-<p>Bienvenido a nuestra comunidad <strong>QWERTY.co<strong> Por favor digita el siguente código para validar tu cuenta.</p>
+<p>Bienvenido a nuestra aplicación.  Por favor digita el siguente código para validar tu cuenta.</p>
 <H1>$rrn</H1>
 
 
-<h3>Toda la ayuda que necesitas la puedes encontrar en nuestra sección de respuestas a preguntas frecuentes: http://qwerty.co/faq.</h3>
 </div>
 		$aviso
 			";
@@ -129,9 +189,6 @@ mail("$email_envio","$asunto","$cuerpo","$headers") ;
 		</div>	
 	$boton
 	";
-									}else{
-	$resultado .= "$boton <div class='alert alert-danger'>No hay un email válido </div>";
-									
 									}
 									
 $respuesta->addAssign("$div","innerHTML",$resultado);
@@ -176,6 +233,8 @@ $rrn = $formulario[rrn]; //
 $codificado = md5("$codigo_confirmacion");
 if($rrn == $codificado) {
 $control = $formulario[control]; // nuevo_ 
+$id_empresa = $formulario[id_empresa]; // nuevo_ 
+if($id_empresa =="") {$id_empresa= $_SESSION['id_empresa'];}
 $nombre_formulario = $formulario[nombre_formulario]; // nuevo_
 $email_express = $formulario[email_express]; // aa@gmail.com
 $email_express_confirmar = $formulario[email_express_confirmar]; // aa@gmail.com
@@ -183,14 +242,17 @@ $nombre_express = $formulario[nombre_express]; // nombre
 $apellido_express = $formulario[apellido_express]; // apellido
 $telefono_express = $formulario[telefono_express]; // 324343
 $password_express = $formulario[password_express]; // 1234
+$documento = $formulario[documento_express]; // 1234
 $password_express_confirmar = $formulario[password_express_confirmar]; // 23456
 	$ip = obtener_ip();
 
 	$link = Conectarse();
 mysql_query("SET NAMES 'utf8'");
 
-$consulta = "INSERT INTO usuarios (username,p_nombre,p_apellido,email,bio,passwd,control,status,lastip,id_empresa) 
-				VALUES ('$email_express_confirmar','$nombre_express','$apellido_express','$email_express_confirmar','','".MD5($password_express_confirmar)."','$control','1','$ip','$_SESSION[id_empresa]')";
+$consulta = "INSERT INTO $tabla_autenticacion (username,p_nombre,p_apellido,email,passwd,control,status,lastip,id_empresa,documento_numero) 
+				VALUES ('$email_express_confirmar','$nombre_express','$apellido_express','$email_express_confirmar','".MD5($password_express_confirmar)."','$control','1','$ip','$id_empresa','$documento')";
+//$respuesta->addAssign("debug","innerHTML",$consulta);
+//return $respuesta;
 	$sql_consulta=mysql_query($consulta,$link);
 	if($sql_consulta) {
 		$id = mysql_insert_id();
@@ -226,14 +288,29 @@ return $respuesta;
 elseif($accion =="nuevo") {
 //$respuesta = new xajaxResponse('utf-8');
 		$div="contenido";
+		if($_SESSION['id'] == 1) {
+$empresa = select('empresa','id','razon_social','',"estado = '1'",'id_empresa');
+$empresa ="
+<div class='input-group'>
+	<span class='input-group-addon'>Empresa</span>
+	$empresa
+</div>
+
+";
+}
+$listado_usuarios = usuarios_listado($tabla_autenticacion,"");
 $form = "
+
 <div class='alert alert-warning'>
 <form class='form' id='$nombre_formulario' name='$nombre_formulario' >
 <input type='hidden' value = 'nuevo_$nombre_formato' id='nombre_formulario' name='nombre_formulario' >
-	<legend>Datos de contacto</legend>
+	<legend>Usuario </legend>
+		$empresa
 		<div class='row'>
-			<div class='col-sm-6'>
+			<div class='col-md-6'>
+			<label></label>
 				<div class='input-group' id='email_express_grupo'>
+				
 					<span class='input-group-addon'>
 						<i class='fa fa-envelope-o'></i>
 					</span>
@@ -242,8 +319,8 @@ $form = "
 					 	onchange=\"xajax_validar_usuario('email',(this.value),'email_express','login'); \"  > 
 				</div>
 			</div>
-			<div class='col-sm-6'>
-				
+			<div class='col-md-6'>
+				<label></label>
 				<div class='input-group' id='email_express_confirmar_grupo'>
 					<span class='input-group-addon'>
 						<i class='fa fa-envelope'></i>
@@ -255,7 +332,8 @@ $form = "
 			</div>
 		</div>
 		<div class='row'>
-			<div class='col-sm-12'>
+			<div class='col-md-6'>
+			<label></label>
 				<div class='input-group' id='nombre_express'>
 					<span class='input-group-addon'>
 						<i class='fa fa-user'></i>
@@ -263,9 +341,9 @@ $form = "
 					<input type='text' id='nombre_express' name='nombre_express' placeholder='Nombre' class='form-control'> 
 				</div>
 			</div>
-		</div>
-		<div class='row'>
-			<div class='col-sm-12'>
+		
+			<div class='col-md-6'>
+			<label></label>
 				<div class='input-group' id='apellido_express'>
 					<span class='input-group-addon'>
 						<i class='fa fa-user '></i>
@@ -275,7 +353,19 @@ $form = "
 			</div>
 		</div>
 		<div class='row'>
-			<div class='col-sm-12'>
+			<div class='col-md-6'>
+			<label></label>
+				<div class='input-group' id='documento_express_grupo' title='Documento de identidad'>
+					
+					<span class='input-group-addon'>
+						<i class='fa fa-certificate'></i>
+					</span>
+					<input type='number' id='documento_express' name='documento_express' placeholder='Documento de identidad' class='form-control' 
+					onclick=\"(this.value=''); \"> 
+				</div>
+			</div>
+			<div class='col-md-6'>
+			<label></label>
 				<div class='input-group' id='telefono_express'>
 					
 					<span class='input-group-addon'>
@@ -287,7 +377,8 @@ $form = "
 			</div>
 		</div>
 		<div class='row'>
-			<div class='col-sm-6'>
+			<div class='col-md-6'>
+			<label></label>
 				<div class='input-group' id='password_express_grupo'>
 					<span class='input-group-addon'>
 						<i class='fa fa-key'></i>
@@ -297,6 +388,7 @@ $form = "
 				</div>
 			</div>
 			<div class='col-sm-6'>
+			<label></label>
 				<div class='input-group' id='password_express_confirmar_grupo'>
 					<span class='input-group-addon'>
 						<i class='fa fa-lock'></i>
@@ -308,7 +400,7 @@ $form = "
 			</div>
 		</div>
 		<div class='row'>
-			<div class='col-sm-12'>
+			<div class='col-md-12'>
 				<br>
 				<div id='registro_confirmacion_email'>				
 $boton
@@ -319,6 +411,11 @@ $boton
 
 </form>
 </div>
+
+<!-- listado_usuarios -->
+$listado_usuarios
+<!-- listado_usuarios -->
+
 ";		
 $respuesta->addAssign("$div","innerHTML",$form);
 return $respuesta;
@@ -393,11 +490,12 @@ $resultado = "
 				</div>
 	";
 if(!isset($_SESSION['id'])){ print $resultado; }else {
-$nuevo = "<div class='btn btn-primary  btn-block' onclick=\"xajax_registro_express(xajax.getFormValues('login'),'nuevo');\">Usuario nuevo</div>";
+
 print $nuevo ;
 }
 return;	
 	}
+	include("includes/datos.php");
 	$div='contenido';
 	$respuesta = new xajaxResponse('utf-8');
 
@@ -429,7 +527,7 @@ $mensaje ="Por favor escribe tu <strong>correo o usuario</strong> si olvidaste t
 	return $respuesta;
 	}else
 	{
-$consulta = "SELECT id,email,control,id_empresa FROM usuarios WHERE (email = '$email' OR username = '$email' )";
+$consulta = "SELECT id,email,control,id_empresa FROM $tabla_autenticacion WHERE (email = '$email' OR username = '$email' ) LIMIT 1";
 			$sql=mysql_query($consulta,$link);
 if (mysql_num_rows($sql)!='0')
 		{
@@ -438,7 +536,7 @@ $correo = mysql_result($sql,0,"email");
 $control = mysql_result($sql,0,"control");
 $id_usuario = mysql_result($sql,0,"id");
 $id_empresa = mysql_result($sql,0,"id_empresa");
-$firma ="UPDATE `usuarios` SET `firma_recuperacion` = '$firma_recuperacion' WHERE `usuarios`.`id` = '$id_usuario';";
+$firma ="UPDATE $tabla_autenticacion SET `firma_recuperacion` = '$firma_recuperacion' WHERE `id` = '$id_usuario' LIMIT 1;";
 $cambiar_firma=mysql_query($firma,$link);
 $tipo='success';
 
@@ -485,7 +583,7 @@ $mensaje ="El <strong>correo o usuario</strong> no se encuentra registrado aún.
 	return $respuesta;
 }
 	
-$consulta = "SELECT * FROM usuarios WHERE (email = '$email' OR username = '$email' )AND passwd = '$password'  LIMIT 1";
+$consulta = "SELECT * FROM $tabla_autenticacion WHERE (email = '$email' OR username = '$email' )AND passwd = '$password'  LIMIT 1";
 
 
 			$sql=mysql_query($consulta,$link);
@@ -511,7 +609,7 @@ $consulta = "SELECT * FROM usuarios WHERE (email = '$email' OR username = '$emai
 						$resultado .="
 						$sucursal
 						
-						<div class=' alert alert-success'><h3><b>Hola $_SESSION[username]</b</h3></div>";
+						<div class=' alert alert-success'><h3><b>Hola $_SESSION[username] </b</h3></div>";
 						$respuesta->addRedirect("index.php");
 						}	
 													}else{
@@ -527,7 +625,8 @@ $consulta = "SELECT * FROM usuarios WHERE (email = '$email' OR username = '$emai
 $xajax->registerFunction("revisar_ingreso");
 
 function cambiar_password_formato($change) {
-	$firma_recuperacion = remplacetas("usuarios","firma_recuperacion",$change,"firma_recuperacion") ;
+	require("includes/datos.php");
+	$firma_recuperacion = remplacetas("$tabla_autenticacion","firma_recuperacion",$change,"firma_recuperacion") ;
 	if($firma_recuperacion[0] =='') {
 		$formato ="<div class='alert alert-danger'><h1>Lo sentimos</h1><p>El Link ya no es válido</p></div>";
 		return   $formato; 
@@ -571,14 +670,15 @@ return $formato;
 function cambiar_password($formulario){
 	//	if ( !isset ( $_SESSION['id'] ) ) {	return;}
 			$respuesta = new xajaxResponse('utf-8');
+					require("includes/datos.php");
 $formulario =	mysql_seguridad($formulario);
 $actual= $formulario[password_actual];
 $nuevo= $formulario[password_nuevo];
 $confirmacion= $formulario[password_confirmacion];
 $firma = $formulario[firma_recuperacion];
-$firma_recuperacion = remplacetas("usuarios","firma_recuperacion",$formulario[firma_recuperacion],"firma_recuperacion") ;
+$firma_recuperacion = remplacetas("$tabla_autenticacion","firma_recuperacion",$formulario[firma_recuperacion],"firma_recuperacion") ;
 if(isset($firma)) {$actual = $firma; $id_usuario = $firma_recuperacion[1]; }else{$id_usuario = $_SESSION[id];  }
-$verifica = remplacetas("usuarios","id",$_SESSION[id],"passwd") ;
+$verifica = remplacetas("$tabla_autenticacion","id",$_SESSION[id],"passwd") ;
 
 $size= strlen($nuevo);
 if($nuevo != $confirmacion OR $actual =="" ){
@@ -602,7 +702,7 @@ elseif($formulario[firma_recuperacion] =='' AND $verifica[0] != MD5($actual) ){
 $link=Conectarse(); 
 	mysql_query("SET NAMES 'utf8'");
 	$nueva_firma = sha1(mktime());
-	$consulta = "UPDATE usuarios SET  passwd =  '".MD5($nuevo)."' , firma_recuperacion = '$nueva_firma' WHERE  id = $id_usuario;";
+	$consulta = "UPDATE $tabla_autenticacion SET  passwd =  '".MD5($nuevo)."' , firma_recuperacion = '$nueva_firma' WHERE  id = $id_usuario LIMIT 1;";
 	$sql_consulta=mysql_query($consulta,$link);
 	if($sql_consulta) {
 $resultado = "<div class='alert alert-success'>La clave se cambió con éxito.</div>";	

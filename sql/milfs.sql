@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Nov 11, 2015 at 09:25 PM
+-- Generation Time: Nov 14, 2015 at 08:43 PM
 -- Server version: 5.6.25-4
 -- PHP Version: 5.6.14-1+b1
 
@@ -58,15 +58,16 @@ CREATE TABLE `empresa` (
   `id_localizacion` int(11) NOT NULL,
   `id_redes_sociales` int(11) NOT NULL,
   `twitter` varchar(50) COLLATE utf8_spanish2_ci NOT NULL,
-  `facebook` varchar(200) COLLATE utf8_spanish2_ci NOT NULL
+  `facebook` varchar(200) COLLATE utf8_spanish2_ci NOT NULL,
+  `estado` int(1) NOT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci COMMENT='Datos de la IPS';
 
 --
 -- Dumping data for table `empresa`
 --
 
-INSERT INTO `empresa` (`id`, `id_responsable`, `ciiu`, `sector`, `razon_social`, `sigla`, `slogan`, `nit`, `direccion`, `telefono_1`, `web`, `email`, `persona_contacto`, `regimen_tributario`, `resolucion_facturacion`, `facturacion_desde`, `facturacion_hasta`, `facturacion_primera`, `facturacion_prefijo`, `facturacion_fecha`, `facturacion_vencimiento`, `logo_color`, `logo_bn`, `logo_alta`, `logo_baja`, `imagen`, `css`, `css_impresion`, `id_localizacion`, `id_redes_sociales`, `twitter`, `facebook`) VALUES
-(1, 1, '', 0, 'qwerty', 'MILFS', 'El futuro ya no es lo que era', '', '', '', 'http://qwerty.co', 'correo@qwerty.co', '', '', '', NULL, NULL, NULL, '', 0, 0, '', '', '', '', '5ea17940eb83cbcff6a7cea1c501ce85.jpg', '', '', 0, 0, 'qwerty_co', 'https://www.facebook.com/pages/Qwerty-co/146226688795185');
+INSERT INTO `empresa` (`id`, `id_responsable`, `ciiu`, `sector`, `razon_social`, `sigla`, `slogan`, `nit`, `direccion`, `telefono_1`, `web`, `email`, `persona_contacto`, `regimen_tributario`, `resolucion_facturacion`, `facturacion_desde`, `facturacion_hasta`, `facturacion_primera`, `facturacion_prefijo`, `facturacion_fecha`, `facturacion_vencimiento`, `logo_color`, `logo_bn`, `logo_alta`, `logo_baja`, `imagen`, `css`, `css_impresion`, `id_localizacion`, `id_redes_sociales`, `twitter`, `facebook`, `estado`) VALUES
+(1, 1, '', 0, 'qwerty', 'MILFS', 'El futuro ya no es lo que era', '', '', '', 'http://qwerty.co', 'correo@qwerty.co', '', '', '', NULL, NULL, NULL, '', 0, 0, '', '', '', '', '5ea17940eb83cbcff6a7cea1c501ce85.jpg', '', '', 0, 0, 'qwerty_co', 'https://www.facebook.com/pages/Qwerty-co/146226688795185', 0);
 
 -- --------------------------------------------------------
 
