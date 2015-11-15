@@ -31,7 +31,13 @@ $name = MD5(time())."$ext";
 $nombre= "$_SESSION[path_images_secure]/full/".$name;
 $imagenX = $_FILES[fileUpload][tmp_name];
 $coordenadas = leer_exif($imagenX);
-if($coordenadas !='') { $alerta = "alert('Se han detectado coordenadas en los metadatos de la imagen y se ubicará el mapa en ese lugar.');";}
+//$link = "$_SESSION[url]mapero.php?lat=$coordenadas[lon]&lon=$coordenadas[lat]&zoom=16&id=$name";
+if($coordenadas !='') { 
+$coordenadas = "$coordenadas"."&id=$_REQUEST[campo_mapa]"."[0]";
+$alerta = "alert(' Se han detectado coordenadas en los metadatos de la imagen y se ubicará el mapa en ese lugar.');";
+
+
+}
 //if (!copy($_FILES['fileUpload']['tmp_name'],"$nombre"))
 if (!move_uploaded_file($_FILES['fileUpload']['tmp_name'],$nombre))
 //move_uploaded_file($tmp_name, "$uploads_dir/$name");
@@ -96,7 +102,7 @@ if ( !empty($exif['GPSLongitude']) && !empty($exif['GPSLatitude']) ) {
     if ( $exif['GPSLatitudeRef'] == 'S')
         $gps_latitude = -$gps_latitude;
         if($gps_latitude !='') {
-  $resultado =   "$_SESSION[url]/mapa.php?lon=$gps_latitude&lat=$gps_longitude&zoom=18";
+  $resultado =   "$_SESSION[url]mapero.php?lon=$gps_latitude&lat=$gps_longitude&zoom=18";
 										  }else{$resultado ="";}
 //$resultado = "$gps_longitude $gps_latitude";        
         

@@ -1,6 +1,59 @@
 <?php
 date_default_timezone_set('America/Bogota');
 
+function geocoder($valor,$campo){
+$respuesta = new xajaxResponse('utf-8');
+if(strlen($valor) > 3) {
+$valor = urlencode($valor);
+$json = "https://nominatim.openstreetmap.org/search.php?format=json&limit=5&addressdetails=1&q=$valor";
+$data = file_get_contents("$json");
+$geocoder = json_decode($data, true);
+if($data ==="[]") {$vacio="
+		<a class='pull-right' onclick=\"xajax_limpia_div('muestra_geocoder'); \"><i class='fa fa-times-circle-o'></i></a>
+		<strong class='text-danger center'><i class='fa fa-exclamation-triangle'></i> No se encontraron resultados</strong>
+";}
+
+foreach ($geocoder as $clave => $valor) {
+	$ciudad = $valor['address']['city'];
+	$municipio = $valor['address']['town'];
+	$pais = $valor['address']['country'];
+	$departamento = $valor['address']['state'];
+	$licencia= $valor['licence'];
+	$link = "$_SESSION[url]mapero.php?lat=$valor[lon]&lon=$valor[lat]&zoom=16&id=$campo";
+	$linea .= "	
+	<div onclick=\" xajax_limpia_div('muestra_geocoder');	document.getElementById('mapita').src='$link'; \"  style='padding:5px; border-radius: 3px;margin:5px;border: 1px solid gray; background-color : white;'>
+	<ul class='list-unstyled' >
+	<li><strong>$valor[display_name]</strong></li>
+	<!-- <li>Lat: $valor[lat] lon $valor[lon]</li> -->
+	<li><image src='$valor[icon]' > $ciudad $municipio $pais $departamento</li>
+	
+	</ul>
+	</div>
+			";
+//foreach ($valor as $clave => $valor) {   $linea .= "CLAVE : $clave > VALOR:  $valor"; }
+}
+$resultado = " <div style='width: 100%;'>
+					<a class='pull-right' onclick=\"xajax_limpia_div('muestra_geocoder'); \">Cerrar <i class='fa fa-times-circle-o'></i></a>
+					<br>
+					$linea 
+					</div>
+					<div class='text-center '  style='padding:5px; padding:5px; border-radius: 3px;margin:5px;border: 1px solid gray; background-color : white;'>
+					<small>$vacio $licencia</small>
+					</div>";
+}
+			//$div_contenido = "<div id='$div'>$div</div>";
+			//$respuesta->addAssign("muestra_form","innerHTML","$aviso");
+			//$respuesta->addAssign("titulo_modal","innerHTML","Hola mundo");
+			//$respuesta->addAssign("pie_modal","innerHTML","$pie");
+			$respuesta->addAssign("muestra_geocoder","innerHTML","$resultado");
+			//$respuesta->addscript("$('#muestraInfo').modal('toggle')");	
+
+			return $respuesta;
+
+}
+$xajax->registerFunction("geocoder");
+
+
 function mostrar_psi(){
 $respuesta = new xajaxResponse('utf-8');
 include("psi.php");
@@ -2276,7 +2329,7 @@ $campo_imagen = $campo_imagen[0];
 	
 	
 if ($campo_imagen[0] != "") {
-$subir_imagen = subir_imagen('',"$campo_imagen"."[0]");
+$subir_imagen = subir_imagen("$perfil","$campo_imagen"."[0]");
 if($tipo != "campos") {	
 	$imagen = " 
 			<div class='form-group' id='input_".$campo_imagen."[0]' >
@@ -4549,6 +4602,8 @@ function subir_imagen($respuesta,$id){
 ///vinculado con la funcion de javascript resultadoUpload(estado, file)  que esta en librerias/scripts.js
 //this.form.taget= 'ventana'; this.form.action = 'destinoEspecial.html'; this.form.submit()" 
 $javascript="$_SESSION[url]/includes/upload.php";
+$campo_mapa = buscar_campo_tipo($respuesta,"14");
+$campo_mapa = $campo_mapa[0];
 if ($id ==''){$id='imagen';}
 $size = ($_SESSION[upload_size]*1024*1024)." bytes";
 $resultado .="
@@ -4557,6 +4612,7 @@ $resultado .="
 action=  $javascript 
 target='iframeUpload' class='form-horizontal' name='subir_imagen_$id' id='subir_imagen_$id'>
 <input type='hidden' id='id_imagen' name='id_imagen' value='$id'>
+<input type='hidden' id='campo_mapa' name='campo_mapa' value='$campo_mapa'>
 <input class='form-control'  name='fileUpload' type='file' onchange=\"this.form.taget= 'iframeUpload'; this.form.action = '$javascript';this.form.submit();\" />
 <iframe name='iframeUpload' style='display:none' ></iframe>
 <div class='alert alert-info text-center' id='formUpload'>La imagen debe estar en formato .jpg y de tamaño m&aacute;ximo  $_SESSION[upload_size] MB ( $size)</div>
@@ -6491,9 +6547,19 @@ $consulta ="
 
 								}
 									$render .= "
-																		
-																		<iframe id='mapita' src='$_SESSION[url]mapa.php?lat=$lat&lon=$lon&zoom=$zoom&id=".$id_campo."[".$item."]' width='100%' height='300px'></iframe>
-																		<input   value='$value' type='text' id='".$id_campo."[".$item."]' name='".$id_campo."[".$item."]' class='form-control' placeholder='coordenadas' readonly >
+	<div style='position:relative'>
+		<div class='input-group'>
+			<input placeholder='El libano, tolima, colombia' type='text' class='form-control' id='geocoder_".$id_campo."[".$item."]'>
+			<span class='input-group-btn'>
+				<div class='btn btn-default' onclick=\"xajax_geocoder((document.getElementById('geocoder_".$id_campo."[".$item."]').value),'".$id_campo."[".$item."]'); \"  ><i class='fa fa-search'></i></div>
+			</span>
+		</div>
+		
+	<div id='muestra_geocoder' style='position:absolute; max-height: 300px; width: 90%; overflow-y:auto; '></div>
+	</div>
+	
+	<iframe id='mapita' src='$_SESSION[url]mapa.php?lat=$lat&lon=$lon&zoom=$zoom&id=".$id_campo."[".$item."]' width='100%' height='300px'></iframe>
+	<input   value='$value' type='text' id='".$id_campo."[".$item."]' name='".$id_campo."[".$item."]' class='form-control' placeholder='coordenadas' readonly >
 																		
 																				 ";
 					$cols='12';																																	 
@@ -7148,7 +7214,7 @@ $campo_imagen = $campo_imagen[0];
 	
 	
 if ($campo_imagen[0] != "") {
-$subir_imagen = subir_imagen('',"$campo_imagen"."[0]");	
+$subir_imagen = subir_imagen("$id","$campo_imagen"."[0]");	
 	}
 	$muestra_form = "
 	<div id ='div_$control' class=''   >
