@@ -7,12 +7,19 @@ require ('funciones/funciones.php');
 require ('funciones/convert.php');
 require ('funciones/login.php');
 require ("includes/markdown.php");
+require ("includes/simple_html_dom.php");
 require ("funciones/conex.php");
 
 $xajax->processRequests(); 
 //$xajax->debugOn('');
-if (isset($_REQUEST['form'])) {$form = $_REQUEST['form'];} else {$form = "";}
+$embebido =0;
+if (isset($_REQUEST['form'])) {
+	$form = $_REQUEST['form'];
+	$opciones["formato"]= $_REQUEST['formato'];	
+	} else {$form = "";}
+	if($form !='') {$embebido = 1;}
 if (isset($_REQUEST['identificador'])) {$identificador = $_REQUEST['identificador'];} else {$identificador = "";}
+	if($identificador !='') {$embebido = 1;}
 if (isset($_REQUEST['id'])) {$id = $_REQUEST['id'];} else {$id = "";}
 if (isset($_REQUEST['c'])) {$c = $_REQUEST['c'];} else {$c = "";}
 if (isset($_REQUEST['f'])) {$f = $_REQUEST['f'];} else {$f = "";}
@@ -31,7 +38,7 @@ if (isset($_REQUEST['t'])) {$t = $_REQUEST['t'];} else {$t = "";}
 	<link rel="shortcut icon" href="favicon-152.png">
 	<link rel="apple-touch-icon-precomposed" href="favicon-152.png">
 	<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha256-k2/8zcNbxVIh5mnQ52A0r3a6jAgMGxFJFE2707UxGCk= sha512-ZV9KawG2Legkwp3nAlxLIVFudTauWuBpC10uEafMHYL0Sarrz5A7G79kXh5+5+woxQ5HM559XX2UZjMJ36Wplg==" crossorigin="anonymous">
-	<?php if($form !='') { echo "<link href='css/embebido.css' rel='stylesheet'>";}else{ echo "<link href='css/estilos.php?dd' rel='stylesheet'>";} ?>
+	<?php if($form !='') { echo "<link href='css/embebidoXXX.css' rel='stylesheet'>";}else{ echo "<link href='css/estilos.php?dd' rel='stylesheet'>";} ?>
 
 	<link rel="stylesheet" type="text/css" media="screen" href="css/bootstrap.css">
 	<link rel="stylesheet" type="text/css" media="screen" href="css/bootstrap-markdown.css">
@@ -49,10 +56,19 @@ if (isset($_REQUEST['t'])) {$t = $_REQUEST['t'];} else {$t = "";}
 <?php
 
 					if($id !='' OR $c ){$onload ="<script type=\"text/javascript\"> xajax_formulario_modal('".$id."','','".$c."','".$t."')</script>";}
-					
+						if( isset($_REQUEST['psi'])){$onload ="<script type=\"text/javascript\"> xajax_mostrar_psi()</script>";}
 ?>
 
+<!--      <script src="js/jquery.min.js"></script>
+  <script src="js/bootstrap.js"></script> -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+  <script src="js/markdown.js"></script>
+  <script src="js/to-markdown.js"></script>
+  <script src="js/bootstrap-markdown.js"></script>
+      <script src="js/scripts.js"></script>
 <script type="text/javascript">
+ 
 //Recoger elemento arrastrable//
 function evdragstart(ev,el) { //ev= el evento, el=elemento arrastrado.
     cont1=el.parentNode; //guardamos el elemento padre del elemento en una variable.
@@ -88,23 +104,18 @@ function evdrop(ev,el) { //ev=el evento; el=receptor de soltado
 </style>
 </head>
 <body  >
-<!--      <script src="js/jquery.min.js"></script>
-  <script src="js/bootstrap.js"></script> -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
-  <script src="js/markdown.js"></script>
-  <script src="js/to-markdown.js"></script>
-  <script src="js/bootstrap-markdown.js"></script>
-      <script src="js/scripts.js"></script>
-<?php if($form !='') { echo formulario_embebido($form);}
-elseif($identificador !='') { echo mostrar_identificador($identificador);}
-else{
+
+<?php if($embebido ==1) { 
+if($form!=''){	 echo formulario_embebido($form,$opciones);}
+elseif($identificador !='') { echo mostrar_identificador($identificador,$id);}
+//elseif($_REQUEST['psi'] !='') { include("psi.php") ; echo $aviso;}
+else{}
+
+}else{
 
  ?>
 <?php echo @$onload; ?>
-<?php if(isset($_REQUEST['f'])){
-form_publico("$f");
-}
+<?php 
  if ( isset ( $_SESSION['id'] ) ) {	?>
 <div class="navbar navbar-inverse nav-bar-fixed-top " role="navigation">
   <div class="container-fluid">
@@ -125,7 +136,7 @@ form_publico("$f");
 <?php }else{ } ?>
 
 
-
+<div id='debug'></div>
 	<div class='container'>
 		<div id='contenido'>
 		
@@ -139,7 +150,8 @@ form_publico("$f");
 <?php if(isset($_REQUEST['change'])){
 echo cambiar_password_formato("$_REQUEST[change]");
 }
-revisar_ingreso('');?>		
+revisar_ingreso('');
+?>		
 
 <?php echo $pie; ?>
 <img class='img-responsive center-block' src="images/logo.png" alt="MILFS">
@@ -161,7 +173,7 @@ revisar_ingreso('');?>
         <h4 class='modal-title' id='myModalLabel_info'><div id='titulo_modal'></div></h4>
       </div>
       <div class='modal-body'>
-
+		<?php	include("psi.php") ;?>
        <div id='muestra_form'></div>
       </div>
       <div class='modal-footer' id='pie_modal'>
@@ -178,7 +190,7 @@ revisar_ingreso('');?>
        <div class="">
 	       <div class="container">
         <a href='http://QWERTY.co/milfs'>&copy; MILFS Un proyecto de http://QWERTY.co</a> Se distribuye bajo licencia GPL V3
-        <a target="_blank" href='http://qwerty.co/faq/category/19/privacidad-y-protecci%C3%B3n-de-datos.html'>Políticas de privacidad y protección de datos.</a> 
+        <a href="?psi" target="_psi"><i class="fa fa-smile-o "></i> Políticas de privacidad y protección de datos.</a>
         	</div> 
       </div>
       <?php } ?>

@@ -1,0 +1,1 @@
+ALTER TABLE `empresa` ADD `estado` INT(1) NOT NULL DEFAULT '1' ;

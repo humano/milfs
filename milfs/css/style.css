@@ -1,8 +1,27 @@
- * {
+/* * {
 	margin: 0;
 	padding: 0;
 }
+		*/
+		fieldset.fieldset-borde {
 
+    border: 2px solid #EDEDED !important;
+        border-radius:3px;
+    padding: 0 1.4em 1.4em 1.4em !important;
+    margin: 0 0 1.5em 0 !important;
+    -webkit-box-shadow:  0px 0px 0px 0px #000;
+            box-shadow:  0px 0px 0px 0px #000;
+}
+
+    legend.legend-area {
+        font-size: 1.2em !important;
+        font-weight: bold !important;
+        text-align: left !important;
+        width:auto;
+        padding:0 10px;
+        border-bottom:none;
+    }
+    
 body {
 	background: #222;
 	font-family: Georgia, serif;
