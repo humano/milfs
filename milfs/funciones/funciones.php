@@ -1,6 +1,25 @@
 <?php
 date_default_timezone_set('America/Bogota');
 
+function contar_visitas($id,$tipo) {
+$id_visitas = remplacetas('form_parametrizacion','campo',$id,'id'," tabla='form_id' AND opcion='$tipo'") ;
+$visitas = remplacetas('form_parametrizacion','id',$id_visitas[0],'descripcion',"") ;
+$cantidad = $visitas[0]+1;
+if($visitas[0] =="") {
+	$consulta = "INSERT INTO form_parametrizacion set tabla='form_id', campo ='$id',opcion ='$tipo',descripcion= '$cantidad',visible ='1'";
+							}
+else {
+		$consulta = "UPDATE  form_parametrizacion set tabla='form_id', campo ='$id',opcion ='$tipo',descripcion= '$cantidad',visible ='1' 
+		WHERE id ='$id_visitas[0]' LIMIT 1";
+}
+$link=Conectarse(); 
+	mysql_query("SET NAMES 'utf8'");
+	$sql=mysql_query($consulta,$link);
+
+return $cantidad;
+}
+
+
 function geocoder($valor,$campo){
 $respuesta = new xajaxResponse('utf-8');
 if(strlen($valor) > 3) {
@@ -1403,9 +1422,10 @@ $link=Conectarse();
 		$id_form = $row[form_id];*/
 		$impresion = formulario_imprimir("$id_form","$control",""); 
 		if($impresion !="") {
+			$visitas= contar_visitas($control,'identificador') ;
 		$descripcion = remplacetas('form_id','id',$id_form,'descripcion',"") ;
 		$nombre = remplacetas('form_id','id',$id_form,'nombre',"") ;
-		$resultado .= "<h2>$nombre[0]</h2><legend>$descripcion[0]</legend>$impresion<br>"; 
+		$resultado .= "$visitas<h2>$nombre[0]</h2><legend>$descripcion[0]</legend>$impresion<br>"; 
 	//														}
 $resultado = "<div class='container-fluid'>$resultado</div>";
 									}else{
@@ -2203,7 +2223,7 @@ $respuesta = new xajaxResponse('utf-8');
 if($div !='') {
 	$valores = limpiar_caracteres("$valores");
 	$grupo = editar_campo("$tabla",$ultimo_id,"$principal","","","");
-	$respuesta->addAssign($div,"innerHTML","<strong>$formulario[$principal]</strong>");
+	$respuesta->addAssign($div,"innerHTML","<strong>$formulario[$principal]  </strong>");
 
 				}
 	//$respuesta->addAlert("$insertar");
@@ -2420,6 +2440,7 @@ if($tipo=='embebido') {
 $resultado = "
 $muestra_form
 <span>Poweredy by <a href='https://github.com/humano/milfs' target='milfs'>MILFS</a></span>
+<a href='?psi' target='_psi'><i class='fa fa-smile-o '></i> Políticas de privacidad y protección de datos.</a>
 ";
 return $resultado;
 
@@ -2429,6 +2450,8 @@ $resultado = "
 $cabecera
 $muestra_form
 <span>Poweredy by <a href='https://github.com/humano/milfs' target='milfs'>MILFS</a></span>
+<a href='?psi' target='_psi'><i class='fa fa-smile-o '></i> Políticas de privacidad y protección de datos.</a>
+
 ";
 return $resultado;
 
@@ -3190,7 +3213,7 @@ function formulario_embebido($id){
 
 			$formulario_nombre = remplacetas('form_id','id',$id,'nombre') ;
 			$formulario_descripcion = remplacetas('form_id','id',$id,'descripcion') ;
-
+			$visitas= contar_visitas($id,'formulario') ;
 			$muestra_form = "
 			<style>
 			fieldset.fieldset-borde {
@@ -3213,10 +3236,9 @@ function formulario_embebido($id){
     }
 			</style>
 <div style='width;100%; min-height:900px; padding: 0.3%; background-image: url(images/iron.jpg); background-attachment:fixed; background-color: gray ;'>
-	<div class='container-fluid' style=' border-radius:3px; background-color:white; max-width:600px; box-shadow: 2px 2px 5px #999; overflow:no;' id='contenedor_datos' >			
-			
-				<h1 class='formulario_nombre'>$formulario_nombre[0]</h1>
-				<h2 class='formulario_descripcion'>$formulario_descripcion[0] </h2>
+	<div class='container-fluid' style=' border-radius:3px; background-color:white; max-width:800px; box-shadow: 2px 2px 5px #999; overflow:no;' id='contenedor_datos' >			
+			( $visitas )
+				<h1 class='formulario_nombre'>$formulario_nombre[0]<br><small class='formulario_descripcion'>$formulario_descripcion[0] </h1>
 				$impresion
 			
 			
@@ -6564,8 +6586,9 @@ $consulta ="
 																				 ";
 					$cols='12';																																	 
 																				 }
-elseif($campo_tipo_accion == 'email'){$render = "<code>Escriba un email válido</code>
-							<input value='$value' type='email' id='".$id_campo."[".$item."]' name='".$id_campo."[".$item."]' class='form-control' placeholder='$campo_descripcion' > ";}
+elseif($campo_tipo_accion == 'email'){$render = "
+							<input value='$value' type='email' id='".$id_campo."[".$item."]' name='".$id_campo."[".$item."]' class='form-control' placeholder='$campo_descripcion' >
+							<code>Escriba un email válido</code> ";}
 		elseif($campo_tipo_accion == 'envio'){$render = "
 						<input value='$value' type='email' id='".$id_campo."[".$item."]' name='".$id_campo."[".$item."]' class='form-control' placeholder='$campo_descripcion' > 
 						<code>Se enviará un email</code>";}
@@ -6600,7 +6623,7 @@ elseif($campo_tipo_accion == 'email'){$render = "<code>Escriba un email válido<
 			
 			//$select = select('form_campos_valores','campo_valor','campo_valor','',"id_form_campo = $id_campo",$id_campo."[".$item."]");
 			$select = select_edit($id_campo,$id_form,$value,$id_campo."[".$item."]",$control);
-			$render = "$select ";}
+			$render = "$select "; $cols='12';	 }
 		elseif($campo_tipo_accion == 'radio'){
 			$select = radio_edit($id_campo,$id_form,$value,$id_campo."[".$item."]",$control);
 			$render = "$select ";
@@ -6638,7 +6661,8 @@ elseif($campo_tipo_accion == 'email'){$render = "<code>Escriba un email válido<
 		elseif($campo_tipo_accion == 'combo'){
 			//$select = select('form_campos_valores','campo_valor','campo_valor','',"id_form_campo = $id_campo",$id_campo."[".$item."]");
 			$select = combo_select($id_campo,$id_form,$value,$id_campo."[".$item."]",$control,"");
-			$render = "$select ";}
+			$render = "$select ";
+			$cols='12';	}
 		elseif($campo_tipo_accion == 'relacion'){
 			$select = relacion_select($id_campo,$id_form,$value,$id_campo."[".$item."]",$control,"");
 			$render = "$select ";
@@ -6665,13 +6689,22 @@ elseif($campo_tipo_accion == 'email'){$render = "<code>Escriba un email válido<
 
 		elseif($campo_tipo_accion == 'password'){
 			$render = "
-			<div class='form-group' id= '".$id_campo."[".$item."]_grupo'>
-							<input autocomplete='off' value='$value' type='password' id='".$id_campo."[".$item."]' name='".$id_campo."[".$item."]' class=' form-control' placeholder='$campo_descripcion' >
-			</div> 
-			<div class='form-group' id= '".$id_campo."_control[".$item."]_grupo'>
-							<label>Confirmar</label><input onchange= \"xajax_confirma_campo((document.getElementById('".$id_campo."[".$item."]').value),(document.getElementById('".$id_campo."_control[".$item."]').value),'".$id_campo."[".$item."]','".$id_campo."_control[".$item."]')\" value='$value' type='password' id='".$id_campo."_control[".$item."]' name='".$id_campo."_control[".$item."]' class=' has-warning form-control' placeholder='$campo_descripcion' >
-			</div> 
-															";}
+			<div class='row'>
+				<div class='col-md-6'>
+					<div class='input-group' id= '".$id_campo."[".$item."]_grupo'>
+						<span class='input-group-addon'>$campo_nombre</span>
+							<input class=' form-control'  autocomplete='off' value='$value' type='password' id='".$id_campo."[".$item."]' name='".$id_campo."[".$item."]' placeholder='$campo_descripcion' >
+					</div> 
+				</div>
+				<div class='col-md-6 '>
+					<div class='input-group' id= '".$id_campo."_control[".$item."]_grupo'>
+							<span class='input-group-addon'>Confirmar</span>
+							<input  class='  form-control'  onchange= \"xajax_confirma_campo((document.getElementById('".$id_campo."[".$item."]').value),(document.getElementById('".$id_campo."_control[".$item."]').value),'".$id_campo."[".$item."]','".$id_campo."_control[".$item."]')\" value='$value' type='password' id='".$id_campo."_control[".$item."]' name='".$id_campo."_control[".$item."]' placeholder='$campo_descripcion' >
+					</div> 
+				</div>
+			</div>
+															";
+															$cols='12';	}
 		elseif($campo_tipo_accion == 'unico'){
 			$render ="<input onkeyup= \"xajax_revisar_campo_unico('".$id_campo."[".$item."]','$id_campo','$id_form',(this.value)) \" value='$value' type='text' id='".$id_campo."[".$item."]' name='".$id_campo."[".$item."]' class='form-control' placeholder='$campo_descripcion' >
 							<div id='div_".$id_campo."[".$item."]'></div> ";
@@ -7392,7 +7425,7 @@ $resultado .= "<option value='$row[$value]' $selected > ".substr($row[$campo1], 
 															}
 														}
 $resultado .= "</select>";
-										}else{$resultado = "<div class='alert alert-warning'><i class='fa fa-exclamation-triangle'></i> No hay resultados</div>";}
+										}else{$resultado = "<div class='alert alert-warning'><i class='fa fa-exclamation-triangle'></i> No hay resultados $consulta</div>";}
 
 return $resultado;
 }
@@ -7610,8 +7643,8 @@ if($pos == "") { //// si no es un email
 
 			$respuesta->addAssign("$campo","value","$pos");
 			$respuesta->addAssign("$campo_confirmacion","value","");
-			$respuesta->addAppend("$campo"."_grupo","className"," input-group  has-error ");
-			$respuesta->addAppend("$campo_confirmacion"."_grupo","className","input-group  has-error ");
+			$respuesta->addAssign("$campo"."_grupo","className"," input-group  has-error ");
+			$respuesta->addAssign("$campo_confirmacion"."_grupo","className"," input-group  has-error ");
 			$respuesta->addScript("document.getElementById('$campo').focus(); ");
 			//        document.getElementById('mobileno').focus(); 
 
