@@ -1,9 +1,9 @@
 -- phpMyAdmin SQL Dump
--- version 4.5.1deb1
+-- version 4.5.1deb3
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Nov 14, 2015 at 08:43 PM
+-- Generation Time: Nov 17, 2015 at 04:10 PM
 -- Server version: 5.6.25-4
 -- PHP Version: 5.6.14-1+b1
 
@@ -175,7 +175,7 @@ CREATE TABLE `form_campos` (
 --
 
 INSERT INTO `form_campos` (`id`, `id_especialista`, `id_empresa`, `campo_nombre`, `campo_descripcion`, `campo_tipo`, `campo_area`, `orden`, `activo`, `identificador`, `bloqueo`, `tipo_contenido`) VALUES
-(0, 0, 1, 'imagen', 'Campo especial para la imagen', 15, 0, 0, 1, 'imagen', 0, ''),
+(0, 0, 1, 'Imagen', 'Campo especial para la imagen', 15, 0, 0, 1, 'imagen', 0, ''),
 (1, 0, 1, 'Primer nombre', 'Pablo', 1, 0, 0, 1, 'f13bb435acfd7ba3f88a5f74fe3fadc2', 0, ''),
 (2, 0, 1, 'Segundo nombre', 'Fernando', 1, 0, 0, 1, 'e03db6f72422a01b20953b25d7c7fee3', 0, ''),
 (3, 0, 1, 'Primer apellido', 'Perez', 1, 0, 0, 1, '5c3cdc8e15eb15dfce8c591986deb800', 0, ''),
@@ -252,7 +252,7 @@ INSERT INTO `form_campos` (`id`, `id_especialista`, `id_empresa`, `campo_nombre`
 CREATE TABLE `form_campos_valores` (
   `id` int(11) NOT NULL,
   `id_form_campo` int(11) NOT NULL,
-  `campo_valor` char(200) COLLATE utf8_spanish2_ci NOT NULL,
+  `campo_valor` text COLLATE utf8_spanish2_ci NOT NULL,
   `predeterminado` set('0','1') COLLATE utf8_spanish2_ci NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
 
@@ -2777,7 +2777,15 @@ INSERT INTO `form_datos` (`id`, `id_campo`, `form_id`, `proceso`, `orden`, `id_u
 (51, 40, 3, NULL, 0, 1, 1, '@Fredy_Rivera', 1445972605, NULL, '34a799ec5c0f3a708468bd77cf54dcea'),
 (52, 70, 3, NULL, 0, 1, 1, 'd8da224187ec05d752734ae56438f346.jpg', 1445972605, NULL, '34a799ec5c0f3a708468bd77cf54dcea'),
 (53, 45, 3, NULL, 0, 1, 1, 'Amanecer en Santa Marta', 1445972605, NULL, '34a799ec5c0f3a708468bd77cf54dcea'),
-(54, 18, 3, NULL, 0, 1, 1, '-74.21447038650511 11.240873262562987 18', 1445972605, NULL, '34a799ec5c0f3a708468bd77cf54dcea');
+(54, 18, 3, NULL, 0, 1, 1, '-74.21447038650511 11.240873262562987 18', 1445972605, NULL, '34a799ec5c0f3a708468bd77cf54dcea'),
+(55, 1, 1, NULL, 0, 1, 1, 'Delfín', 1447607538, NULL, '89aa6efe62e27e5c3979be8cc1bfe252'),
+(56, 3, 1, NULL, 0, 1, 1, 'Cortez', 1447607538, NULL, '89aa6efe62e27e5c3979be8cc1bfe252'),
+(57, 18, 1, NULL, 0, 1, 1, '-75.171134 4.8746064 16', 1447607538, NULL, '89aa6efe62e27e5c3979be8cc1bfe252'),
+(58, 1, 1, NULL, 0, 1, 1, 'Delfín', 1447607550, NULL, '89aa6efe62e27e5c3979be8cc1bfe252'),
+(59, 11, 1, NULL, 0, 1, 1, 'Libadores', 1447607550, NULL, '89aa6efe62e27e5c3979be8cc1bfe252'),
+(60, 9, 1, NULL, 0, 1, 1, 'Probando el mapita', 1447607550, NULL, '89aa6efe62e27e5c3979be8cc1bfe252'),
+(61, 1, 1, NULL, 0, 1, 1, 'Delfín', 1447607629, NULL, '89aa6efe62e27e5c3979be8cc1bfe252'),
+(62, 18, 1, NULL, 0, 1, 1, '-75.2692534 4.8795198 16', 1447607629, NULL, '89aa6efe62e27e5c3979be8cc1bfe252');
 
 -- --------------------------------------------------------
 
@@ -2826,7 +2834,7 @@ CREATE TABLE `form_id` (
 --
 
 INSERT INTO `form_id` (`id`, `nombre`, `descripcion`, `activo`, `modificable`, `publico`, `propietario`, `id_empresa`, `creacion`, `orden`, `formulario_respuesta`) VALUES
-(1, 'Contacto', 'Capura de datos en evento.', '1', '1', '1', 1, 1, '2014-09-30 19:47:38', 80, 0),
+(1, 'Contacto', 'Capura de datos en evento.', '1', '1', '0', 1, 1, '2014-09-30 19:47:38', 80, 0),
 (2, 'Biblioteca Digital', 'Repositorio digital de documentos de nuestrared.org.\nLos metadatos fueron establecidos usando <a target= ventana  href= http://biblioestandares.bn.cl/sites/biblioestandares.bn.cl/files/guia_para_la_creacion_de_metadatos_octubre_pub_2009.pdf >Este documento</a>', '1', '1', '1', 1, 1, '2015-02-25 15:38:05', 0, 0),
 (3, 'Galeria', 'Colección de imágenes', '1', '1', '1', 1, 1, '2015-10-27 18:17:18', 0, 0);
 
@@ -3059,7 +3067,7 @@ ALTER TABLE `form_contenido_campos`
 -- AUTO_INCREMENT for table `form_datos`
 --
 ALTER TABLE `form_datos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=55;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=63;
 --
 -- AUTO_INCREMENT for table `form_grupo`
 --
