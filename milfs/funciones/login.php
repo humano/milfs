@@ -10,7 +10,7 @@ $link=Conectarse();
 
 mysql_query("SET NAMES 'utf8'");
 
-$consulta = "SELECT * FROM $tabla $w_empresa ";
+$consulta = "SELECT * FROM $tabla $w_empresa ORDER BY username ";
 $sql=mysql_query($consulta,$link);
 
 $resultado="<table class='table table-striped table-responsive' >
@@ -25,12 +25,15 @@ while( $row = mysql_fetch_array( $sql ) ) {
 $username= editar_campo("$tabla",$row['id'],"username","","","");
 $p_nombre= editar_campo("$tabla",$row['id'],"p_nombre","","","");
 $p_apellido= editar_campo("$tabla",$row['id'],"p_apellido","","","");
-$empresa_id= editar_campo("$tabla",$row['id'],"id_empresa","","","");
+//$empresa_id= editar_campo("$tabla",$row['id'],"id_empresa","","","");
+$empresa_id= $row['id_empresa'];
 
-
-
-
-if($row[id] !=1) {$acciones = "<a  onclick=\" xajax_eliminar_campo('$tabla','$row[id]','tr_$row[id]')\"><i class='fa fa-trash-o'></i></a>";}
+if($_SESSION['id'] == "1" ) {
+	$empresa_id= editar_campo("$tabla",$row['id'],"id_empresa","","","");
+}else {$empresa_id= $row['id_empresa'];}
+if($row[id] !="1") {
+	$acciones = "<a  onclick=\" xajax_eliminar_campo('$tabla','$row[id]','tr_$row[id]')\"><i class='fa fa-trash-o'></i></a>";}
+	else {$acciones="";}
 $resultado .= "<tr id ='tr_$row[id]'><td>$row[id]</td><td>$username</td><td>$p_nombre $p_apellido</td><td>$row[email]</td><td>$row[documento_numero]</td><td> $empresa_id </td><td>$row[documento_numero]</td><td class='danger'>$acciones </td></tr>";
 $linea++;
 															}
@@ -491,7 +494,7 @@ $resultado = "
 	";
 if(!isset($_SESSION['id'])){ print $resultado; }else {
 
-print $nuevo ;
+//print $nuevo ;
 }
 return;	
 	}
@@ -527,7 +530,7 @@ $mensaje ="Por favor escribe tu <strong>correo o usuario</strong> si olvidaste t
 	return $respuesta;
 	}else
 	{
-$consulta = "SELECT id,email,control,id_empresa FROM $tabla_autenticacion WHERE (email = '$email' OR username = '$email' ) LIMIT 1";
+$consulta = "SELECT id,email,control,id_empresa FROM $tabla_autenticacion WHERE (email = '$email' OR username = '$email' )";
 			$sql=mysql_query($consulta,$link);
 if (mysql_num_rows($sql)!='0')
 		{
@@ -536,7 +539,7 @@ $correo = mysql_result($sql,0,"email");
 $control = mysql_result($sql,0,"control");
 $id_usuario = mysql_result($sql,0,"id");
 $id_empresa = mysql_result($sql,0,"id_empresa");
-$firma ="UPDATE $tabla_autenticacion SET `firma_recuperacion` = '$firma_recuperacion' WHERE `id` = '$id_usuario' LIMIT 1;";
+$firma ="UPDATE $tabla_autenticacion SET `firma_recuperacion` = '$firma_recuperacion' WHERE `usuarios`.`id` = '$id_usuario';";
 $cambiar_firma=mysql_query($firma,$link);
 $tipo='success';
 
@@ -625,8 +628,7 @@ $consulta = "SELECT * FROM $tabla_autenticacion WHERE (email = '$email' OR usern
 $xajax->registerFunction("revisar_ingreso");
 
 function cambiar_password_formato($change) {
-	require("includes/datos.php");
-	$firma_recuperacion = remplacetas("$tabla_autenticacion","firma_recuperacion",$change,"firma_recuperacion") ;
+	$firma_recuperacion = remplacetas("usuarios","firma_recuperacion",$change,"firma_recuperacion") ;
 	if($firma_recuperacion[0] =='') {
 		$formato ="<div class='alert alert-danger'><h1>Lo sentimos</h1><p>El Link ya no es válido</p></div>";
 		return   $formato; 
@@ -670,15 +672,14 @@ return $formato;
 function cambiar_password($formulario){
 	//	if ( !isset ( $_SESSION['id'] ) ) {	return;}
 			$respuesta = new xajaxResponse('utf-8');
-					require("includes/datos.php");
 $formulario =	mysql_seguridad($formulario);
 $actual= $formulario[password_actual];
 $nuevo= $formulario[password_nuevo];
 $confirmacion= $formulario[password_confirmacion];
 $firma = $formulario[firma_recuperacion];
-$firma_recuperacion = remplacetas("$tabla_autenticacion","firma_recuperacion",$formulario[firma_recuperacion],"firma_recuperacion") ;
+$firma_recuperacion = remplacetas("usuarios","firma_recuperacion",$formulario[firma_recuperacion],"firma_recuperacion") ;
 if(isset($firma)) {$actual = $firma; $id_usuario = $firma_recuperacion[1]; }else{$id_usuario = $_SESSION[id];  }
-$verifica = remplacetas("$tabla_autenticacion","id",$_SESSION[id],"passwd") ;
+$verifica = remplacetas("usuarios","id",$_SESSION[id],"passwd") ;
 
 $size= strlen($nuevo);
 if($nuevo != $confirmacion OR $actual =="" ){
@@ -702,7 +703,7 @@ elseif($formulario[firma_recuperacion] =='' AND $verifica[0] != MD5($actual) ){
 $link=Conectarse(); 
 	mysql_query("SET NAMES 'utf8'");
 	$nueva_firma = sha1(mktime());
-	$consulta = "UPDATE $tabla_autenticacion SET  passwd =  '".MD5($nuevo)."' , firma_recuperacion = '$nueva_firma' WHERE  id = $id_usuario LIMIT 1;";
+	$consulta = "UPDATE usuarios SET  passwd =  '".MD5($nuevo)."' , firma_recuperacion = '$nueva_firma' WHERE  id = $id_usuario;";
 	$sql_consulta=mysql_query($consulta,$link);
 	if($sql_consulta) {
 $resultado = "<div class='alert alert-success'>La clave se cambió con éxito.</div>";	
