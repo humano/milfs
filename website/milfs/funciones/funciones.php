@@ -1,6 +1,42 @@
 <?php
 date_default_timezone_set('America/Bogota');
 
+function generar_vcard($identificador){
+$impresion = mostrar_identificador("$identificador","","vcard",'simple');
+$impresion = formulario_imprimir("$id_form","$identificador","$plantilla"); 
+$nombre ="vcard_".$identificador.".vcf";
+$vcard ="BEGIN:VCARD
+VERSION:3.0
+N:Gump;Forrest
+FN:Forrest Gump
+ORG:Bubba Gump Shrimp Co.
+TITLE:Shrimp Man
+PHOTO;VALUE=URL;TYPE=GIF:http://www.example.com/dir_photos/my_photo.gif
+TEL;TYPE=WORK,VOICE:(111) 555-1212
+TEL;TYPE=HOME,VOICE:(404) 555-1212
+ADR;TYPE=WORK:;;100 Waters Edge;Baytown;LA;30314;United States of America
+LABEL;TYPE=WORK:100 Waters Edge\nBaytown, LA 30314\nUnited States of America
+ADR;TYPE=HOME:;;42 Plantation St.;Baytown;LA;30314;United States of America
+LABEL;TYPE=HOME:42 Plantation St.\nBaytown, LA 30314\nUnited States of America
+EMAIL;TYPE=PREF,INTERNET:forrestgump@example.com
+REV:20080424T195243Z
+END:VCARD";
+$archivo = "milfs/tmp/$nombre";
+$file=fopen($archivo,"w") or die("Problemas en la creacion");//En esta linea lo que hace PHP es crear el archivo, si ya existe lo sobreescribe 
+fputs($file,$impresion);//En esta linea abre el archivo creado anteriormente e ingresa el resultado de tu script PHP 
+fclose($file);//Finalmente lo cierra  
+/*
+$ruta="/tmp/vcard_".$identificador.".vcf"; 
+header ("Content-Disposition: attachment; filename=".$ruta); 
+header ("Content-Type: application/octet-stream"); 
+header ("Content-Length: ".filesize($ruta)); 
+readfile($ruta); 
+*/
+return $archivo;
+
+
+}
+
 function autoriza_formulario_mostrar($password,$form,$control) {
 	$respuesta = new xajaxResponse('utf-8');
 	if($password =="") {  unset($_SESSION['permiso_identificador']); $respuesta->addScript("javascript:location.reload(true);"); return $respuesta;}
@@ -63,6 +99,14 @@ $id_empresa = 	remplacetas('form_datos','control',$identificador,'id_empresa',""
 	} else{ 
 	$contenido = mostrar_identificador($identificador,"","");
 	$impresion = "
+		<!-- plantilla landingpage -->
+	<br><div class='clearfix'></div>
+
+<a  name='control_$identificador'></a>
+    <div class='content-section-a'>
+
+        <div class='container-fluid'>
+		
 	         <div class='row'>
                 <div class='col-lg-5 col-sm-6'>
                     <div class='clearfix'></div>
@@ -74,28 +118,19 @@ $id_empresa = 	remplacetas('form_datos','control',$identificador,'id_empresa',""
                    $mostrar_imagen
                 </div>
             </div>
-	
-	
-	";
-	
-	}
- $linea = "<br><div class='clearfix'></div>
 
-<a  name='control_$identificador'></a>
-    <div class='content-section-a'>
-
-        <div class='container-fluid'>
-			<!-- plantilla landingpage -->
-			$impresion 
-			<!-- plantilla landingpage --> 
 			<div class='link-compartir text-center'><a href='$uri' ><i class='fa fa-share-square'></i> Compartir </a></div>
         </div>
         <!-- /.container -->
 
     </div>		
 
-
-";
+	<!-- plantilla landingpage --> 
+	
+	";
+	
+	}
+ $linea = "$impresion";
 
 	return $linea;
 	}
@@ -1592,7 +1627,7 @@ $sql=mysql_query($consulta,$link);
 if (mysql_num_rows($sql)!=0){
 
 while( $row = mysql_fetch_array( $sql ) ) {
-$listado .= "<li class='list-group-item'><a href='#' onclick=\"xajax_portal_filtro_cadena('$formulario','$id_campo','$row[control]','$div') \" title='$row[control]'>$row[contenido]</a></li>";
+$listado .= "<li class='list-group-item'><a href='#' onclick=\"xajax_portal_filtro_cadena('$formulario','$id_campo','$row[control]','$div','$plantilla') \" title='$row[control]'>$row[contenido]</a></li>";
 }
 $resultado = "	
 		 <ul class='list-group'>
@@ -1786,33 +1821,34 @@ $link=Conectarse();
 return $resultado ;
 }
 
-function mostrar_identificador($control,$form,$plantilla){
+function mostrar_identificador($control,$form,$plantilla,$tipo){
 	$resultado="";
+	$tipo="$tipo";
 	if($form != "") {$id_form = "$form";}else {$id_form ="";}
-/*$consulta = "	SELECT distinct(form_id) FROM form_datos WHERE control = '$control'	";
-$link=Conectarse(); 
-	mysql_query("SET NAMES 'utf8'");
-	$sql =	mysql_query($consulta,$link);
-	if (mysql_num_rows($sql)!=0){
-		$session = crear_session ('16',$control);
-		$resultado ="$session<div class='container-fluid'>";
-		mysql_data_seek($sql, 0);
-	//while( $row = mysql_fetch_array( $sql ) ) {
-		$id_form = $row[form_id];*/
+
 		$impresion = formulario_imprimir("$id_form","$control","$plantilla"); 
 		if($impresion !="") {
 			$visitas= contar_visitas($control,'identificador') ;
 			$visitas= "<h4><small><i class='fa fa-eye'></i> $visitas</small></h4>";
 		$descripcion = remplacetas('form_id','id',$id_form,'descripcion',"") ;
 		$nombre = remplacetas('form_id','id',$id_form,'nombre',"") ;
-		$resultado .= "$visitas<h2>$nombre[0]</h2><legend>$descripcion[0]</legend>$impresion<br>"; 
-	//														}
-$resultado = "<div class='container-fluid'>$resultado</div>";
+		if($tipo=="") {
+		$resultado = "
+		<div class='container-fluid'>
+			$visitas
+			<h2>$nombre[0]</h2>
+				<legend>$descripcion[0]</legend> 
+				<!-- formulario_imprimir() -->
+				$impresion
+				<!-- formulario_imprimir() -->
+			<br>
+		</div>"; }else {
+$resultado = "$impresion";
+							}
 									}else{
 $resultado ="<div class='container alert alert-warning'><h1>No hay resultados</h1></div>";
 									}
-															
-								//		}
+
 return $resultado ;
 }
 
@@ -5061,9 +5097,7 @@ eval("\$plantilla = \"$plantilla \";");
 	$full= "<div class='$class'>$resultado </div>";							
 							}
 
-		$resultado =" $full 
-		<!-- <a class='btn btn-default pull-right' onclick=\"xajax_formulario_modal('$id','','$control',''); \"> Ampliar</a> 
-		<a target='_blank' href='index.php?id=$id&c=$control' class='btn btn-default pull-right'><i class='fa fa-share-square-o'></i> Compartir</a> -->";
+		$resultado ="$full";
 	return $resultado;
 	
 //	}else {$resultado ="<div class='alert alert-warning'><h1>No se encontraron resultados</h1></div>"; return $resultado;}
