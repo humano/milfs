@@ -1,12 +1,12 @@
 <?php session_start(); 
 //ini_set('display_errors', 'On');
 if(isset($_REQUEST['debug'])) {ini_set('display_errors', 'On');} 
-	require ('xajax/xajax.inc.php');
+	require ('milfs/xajax/xajax.inc.php');
 	$xajax = new xajax();
-	require ("funciones/conex.php");
-   require ('funciones/funciones.php');
-   require ("includes/markdown.php");
-   require ("includes/simple_html_dom.php");
+	require ("milfs/funciones/conex.php");
+   require ('milfs/funciones/funciones.php');
+   require ("milfs/includes/markdown.php");
+   require ("milfs/includes/simple_html_dom.php");
 	$xajax->processRequests();  ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -18,19 +18,21 @@ if(isset($_REQUEST['debug'])) {ini_set('display_errors', 'On');}
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="fredyrivera" >
-	<link rel="shortcut icon" href="favicon-152.png">
-	<link rel="apple-touch-icon-precomposed" href="favicon-152.png">
+	<link rel="shortcut icon" href="milfs/favicon-152.png">
+	<link rel="apple-touch-icon-precomposed" href="milfs/favicon-152.png">
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous">
-	<?php $xajax->printJavascript("xajax/");  ?>
+	<?php $xajax->printJavascript("milfs/xajax/");  ?>
 	<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha256-k2/8zcNbxVIh5mnQ52A0r3a6jAgMGxFJFE2707UxGCk= sha512-ZV9KawG2Legkwp3nAlxLIVFudTauWuBpC10uEafMHYL0Sarrz5A7G79kXh5+5+woxQ5HM559XX2UZjMJ36Wplg==" crossorigin="anonymous">
-
+	<script src="milfs/js/scripts.js"></script>
 <?php 
 	
 
    
 //$xajax->debugOn('');
 $embebido =0;
-if( isset($_REQUEST['empresa']) OR empty($_REQUEST) OR isset($_REQUEST['set']) OR isset($_REQUEST['identificador']) ) {
+$onload="";
+if (isset($_REQUEST['form'])) {$form = $_REQUEST['form'];} else {$form = "";}
+if (isset($_REQUEST['identificador'])) {$identificador = $_REQUEST['identificador'];} else {$identificador = NULL ;}
 $acceso = 0;
 if(	@$_REQUEST['empresa'] =="") { $id_empresa = "1";}
 else { $id_empresa = $_REQUEST['empresa'];}
@@ -54,17 +56,33 @@ if($id[0]=="") { $id_empresa = "1";}
 			if($publico[0] =='1') {$acceso = 1;}
 	
 	}
-	if( isset($_REQUEST['identificador'])){
+	if( isset($identificador)){
+		$form = 	remplacetas('form_datos','control',$identificador,'form_id',"") ;	
+			if (isset($_REQUEST['t'])) {
+				$t = $_REQUEST['t'];
+				//$opciones= array();
+				//$opciones[]= "$identificador";
+				$onload =" <script type=\"text/javascript\">xajax_formulario_embebido_ajax($form[0],'$identificador','edit')</script>";
+				} else {$t = "";}
 		$empresa = 	remplacetas('form_datos','control',$_REQUEST['identificador'],'id_empresa',"") ;	
 		$id_empresa = $empresa[0];
-		$form = 	remplacetas('form_datos','control',$_REQUEST['identificador'],'form_id',"") ;	
+		
 		$titulo = 	remplacetas('form_id','id',$form['0'],'nombre',"") ;
 		$descripcion = 	remplacetas('form_id','id',$form['0'],'descripcion',"") ;
 		$background_imagen = buscar_imagen("$form[0]",$_REQUEST['identificador'],"","$id_empresa");
 		$uri_set = "<a class='' href='?set=$form[0]'>$titulo[0]</a>";
 				$publico = remplacetas('form_id','id',$form[0],'publico',"") ;
 			if($publico[0] =='1') {$acceso = 1;}
-}
+		}
+	elseif( isset($form)){
+		if($form!=''){ 
+						$onload =" <script type=\"text/javascript\">xajax_formulario_embebido_ajax('$form','$opciones','nuevo')</script>";
+							// echo formulario_embebido($form,$opciones);
+							}
+		
+		}
+		elseif( isset($_REQUEST['psi'])){$onload ="<script type=\"text/javascript\"> xajax_mostrar_psi()</script>";}
+	else{}
 $logo = remplacetas('empresa','id',"$id_empresa",'imagen','') ;
 $direccion = remplacetas('empresa','id',"$id_empresa",'direccion','') ;
 $telefono = remplacetas('empresa','id',"$id_empresa",'telefono','') ;
@@ -114,6 +132,34 @@ h6 {
     font-family: "Lato","Helvetica Neue",Helvetica,Arial,sans-serif;
     font-weight: 700;
 }
+fieldset.fieldset-borde {
+
+    border: 2px solid #EDEDED !important;
+    border-radius:3px;
+    padding: 0 1.4em 1.4em 1.4em !important;
+    margin: 0 0 1.5em 0 !important;
+    -webkit-box-shadow:  0px 0px 0px 0px #000;
+            box-shadow:  0px 0px 0px 0px #000;
+}
+
+legend.legend-area {
+        font-size: 1.2em !important;
+        font-weight: bold !important;
+        text-align: left !important;
+        width:auto;
+        padding:0 10px;
+        border-bottom:none;
+    }
+
+.modal-dialog {
+  min-width: 600px;
+  height: auto;
+  padding: 0;
+}
+
+.modal-content {
+  height: auto;
+}
 
 .topnav {
     font-size: 14px; 
@@ -129,7 +175,7 @@ h6 {
     padding-bottom: 50px;
     text-align: center;
     color: #f8f8f8;
-    background: url(images/secure/?file=600/<?php echo $background_imagen; ?> ) no-repeat center center;
+    background: url(milfs/images/secure/?file=600/<?php echo $background_imagen; ?> ) no-repeat center center;
     background-size: cover;
 }
 
@@ -145,7 +191,7 @@ h6 {
     text-shadow: 2px 2px 3px rgba(0,0,0,0.6);
     font-size: 5em;
     border-radius: 3px;
-    background: url(images/oscuro40.png ) ;
+    background: url(milfs/images/oscuro40.png ) ;
 }
 
 .intro-divider {
@@ -194,6 +240,8 @@ h6 {
 .content-section-a {
     padding: 50px 0;
     background-color: #f8f8f8;
+    border-radius: 5px;
+    margin: 10px;
 }
 
 .content-section-b {
@@ -271,6 +319,7 @@ p.copyright {
 </head>
 
 <body>
+
     <!-- Navigation -->
     <nav class="navbar navbar-default navbar-fixed-top topnav" role="navigation">
         <div class="container topnav">
@@ -292,7 +341,7 @@ p.copyright {
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     <li>
-                        <a href="?ingresar">Ingresar</a>
+                        <a href="milfs/?ingresar">Ingresar</a>
                     </li>
                 </ul>
             </div>
@@ -361,8 +410,8 @@ else{ echo landingpage_contenido($id_empresa);}
                 </div>
                 <div class="col-lg-8">
                     <ul class="list-inline banner-social-buttons">
-                       <li>
-                                <a target='redes' href="https://twitter.com/<?php echo $twitter[0]; ?>" class="btn btn-default btn-lg"><i class="fa fa-twitter fa-fw"></i> <span class="network-name">@<?php echo $twitter[0]; ?></span></a>
+                       		<li>
+                                <a target='redes' href="https://twitter.com/<?php echo $twitter[0]; ?>" class="btn btn-default btn-lg"><i class="fa fa-twitter fa-fw"></i> <span class="network-name"><?php echo $twitter[0]; ?></span></a>
                             </li>
                             <li>
                                 <a target='redes' href="https://github.com/humano/milfs/" class="btn btn-default btn-lg"><i class="fa fa-github fa-fw"></i> <span class="network-name">Github</span></a>
@@ -379,7 +428,27 @@ else{ echo landingpage_contenido($id_empresa);}
 
     </div>
     <!-- /.banner -->
+<!-- Modal -->
 
+<div class='modal fade ' id='muestraInfo' tabindex='-1' role='dialog' aria-labelledby='myModalLabel' aria-hidden='true'>
+  <div class='modal-dialog modal-lg' >
+    <div class='modal-content'>
+      <div class='modal-header' >
+        <button type='button' class='close' data-dismiss='modal' aria-hidden='true'><i class='fa fa-times-circle'></i></button>
+        <h4 class='modal-title' id='myModalLabel_info'><div id='titulo_modal'></div></h4>
+      </div>
+      <div class='modal-body'>
+	
+       <div id='muestra_form'></div>
+      </div>
+      <div class='modal-footer' id='pie_modal'>
+        
+       
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Modal -->
     <!-- Footer -->
     <footer>
         <div class="container">
@@ -399,202 +468,14 @@ else{ echo landingpage_contenido($id_empresa);}
                         </li>
                     </ul>
                     <p class="copyright text-muted small"> <a href='http://QWERTY.co/milfs'>&copy; MILFS Un proyecto de http://QWERTY.co</a> Se distribuye bajo licencia GPL V3
-        <a href="?psi" target="_psi"><i class="fa fa-smile-o "></i> Políticas de privacidad y protección de datos.</a></p>
+        						<a href="milfs/?psi" ><i class="fa fa-smile-o "></i> Políticas de privacidad y protección de datos.</a></p>
                 </div>
             </div>
         </div>
     </footer>
-
-    <!-- jQuery -->
-    <script src="js/jquery.js"></script>
-
-    <!-- Bootstrap Core JavaScript -->
-    <script src="js/bootstrap.min.js"></script>
-
-</body>
-
-</html>
-<?php
-return;
-}
-
-
-//require ('funciones/funciones.php');
-require ('funciones/convert.php');
-require ('funciones/login.php');
-
-
-
-
-
-if (isset($_REQUEST['form'])) {
-	$form = $_REQUEST['form'];
-	$opciones= array();
-	if(isset($_REQUEST['formato']) ){	$opciones['formato']= $_REQUEST['formato'];	}
-	} else {$form = "";}
-	if($form !='') {$embebido = 1;}
-if (isset($_REQUEST['identificador'])) {$identificador = $_REQUEST['identificador'];} else {$identificador = "";}
-	if($identificador !='') {$embebido = 1;}
-if (isset($_REQUEST['id'])) {$id = $_REQUEST['id'];} else {$id = "";}
-if (isset($_REQUEST['c'])) {$c = $_REQUEST['c'];} else {$c = "";}
-if (isset($_REQUEST['f'])) {$f = $_REQUEST['f'];} else {$f = "";}
-if (isset($_REQUEST['t'])) {$t = $_REQUEST['t'];} else {$t = "";}
-?>
-	
-	<link rel="stylesheet" type="text/css" media="screen" href="css/bootstrap-markdown.css">
-	<link rel="stylesheet" type="text/css" media="screen" href="css/bootstrap-markdown.min.css">
-	<link href='css/estilos.php?dd' rel='stylesheet'>
-
-
-<style>
-  #map {width: 500px;height:200px;}
-  
-</style>
-
-
-    <title>I<3MILFS</title>
-
-<?php
-
-					if($id !='' OR $c ){$onload ="<script type=\"text/javascript\"> xajax_formulario_modal('".$id."','','".$c."','".$t."')</script>";}
-						if( isset($_REQUEST['psi'])){$onload ="<script type=\"text/javascript\"> xajax_mostrar_psi()</script>";}
-?>
-
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
-  <script src="js/markdown.js"></script>
-  <script src="js/to-markdown.js"></script>
-  <script src="js/bootstrap-markdown.js"></script>
-      <script src="js/scripts.js"></script>
-
-<script type="text/javascript">
- 
-
-function evdragstart(ev,el) { //ev= el evento, el=elemento arrastrado.
-    cont1=el.parentNode; //guardamos el elemento padre del elemento en una variable.
-    ev.dataTransfer.setData("text",ev.target.id);	//guardamos datos del elemento. 
-}
-
-function evdragover (ev) { //ev=el evento.
-    ev.preventDefault(); //quitar comportamiento por defecto.
-}
-
-function evdrop(ev,el) { //ev=el evento; el=receptor de soltado
-    ev.stopPropagation(); //impedir otras acciones 
-    ev.preventDefault(); //quitar comportamiento por defecto
-    var data=ev.dataTransfer.getData("text"); //recogemos datos del elemento
-    mielem=ev.target.appendChild(document.getElementById(data)); //obtenemos el elemento arrastrado
-    cont1.appendChild(mielem); //ponemos el elemento arrastrado en el mismo sitio donde estaba.
-    mielem2=mielem.cloneNode(true); //creamos una copia del elemento arrastrado.
-    mielem2.setAttribute("draggable","false"); //impedimos que el nuevo elemento pueda volver a arrastrarse
-    el.appendChild(mielem2); //colocamos la copia en el receptor de soltado
-}
-</script>
-<style>
-.modal-dialog {
-  width: 98%;
-  height: auto;
-  padding: 0;
-}
-
-.modal-content {
-  height: auto;
-}
-
-</style>
-</head>
-<body  >
-
-<?php if($embebido ==1) { 
-if($form!=''){	 echo formulario_embebido($form,$opciones);}
-elseif($identificador !='') { echo mostrar_identificador($identificador,$id);}
-//elseif($_REQUEST['psi'] !='') { include("psi.php") ; echo $aviso;}
-else{}
-
-}else{
-
- ?>
-<?php echo @$onload; ?>
-<?php 
- if ( isset ( $_SESSION['id'] ) ) {	?>
-<div class="navbar navbar-inverse nav-bar-fixed-top " role="navigation">
-  <div class="container-fluid">
-    <!-- Brand and toggle get grouped for better mobile display -->
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-        <span class="sr-only">MILFS</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <a class="navbar-brand" href="#"><img src="favicon-152.png" style="width:60px" alt="MILFS" title="Multi Interactive Light Form System"></a>
-    </div>
-
-<?php  echo milfs() ?>
-  </div>
-</div>
-<?php }else{ } ?>
-
-
-<div id='debug'></div>
-	<div class='container'>
-		<div id='contenido'>
-		
-		<?php 
-		if(!isset($_SESSION['id_empresa'])) {$id_empresa_portada='1';} else{$id_empresa_portada = $_SESSION['id_empresa'];}
-	$encabezado = empresa_datos("$id_empresa_portada",'encabezado');
-	$pie = empresa_datos("$id_empresa_portada",'pie');
-	echo "$encabezado";		
-		?>xxx
-		<?php echo buscar_imagen("21","","",""); ?>
-		xxx
-<?php if(isset($_REQUEST['change'])){
-echo cambiar_password_formato("$_REQUEST[change]");
-}
-revisar_ingreso('');
-?>		
-
-<?php echo $pie; ?>
-<img class='img-responsive center-block' src="images/logo.png" alt="MILFS">
-		</div>
-
-<?php
-
-
-?>
-
-
-<!-- Modal -->
-
-<div class='modal fade ' id='muestraInfo' tabindex='-1' role='dialog' aria-labelledby='myModalLabel' aria-hidden='true'>
-  <div class='modal-dialog' >
-    <div class='modal-content'>
-      <div class='modal-header' >
-        <button type='button' class='close' data-dismiss='modal' aria-hidden='true'>&times;</button>
-        <h4 class='modal-title' id='myModalLabel_info'><div id='titulo_modal'></div></h4>
-      </div>
-      <div class='modal-body'>
-		<?php	include("psi.php") ;?>
-       <div id='muestra_form'></div>
-      </div>
-      <div class='modal-footer' id='pie_modal'>
-        
-       
-      </div>
-    </div>
-  </div>
-</div>
-
-	</div>
-
-
-       <div class="">
-	       <div class="container">
-        <a href='http://QWERTY.co/milfs'>&copy; MILFS Un proyecto de http://QWERTY.co</a> Se distribuye bajo licencia GPL V3
-        <a href="?psi" target="_psi"><i class="fa fa-smile-o "></i> Políticas de privacidad y protección de datos.</a>
-        	</div> 
-      </div>
-      <?php } ?>
-
+    <?php echo $onload;  ?>
 </body>
+<?php //} ?>
 </html>

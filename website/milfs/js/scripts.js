@@ -121,7 +121,7 @@ function resultadoUploadArchivo(estado,file,div) {
 var link = '';
 if (estado == 0)
 
-var mensaje = '<div id="boton_subir"><input class="btn btn-success btn-block" type="button" value="Importar" onclick="xajax_formulario_importar(\''+file+'\',\'grabar\',(document.getElementById(\'seleccion_formulario\').value)) "></div>';
+var mensaje = '<div id="boton_subir"><input class="btn btn-success btn-block" type="button" value="Importar" onclick="this.disabled= true; xajax_formulario_importar(\''+file+'\',\'grabar\',(document.getElementById(\'seleccion_formulario\').value)) "></div>';
 if (estado == 1)
 var mensaje = 'Error ! - El Archivo ('+ file +') no llegó al servidor' + link;
 if (estado == 2)

@@ -11,7 +11,9 @@ $imagen= $_REQUEST[id_imagen];
 if($_REQUEST[u] == "escritorio") {$respuesta = "escritorio/";}
 // Script Que copia el archivo temporal subido al servidor en un directorio.
 $tipo = $_FILES['fileUpload']['type'];
-if($tipo=="image/png") {$ext = ".png";	} elseif($tipo=="image/jpeg") {$ext = ".jpg";	}
+if($tipo=="image/png") {$ext = ".png";	} 
+elseif($tipo=="image/jpeg") {$ext = ".jpg";	}
+elseif($tipo=="image/gif") {$ext = ".gif";	}
 else {$ext = "novalida";} 
 // Definimos Directorio donde se guarda el archivo
 //$dir = '../../../images_secure';
@@ -68,6 +70,7 @@ $archivo = "$_SESSION[path_images_secure]/full/".$file;// Ponemos el . antes de
 imagealphablending( $thumb, false );
 imagesavealpha( $thumb, true );// La redimensionamosimagecopyresampled($thumb, $img, 0, 0, 0, 0, $newwidth, $newheight, $file_info[0], $file_info[1]);// La mostramos como jpg//header("Content-type: image/jpeg");imagejpeg($thumb,"$_SESSION[path_images_secure]/".$width."/$file", 80);
 imagepng($thumb,"$_SESSION[path_images_secure]/".$width."/$file", 9);
+//imagegif($thumb,"$_SESSION[path_images_secure]/".$width."/$file");
 //imagejpeg($thumb,null, 80);
 }
 function generar_miniatura_alto($file,$alto) {//$archivo = $file;

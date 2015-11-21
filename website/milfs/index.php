@@ -1,17 +1,17 @@
 <?php
 session_start();
-        if(isset($_REQUEST[debug])) {ini_set('display_errors', 'On');}
+        if(isset($_REQUEST['debug'])) {ini_set('display_errors', 'On');}
 require ('xajax/xajax.inc.php');
 $xajax = new xajax();
 require ('funciones/funciones.php');
-require ('funciones/convert.php');
+//require ('funciones/convert.php');
 require ('funciones/login.php');
 require ("includes/markdown.php");
 require ("includes/simple_html_dom.php");
 require ("funciones/conex.php");
 
 $xajax->processRequests(); 
-//$xajax->debugOn('');
+
 $embebido =0;
 if (isset($_REQUEST['form'])) {
 	$form = $_REQUEST['form'];
@@ -34,7 +34,10 @@ if (isset($_REQUEST['t'])) {$t = $_REQUEST['t'];} else {$t = "";}
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="fredyrivera" >
-     <?php $xajax->printJavascript("xajax/");  ?>
+     <?php 
+     $xajax->printJavascript("xajax/"); 
+     //$xajax->debugOn();
+      ?>
 	<link rel="shortcut icon" href="favicon-152.png">
 	<link rel="apple-touch-icon-precomposed" href="favicon-152.png">
 	<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha256-k2/8zcNbxVIh5mnQ52A0r3a6jAgMGxFJFE2707UxGCk= sha512-ZV9KawG2Legkwp3nAlxLIVFudTauWuBpC10uEafMHYL0Sarrz5A7G79kXh5+5+woxQ5HM559XX2UZjMJ36Wplg==" crossorigin="anonymous">
@@ -168,8 +171,9 @@ revisar_ingreso('');
 <div class='modal fade ' id='muestraInfo' tabindex='-1' role='dialog' aria-labelledby='myModalLabel' aria-hidden='true'>
   <div class='modal-dialog' >
     <div class='modal-content'>
+    <button type='button' class='close' data-dismiss='modal' aria-hidden='true'><i class='fa fa-times-circle'></i></button>
       <div class='modal-header' >
-        <button type='button' class='close' data-dismiss='modal' aria-hidden='true'>&times;</button>
+        
         <h4 class='modal-title' id='myModalLabel_info'><div id='titulo_modal'></div></h4>
       </div>
       <div class='modal-body'>

@@ -16,7 +16,7 @@ if (isset($_FILES['fileUpload']['tmp_name'])) {
 	$size= $_FILES['fileUpload']['size'];
 	$nombre =MD5(time()).".jpg";
 // (2) - Comprobamos que se trata de un archivo de imágen
-if ($tipo == 'text/csv' AND $size  <= 1000000 ) {
+if ($tipo == 'text/csv' AND $size  <= 10000000 ) {
 // (3) Por ultimo se intenta copiar el archivo al servidor.
 $name = MD5(time()).".csv";
 $nombre= "/tmp/".MD5(time()).".csv";

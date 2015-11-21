@@ -3,9 +3,9 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Nov 17, 2015 at 04:10 PM
--- Server version: 5.6.25-4
--- PHP Version: 5.6.14-1+b1
+-- Generation Time: Nov 21, 2015 at 06:12 AM
+-- Server version: 5.6.27-2
+-- PHP Version: 5.6.14-1
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -241,7 +241,8 @@ INSERT INTO `form_campos` (`id`, `id_especialista`, `id_empresa`, `campo_nombre`
 (74, 1, 1, '¿Con que frecuencia consulta su email?', 'Cuantas veces al día o la semana el usuario consulta esta red o tecnología.', 27, 1, 0, 1, 'ff947ac7c413896a9200dbd2a7fe8925', 0, ''),
 (75, 1, 1, '¿Con que frecuencia consulta facebook?', 'Cuantas veces al día o la semana el usuario consulta esta red o tecnología.', 27, 1, 0, 1, 'c272f129cab45c170285d5bf6106c0dc', 0, ''),
 (76, 1, 1, '¿Con que frecuencia consulta sus mensajes de texto?', 'Cuantas veces al día o la semana el usuario consulta esta red o tecnología.', 27, 1, 0, 1, 'f8dcb78269dca737f5fc4c8fb4b1d024', 0, ''),
-(77, 1, 1, 'Uso de redes sociales ', 'Conque frecuencia usa estas tecnologías o redes', 28, 1, 0, 1, '151ed033e96b5593d419e23fc43518e9', 0, '');
+(77, 1, 1, 'Uso de redes sociales ', 'Conque frecuencia usa estas tecnologías o redes', 28, 1, 0, 1, '151ed033e96b5593d419e23fc43518e9', 0, ''),
+(78, 1, 1, 'Clave', 'Una palabra secreta que te servirá para consultar tus datos', 18, 0, 0, 1, '5ba3949050065765b0d31bdf9f6cd79a', 0, '');
 
 -- --------------------------------------------------------
 
@@ -2697,7 +2698,12 @@ INSERT INTO `form_contenido_campos` (`id`, `id_campo`, `id_empresa`, `id_form`, 
 (81, 70, 1, 3, '0', '0', 0, 'ddc21d86e20ce79fc8caf51fba052031'),
 (82, 45, 1, 3, '0', '0', 0, '56254520aa30898d9a76cd30646bf33f'),
 (83, 18, 1, 3, '0', '0', 0, 'bcc4f7919bf1f6f6da22f3a732a7334a'),
-(84, 77, 1, 1, '0', '0', 0, 'e1b6d590ce60c79acb794422f1899a16');
+(84, 77, 1, 1, '0', '0', 0, 'e1b6d590ce60c79acb794422f1899a16'),
+(85, 5, 1, 4, '0', '0', 19, '6b72eaf63b3bc583581999af5e67988d'),
+(86, 15, 1, 4, '0', '0', 42, '78634a67f2eee3cb86443bb9602fff33'),
+(87, 26, 1, 4, '0', '0', 66, '68621298d734cd76bf2b53ca8a70b107'),
+(88, 12, 1, 4, '0', '0', 0, '96d9df9899bb63bfe23ae1e5b1a88235'),
+(89, 78, 1, 4, '0', '0', 0, '0d09a17c8859202bfc3e1646ded197e2');
 
 -- --------------------------------------------------------
 
@@ -2785,7 +2791,18 @@ INSERT INTO `form_datos` (`id`, `id_campo`, `form_id`, `proceso`, `orden`, `id_u
 (59, 11, 1, NULL, 0, 1, 1, 'Libadores', 1447607550, NULL, '89aa6efe62e27e5c3979be8cc1bfe252'),
 (60, 9, 1, NULL, 0, 1, 1, 'Probando el mapita', 1447607550, NULL, '89aa6efe62e27e5c3979be8cc1bfe252'),
 (61, 1, 1, NULL, 0, 1, 1, 'Delfín', 1447607629, NULL, '89aa6efe62e27e5c3979be8cc1bfe252'),
-(62, 18, 1, NULL, 0, 1, 1, '-75.2692534 4.8795198 16', 1447607629, NULL, '89aa6efe62e27e5c3979be8cc1bfe252');
+(62, 18, 1, NULL, 0, 1, 1, '-75.2692534 4.8795198 16', 1447607629, NULL, '89aa6efe62e27e5c3979be8cc1bfe252'),
+(63, 5, 4, NULL, 0, 1, 1, 'Humano', 1448074472, NULL, '4fd222ee8dbeef18210e6bcdf312d080'),
+(64, 15, 4, NULL, 0, 1, 1, 'fredyrivera@gmail.com', 1448074472, NULL, '4fd222ee8dbeef18210e6bcdf312d080'),
+(65, 5, 4, NULL, 0, 1, 1, 'Fernando Gonzalez', 1448074519, NULL, '4c62e2dad846dd3d5dc5a92d916f983a'),
+(66, 15, 4, NULL, 0, 1, 1, 'fernando@otraparte.co', 1448074519, NULL, '4c62e2dad846dd3d5dc5a92d916f983a'),
+(67, 26, 4, NULL, 0, 1, 1, '055cb6e87667ded62cb43154988f580f.jpg', 1448074519, NULL, '4c62e2dad846dd3d5dc5a92d916f983a'),
+(68, 12, 4, NULL, 0, 1, 1, 'Lunatico', 1448075945, NULL, 'a94d4684a3a2bacafeb2f2f02711a05a'),
+(69, 78, 4, NULL, 0, 1, 1, '12703dd1411c33587da2004a9434a400', 1448075945, NULL, 'a94d4684a3a2bacafeb2f2f02711a05a'),
+(70, 5, 4, NULL, 0, 1, 1, 'fredy rivera', 1448075945, NULL, 'a94d4684a3a2bacafeb2f2f02711a05a'),
+(71, 15, 4, NULL, 0, 1, 1, 'fredyrivera@gmail.com', 1448075945, NULL, 'a94d4684a3a2bacafeb2f2f02711a05a'),
+(72, 26, 4, NULL, 0, 1, 1, 'f7145dec716f1510d3986760a43d1cf1.jpg', 1448075945, NULL, 'a94d4684a3a2bacafeb2f2f02711a05a'),
+(73, 26, 4, NULL, 0, 0, 1, '90f4c6d9496b551bc24b9a5a573eb556.jpg', 1448077773, NULL, 'a94d4684a3a2bacafeb2f2f02711a05a');
 
 -- --------------------------------------------------------
 
@@ -2807,7 +2824,9 @@ CREATE TABLE `form_grupo` (
 INSERT INTO `form_grupo` (`id_grupo`, `id`, `grupo`, `id_empresa`) VALUES
 (1, 2, 'Documentacion', 1),
 (2, 3, 'Documentacion', 1),
-(3, 1, 'Datos', 1);
+(3, 1, 'Datos', 1),
+(4, 4, 'Pruebas', 1),
+(5, 5, 'Laboratorio', 1);
 
 -- --------------------------------------------------------
 
@@ -2836,7 +2855,9 @@ CREATE TABLE `form_id` (
 INSERT INTO `form_id` (`id`, `nombre`, `descripcion`, `activo`, `modificable`, `publico`, `propietario`, `id_empresa`, `creacion`, `orden`, `formulario_respuesta`) VALUES
 (1, 'Contacto', 'Capura de datos en evento.', '1', '1', '0', 1, 1, '2014-09-30 19:47:38', 80, 0),
 (2, 'Biblioteca Digital', 'Repositorio digital de documentos de nuestrared.org.\nLos metadatos fueron establecidos usando <a target= ventana  href= http://biblioestandares.bn.cl/sites/biblioestandares.bn.cl/files/guia_para_la_creacion_de_metadatos_octubre_pub_2009.pdf >Este documento</a>', '1', '1', '1', 1, 1, '2015-02-25 15:38:05', 0, 0),
-(3, 'Galeria', 'Colección de imágenes', '1', '1', '1', 1, 1, '2015-10-27 18:17:18', 0, 0);
+(3, 'Galeria', 'Colección de imágenes', '1', '1', '1', 1, 1, '2015-10-27 18:17:18', 0, 0),
+(4, 'Prueba', 'No tomar en serio', '1', '1', '1', 1, 1, '2015-11-21 02:31:50', 0, 0),
+(5, 'Laboratorio', 'Pruebas', '1', '1', '0', 1, 1, '2015-11-21 02:36:08', 0, 0);
 
 -- --------------------------------------------------------
 
@@ -2852,6 +2873,20 @@ CREATE TABLE `form_parametrizacion` (
   `descripcion` text NOT NULL,
   `visible` set('0','1') NOT NULL DEFAULT '1'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `form_parametrizacion`
+--
+
+INSERT INTO `form_parametrizacion` (`id`, `tabla`, `campo`, `opcion`, `descripcion`, `visible`) VALUES
+(1, 'form_id', '34a799ec5c0f3a708468bd77cf54dcea', 'identificador', '2', '1'),
+(2, 'form_id', 'fc66982fa904e4cb4736c33e63e5d7aa', 'identificador', '2', '1'),
+(3, 'form_id', '29b348c222e7de9801b0d25335c558f5', 'identificador', '2', '1'),
+(4, 'form_id', '1', 'formulario', '1', '1'),
+(5, 'form_id', '4', 'formulario', '18', '1'),
+(6, 'form_id', '4c62e2dad846dd3d5dc5a92d916f983a', 'identificador', '15', '1'),
+(7, 'form_id', '4fd222ee8dbeef18210e6bcdf312d080', 'identificador', '4', '1'),
+(8, 'form_id', 'a94d4684a3a2bacafeb2f2f02711a05a', 'identificador', '23', '1');
 
 -- --------------------------------------------------------
 
@@ -2994,8 +3029,9 @@ ALTER TABLE `form_datos`
   ADD UNIQUE KEY `id` (`id`),
   ADD KEY `control` (`control`),
   ADD KEY `id_campo` (`id_campo`),
-  ADD KEY `perfil` (`form_id`),
   ADD KEY `id_usuario` (`id_usuario`);
+ALTER TABLE `form_datos` ADD FULLTEXT KEY `contenido` (`contenido`);
+ALTER TABLE `form_datos` ADD FULLTEXT KEY `control_2` (`control`);
 
 --
 -- Indexes for table `form_grupo`
@@ -3052,7 +3088,7 @@ ALTER TABLE `form_areas`
 -- AUTO_INCREMENT for table `form_campos`
 --
 ALTER TABLE `form_campos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=78;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=79;
 --
 -- AUTO_INCREMENT for table `form_campos_valores`
 --
@@ -3062,27 +3098,27 @@ ALTER TABLE `form_campos_valores`
 -- AUTO_INCREMENT for table `form_contenido_campos`
 --
 ALTER TABLE `form_contenido_campos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=85;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=90;
 --
 -- AUTO_INCREMENT for table `form_datos`
 --
 ALTER TABLE `form_datos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=63;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=74;
 --
 -- AUTO_INCREMENT for table `form_grupo`
 --
 ALTER TABLE `form_grupo`
-  MODIFY `id_grupo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id_grupo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 --
 -- AUTO_INCREMENT for table `form_id`
 --
 ALTER TABLE `form_id`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 --
 -- AUTO_INCREMENT for table `form_parametrizacion`
 --
 ALTER TABLE `form_parametrizacion`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 --
 -- AUTO_INCREMENT for table `form_tipo_campo`
 --

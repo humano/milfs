@@ -1,8 +1,8 @@
 <?php
 
-$email = remplacetas('empresa','id','1','email') ;
+$email = remplacetas('empresa','id','1','email','') ;
 $email = "<strong>$email[0]</strong>";
-$razon_social = remplacetas('empresa','id','1','razon_social') ;
+$razon_social = remplacetas('empresa','id','1','razon_social','') ;
 $razon_social ="<strong>$razon_social[0]</strong>";
 $aviso ="
 
