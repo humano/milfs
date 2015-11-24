@@ -181,9 +181,10 @@ if (mysql_num_rows($sql)!='0'){
 														@$zoom = $campos['2'];	
 			
 			if($error_token != 1) {
+				$url_pin =urlencode("$_SESSION[site]milfs/images/iconos/negro.png");
 			$miniatura = "
 
-			<img class=' img-responsive img-rounded'  style='width:100%'  src='https://api.tiles.mapbox.com/v4/examples.map-zr0njcqy/url-https%3A%2F%2Fraw.githubusercontent.com%2Fhumano%2Fmilfs%2Fmaster%2Fmilfs%2Fimages%2Ficonos%2Fnegro.png($lat,$lon,$zoom)/$lat,$lon,$zoom/600x300.png?access_token=$mapbox_token' >
+			<img class=' img-responsive img-rounded'  style='width:100%'  src='https://api.tiles.mapbox.com/v4/examples.map-zr0njcqy/url-".$url_pin."($lat,$lon,$zoom)/$lat,$lon,$zoom/600x300.png?access_token=$mapbox_token' >
 			"; }else{	$miniatura ="<div class='alert alert-danger'>No se ha definido un token de mapbox</div>";}
 									}
 		if($geo[0] !='') { $mapa= "<a href='milfs/map.php?id=$row[id]' target='mapa'>$miniatura</a>";}else {$mapa='';}
@@ -1176,7 +1177,7 @@ while( $row = mysql_fetch_array( $sql ) ) {
 
 										$icono = remplacetas('form_parametrizacion','campo',$perfil,'descripcion'," tabla='form_id' and  opcion = 'categoria:icon:$row[md5_contenido]'") ;
 								if($icono[0] =='') {
-								$icon = "https://raw.githubusercontent.com/humano/milfs/master/milfs/images/iconos/negro.png";
+								$icon = "$_SESSION[site]milfs/images/iconos/negro.png";
 													}else{
 								
 								$icon = $icono[0];
@@ -3974,7 +3975,7 @@ while( $row = mysql_fetch_array( $sql ) ) {
 		
 		//$propiedades[title] ='Hola mundo';
 		if($propiedades[icon][iconUrl] =="") {
-		$propiedades[icon][iconUrl] = "https://raw.githubusercontent.com/humano/milfs/master/milfs/images/iconos/negro.png";
+		$propiedades[icon][iconUrl] = "$_SESSION[site]/milfs/images/iconos/negro.png";
 		}
 		$geometria .= "{\"type\":\"Feature\",\"geometry\":".json_encode($marcador,JSON_NUMERIC_CHECK|JSON_PRETTY_PRINT).",\"properties\":".json_encode($propiedades,JSON_NUMERIC_CHECK|JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT)."},";
 		$features[] = $marcador;
@@ -4976,9 +4977,10 @@ if (mysql_num_rows($sql)!='0'){
 			$error_token ="";
 			if(!isset($mapbox_token)) {		include("milfs/includes/datos.php"); if(!isset($mapbox_token)) {$error_token = 1; }}
 			if($error_token != 1) {
+				$url_pin = urlencode("$_SESSION[site]milfs/images/iconos/negro.png");
 			$contenido = "
 
-			<img class=' img-responsive'  style='width:100%'  src='http://api.tiles.mapbox.com/v4/examples.map-zr0njcqy/url-https%3A%2F%2Fraw.githubusercontent.com%2Fhumano%2Fmilfs%2Fmaster%2Fmilfs%2Fimages%2Ficonos%2Fnegro.png($lat,$lon,$zoom)/$lat,$lon,$zoom/600x250.png?access_token=$mapbox_token' >
+			<img class=' img-responsive'  style='width:100%'  src='http://api.tiles.mapbox.com/v4/examples.map-zr0njcqy/url-".$url_pin."($lat,$lon,$zoom)/$lat,$lon,$zoom/600x250.png?access_token=$mapbox_token' >
 			"; }else{	$contenido ="<div class='alert alert-danger'>No se ha definido un token de mapbox</div>";}
 										}
 			}
@@ -5041,7 +5043,8 @@ $campo_imagen = $campo_imagen[0];
 								$icono = remplacetas('form_parametrizacion','campo',$id,'descripcion'," tabla='form_id' and  opcion = 'categoria:icon:$md5_contenido'") ;
 								if($icono[0] =='') {
 								//$icon = "http://$_SERVER[HTTP_HOST]/milfs/images/pin.png";
-								$icon = "https://raw.githubusercontent.com/humano/milfs/master/milfs/images/iconos/negro.png";
+								$url_pin = urlencode("$_SESSION[site]milfs/images/iconos/negro.png");
+								$icon = "$_SESSION[site]milfs/images/iconos/negro.png";
 													}else{
 								
 								$icon = $icono[0];
@@ -5517,10 +5520,11 @@ $td .= "<td>$imagen</td>";
 														$lat = $campos[0];
 														$lon = $campos[1];
 														$zoom = $campos[2];		
-			require("includes/datos.php");		
+			require("includes/datos.php");	
+			$url_pin =urlencode("$_SESSION[site]milfs/images/iconos/negro.png");
 			$contenido = "
 			<!-- <img class='img-round'  src='http://dev.openstreetmap.de/staticmap/staticmap.php?center=$lon,$lat&zoom=$zoom&size=350x100&maptype=mapnik&markers=$lon,$lat,red-pushpin' > -->
-						<img class='img-round '  src='http://api.tiles.mapbox.com/v4/examples.map-zr0njcqy/url-https%3A%2F%2Fraw.githubusercontent.com%2Fhumano%2Fmilfs%2Fmaster%2Fmilfs%2Fimages%2Ficonos%2Fnegro.png($lat,$lon,$zoom)/$lat,$lon,$zoom/350x100.png?access_token=$mapbox_token' >";
+						<img class='img-round '  src='http://api.tiles.mapbox.com/v4/examples.map-zr0njcqy/url-".$url_pin."($lat,$lon,$zoom)/$lat,$lon,$zoom/350x100.png?access_token=$mapbox_token' >";
 											} else { $contenido ='';}
 			}
 			elseif($campo_tipo=='4'){ $contenido = "<a href='$contenido' target='_blank'>$contenido</a>";}
