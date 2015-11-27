@@ -5,6 +5,7 @@ if(isset($_REQUEST['debug'])) {ini_set('display_errors', 'On');}
 	$xajax = new xajax();
 	require ("milfs/funciones/conex.php");
    require ('milfs/funciones/funciones.php');
+   include ('milfs/addon/funciones.php');
    require ("milfs/includes/markdown.php");
    require ("milfs/includes/simple_html_dom.php");
 	$xajax->processRequests();  ?>
@@ -16,14 +17,10 @@ if(isset($_REQUEST['debug'])) {ini_set('display_errors', 'On');}
     <meta name="viewport" content="user-scalable=no, width=device-width,  maximum-scale=1,  initial-scale=1">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="fredyrivera" >
+
 	<link rel="shortcut icon" href="milfs/favicon-152.png">
 	<link rel="apple-touch-icon-precomposed" href="milfs/favicon-152.png">
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous">
-	<?php $xajax->printJavascript("milfs/xajax/");  ?>
-	<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha256-k2/8zcNbxVIh5mnQ52A0r3a6jAgMGxFJFE2707UxGCk= sha512-ZV9KawG2Legkwp3nAlxLIVFudTauWuBpC10uEafMHYL0Sarrz5A7G79kXh5+5+woxQ5HM559XX2UZjMJ36Wplg==" crossorigin="anonymous">
-	<script src="milfs/js/scripts.js"></script>
+
 <?php 
 	
 
@@ -32,6 +29,7 @@ if(isset($_REQUEST['debug'])) {ini_set('display_errors', 'On');}
 $embebido =0;
 $onload="";
 if (isset($_REQUEST['form'])) {$form = $_REQUEST['form'];} else {$form = "";}
+if (isset($_REQUEST['addon'])) {$addon = $_REQUEST['addon'];} else {$addon = "";}
 if (isset($_REQUEST['identificador'])) {$identificador = $_REQUEST['identificador'];} else {$identificador = NULL ;}
 $acceso = 0;
 if(	@$_REQUEST['empresa'] =="") { $id_empresa = "1";}
@@ -66,9 +64,11 @@ if($id[0]=="") { $id_empresa = "1";}
 				} else {$t = "";}
 		$empresa = 	remplacetas('form_datos','control',$_REQUEST['identificador'],'id_empresa',"") ;	
 		$id_empresa = $empresa[0];
-		
+		$impresion = mostrar_identificador("$_REQUEST[identificador]","","landingpage",'simple');
+		$impresion = strip_tags($impresion);
+		//$impresion = eregi_replace("[\n|\r|\n\r|\t|\0", " ",$impresion);
 		$titulo = 	remplacetas('form_id','id',$form['0'],'nombre',"") ;
-		$descripcion = 	remplacetas('form_id','id',$form['0'],'descripcion',"") ;
+		$descripcion_meta = $impresion; //	remplacetas('form_id','id',$form['0'],'descripcion',"") ;
 		$background_imagen = buscar_imagen("$form[0]",$_REQUEST['identificador'],"","$id_empresa");
 		$uri_set = "<a class='' href='?set=$form[0]'>$titulo[0]</a>";
 				$publico = remplacetas('form_id','id',$form[0],'publico',"") ;
@@ -76,11 +76,16 @@ if($id[0]=="") { $id_empresa = "1";}
 		}
 	elseif( isset($form)){
 		if($form!=''){ 
+			if(isset($_REQUEST['embebido']) ){ 
+						$onload = formulario_embebido($form,$opciones);
+			}else {
 						$onload =" <script type=\"text/javascript\">xajax_formulario_embebido_ajax('$form','$opciones','nuevo')</script>";
+					}
 							// echo formulario_embebido($form,$opciones);
 							}
 		
 		}
+
 		elseif( isset($_REQUEST['psi'])){$onload ="<script type=\"text/javascript\"> xajax_mostrar_psi()</script>";}
 	else{}
 $logo = remplacetas('empresa','id',"$id_empresa",'imagen','') ;
@@ -93,12 +98,32 @@ $twitter = remplacetas('empresa','id',"$id_empresa",'twitter','') ;
 $razon_social = remplacetas('empresa','id',"$id_empresa",'razon_social','') ;
 $sigla = remplacetas('empresa','id',"$id_empresa",'sigla','') ;
 
-
+$uri = trim($_SESSION[site], '/').$_SERVER[REQUEST_URI];
 
 	?>
-
-    <!-- Custom CSS -->
-    <!-- Custom Fonts -->
+    <meta NAME="Language" CONTENT="Spanish">
+<meta NAME="Revisit" CONTENT="1 days">
+<meta NAME="Distribution" CONTENT="Global">
+<meta NAME="Robots" CONTENT="All">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:site" content="<?php echo $twitter[0]; ?>">
+<meta name="twitter:creator" content="@qwerty_co">
+<meta name="twitter:url" content="<?php echo $uri ; ?>">
+<meta name="twitter:title" content="<?php echo $titulo[0]; ?>">
+<meta name="twitter:description" content=" <?php echo $descripcion_meta; ?>">
+<meta name="twitter:image" content="<?php echo "$_SESSION[url]images/secure/?file=600/$background_imagen"; ?>">
+   <meta property="og:type"  content="article"> 
+<meta property="og:title" content="<?php echo $titulo[0]; ?>" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="<?php echo "$uri"; ?>" />
+<meta property="og:image" content="<?php echo "$_SESSION[url]images/secure/?file=600/$background_imagen"; ?>" />
+<meta property="og:site_name" content="<?php echo $razon_social[0]; ?>" />
+<meta property="og:description" content=" <?php echo $descripcion_meta; ?>" />
+            
+ 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous">
+	<?php $xajax->printJavascript("milfs/xajax/");  ?>
+	<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha256-k2/8zcNbxVIh5mnQ52A0r3a6jAgMGxFJFE2707UxGCk= sha512-ZV9KawG2Legkwp3nAlxLIVFudTauWuBpC10uEafMHYL0Sarrz5A7G79kXh5+5+woxQ5HM559XX2UZjMJ36Wplg==" crossorigin="anonymous">
+	<script src="milfs/js/scripts.js"></script>
     
     <link href="http://fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic,700italic" rel="stylesheet" type="text/css">
 
@@ -319,7 +344,31 @@ p.copyright {
 </head>
 
 <body>
+<?php 
+	
+	if(isset($_REQUEST['embebido']) ){ /* SI SE SOLICITA UN EMBEBIDO SE MUESTRA ESTO */
+			if( isset($addon)){
+				if($addon!=''){ 
+					if(isset($_REQUEST['embebido']) ){ 
+						include("milfs/addon/$addon/$addon".".php");
+					}
+				}
+			}
+ 	echo $onload;  
 
+ 		if(isset($_REQUEST['set'])) { 
+			echo landingpage_contenido_formulario($_REQUEST['set']); 
+		}
+
+?>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+    </body>
+    </html>
+<?php 
+	}
+	else{ /* SI NO SE SOLICITA UN EMBEBIDO SE CONTINUA CON EL FLUJO DEL HTML */
+	?>
     <!-- Navigation -->
     <nav class="navbar navbar-default navbar-fixed-top topnav" role="navigation">
         <div class="container topnav">
@@ -389,12 +438,17 @@ p.copyright {
     <a  name="formularios"></a>
     
 <?php
-if($acceso ==1) {
-if(isset($_REQUEST['set'])) { 
-	echo landingpage_contenido_formulario($_REQUEST['set']); }
-	elseif(isset($_REQUEST['identificador'])) { echo landingpage_contenido_identificador($_REQUEST['identificador']); }
-else{ echo landingpage_contenido($id_empresa);}
-}
+	if($acceso ==1) {
+		if(isset($_REQUEST['set'])) { 
+			echo landingpage_contenido_formulario($_REQUEST['set']); 
+		}
+		elseif(isset($_REQUEST['identificador'])) {
+			echo landingpage_contenido_identificador($_REQUEST['identificador']); 
+		}
+		else{ 
+			echo landingpage_contenido($id_empresa);
+		}
+	}
  ?>
 	
     
@@ -477,5 +531,5 @@ else{ echo landingpage_contenido($id_empresa);}
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
     <?php echo $onload;  ?>
 </body>
-<?php //} ?>
+<?php } ?>
 </html>

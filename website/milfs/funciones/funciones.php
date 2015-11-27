@@ -1,6 +1,40 @@
 <?php
 date_default_timezone_set('America/Bogota');
 
+function grabar_imagen($imagen,$control) {
+
+	$imgData = str_replace(' ','+',$imagen);
+	$imgData =  substr($imgData,strpos($imgData,",")+1);
+	$imgData = base64_decode($imgData);
+
+	$nombre= $control.".png";
+	$filePath = "$_SESSION[path]/tmp/".$nombre;
+
+	$file = fopen($filePath, 'w');
+		fwrite($file, $imgData);
+		fclose($file);
+	$full= "$_SESSION[path_images_secure]/full/".$nombre;
+	if (!rename($filePath,$full)){}
+	else {
+	echo generar_miniatura($nombre,"150");
+	echo generar_miniatura($nombre,"300");
+	echo generar_miniatura($nombre,"600");
+			}
+
+			//return "$nombre";
+			return "$nombre";
+}
+
+
+function generar_miniatura($file,$width) {//$archivo = $file;
+$archivo = "$_SESSION[path_images_secure]/full/".$file;// Ponemos el . antes del nombre del archivo porque estamos considerando que la ruta está a partir del archivo thumb.php$file_info = getimagesize($archivo);// Obtenemos la relación de aspecto$ratio = $file_info[0] / $file_info[1];// Calculamos las nuevas dimensiones$newwidth = $width;$newheight = round($newwidth / $ratio);// Sacamos la extensión del archivo$ext = explode(".", $file);$ext = strtolower($ext[count($ext) - 1]);if ($ext == "jpeg") $ext = "jpg";// Dependiendo de la extensión llamamos a distintas funcionesswitch ($ext) {        case "jpg":                $img = imagecreatefromjpeg($archivo);        break;        case "png":                $img = imagecreatefrompng($archivo);        break;        case "gif":                $img = imagecreatefromgif($archivo);        break;}// Creamos la miniatura$thumb = imagecreatetruecolor($newwidth, $newheight);
+imagealphablending( $thumb, false );
+imagesavealpha( $thumb, true );// La redimensionamosimagecopyresampled($thumb, $img, 0, 0, 0, 0, $newwidth, $newheight, $file_info[0], $file_info[1]);// La mostramos como jpg//header("Content-type: image/jpeg");imagejpeg($thumb,"$_SESSION[path_images_secure]/".$width."/$file", 80);
+imagepng($thumb,"$_SESSION[path_images_secure]/".$width."/$file", 9);
+//imagegif($thumb,"$_SESSION[path_images_secure]/".$width."/$file");
+//imagejpeg($thumb,null, 80);
+}
+
 function generar_vcard($identificador){
 $impresion = mostrar_identificador("$identificador","","vcard",'simple');
 $impresion = formulario_imprimir("$id_form","$identificador","$plantilla"); 
@@ -280,9 +314,9 @@ return $imagen[0];
 return;
 }
 
-function wait($div){
+function wait($div,$mensaje){
 $respuesta = new xajaxResponse('utf-8');
-$resultado ="<h1><i class='fa fa-spinner fa-pulse'></i> Procesando ...</h1>";
+$resultado ="<h1><i class='fa fa-spinner fa-pulse'></i> $mensaje Procesando ...</h1>";
 $respuesta->addAssign("$div","innerHTML","$resultado");
 
 			return $respuesta;
@@ -312,7 +346,7 @@ $consulta= " SELECT * FROM form_campos WHERE id = id $w_empresa $w_especialista 
 	$filtros = "
 	<div class='input-group'>
 		<span class='input-group-addon'><i class='fa fa-filter'></i></span>
-		<select class='form-control' id='filtro_campos' onchange = \"xajax_wait('div_tabla_campos'); xajax_campos_tabla(this.value,'div_tabla_campos'); \">
+		<select class='form-control' id='filtro_campos' onchange = \"xajax_wait('div_tabla_campos',''); xajax_campos_tabla(this.value,'div_tabla_campos'); \">
 			<option value=''>Seleccione</option>
 			<option value=''>Todos</option>
 			<option value='id_especialista'>Mis campos</option>
@@ -1026,7 +1060,9 @@ $encabezado
 <div style='border 1px solid black; border-radius: 30px; '>$impresion</div>";
 $asunto= "[MILFS] $nombre_formulario[0]";
 $cuerpo ="
+<!-- plantilla email -->
 $impresion
+<!-- plantilla email -->
 </p>Se ha completado el formulario <b>$nombre_formulario[0]</b></p>
 <p>Puede revisar los datos en <a href='http://$_SERVER[HTTP_HOST]/milfs/?identificador=$control'>http://$_SERVER[HTTP_HOST]/milfs?id=$id&c=$control</a></p>
 <p>Saludos de MILFS</p>
@@ -3665,7 +3701,7 @@ function formulario_embebido($id){
         border-bottom:none;
     }
 			</style>
-<div style='width;100%; min-height:900px; padding: 0.3%; background-image: url(images/iron.jpg); background-attachment:fixed; background-color: gray ;'>
+<div style='width;100%; min-height:900px; padding: 0.3%; background-image: url(milfs/images/iron.jpg); background-attachment:fixed; background-color: gray ;'>
 	<div class='container-fluid' style=' border-radius:3px; background-color:white; max-width:800px; box-shadow: 2px 2px 5px #999; overflow:no;' id='contenedor_datos' >			
 			<h4><small><i class='fa fa-eye'></i> $visitas</small></h4>
 				<h1 class='formulario_nombre'>$formulario_nombre[0]<br><small class='formulario_descripcion'>$formulario_descripcion[0] </h1>
@@ -5161,7 +5197,7 @@ return $resultado;
 function formulario_importador($accion) {
 	
 	if($accion =='') {
-	$resultado="<a href='#' onclick =\"xajax_wait('contenido'); xajax_formulario_importador('formulario'); \"><i class='fa fa-upload'></i> Importador</a>";	
+	$resultado="<a href='#' onclick =\"xajax_wait('contenido',''); xajax_formulario_importador('formulario'); \"><i class='fa fa-upload'></i> Importador</a>";	
 
 	return $resultado;	
 		}
@@ -6278,7 +6314,7 @@ $respuesta = new xajaxResponse('utf-8');
 		if($div==''){
 					$div = "contenido";
 					$cerrar = "<a href='#'onclick=\"xajax_limpia_div('$div')\"> [X]</a> ";
-$resultado = " <a href='#' onclick=\"xajax_wait('$div');xajax_formulario_crear_campo('$area','','$div'); \"><i class='fa fa-plus-square'></i> Campos </a>";
+$resultado = " <a href='#' onclick=\"xajax_wait('$div','');xajax_formulario_crear_campo('$area','','$div'); \"><i class='fa fa-plus-square'></i> Campos </a>";
 					
 					return $resultado;
 		}
