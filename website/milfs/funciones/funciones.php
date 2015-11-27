@@ -1,6 +1,31 @@
 <?php
 date_default_timezone_set('America/Bogota');
 
+function decodifica_parametro ($string)
+{
+	$inicial = substr($string,0,1);
+	$string = mb_substr($string,1);
+	$cadena = $string;
+	//$length = strlen($base);
+	
+	$size = strlen($string) - 1;
+	$string = str_split($string);
+	
+	//$out = strpos($base, array_pop($string));
+//return $out;
+	/*foreach($string as $i => $char)
+	{
+
+		$out += (strpos($base, $char)* pow($length, $size - $i));
+//$out .= "$i => $char";
+	}*/
+$resultado[0]=$inicial;
+//$resultado[1]=$out;
+$resultado[1]=$cadena;
+
+	return $resultado;
+}
+
 function grabar_imagen($imagen,$control) {
 
 	$imgData = str_replace(' ','+',$imagen);
