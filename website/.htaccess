@@ -1,0 +1,12 @@
+Options +FollowSymLinks
+Options +Indexes
+RewriteEngine On
+
+## using www for url shortener domain is bad idea :D
+
+RewriteCond %{HTTP_HOST} ^www\.(.*)$ [NC]
+RewriteRule ^(.*)$ http://%1/$1 [R=301,L]
+
+RewriteCond %{SCRIPT_FILENAME} !-f
+RewriteCond %{SCRIPT_FILENAME} !-d
+RewriteRule (.*) index.php?v=$1 [QSA,L]

@@ -22,72 +22,115 @@ if(isset($_REQUEST['debug'])) {ini_set('display_errors', 'On');}
 	<link rel="apple-touch-icon-precomposed" href="milfs/favicon-152.png">
 
 <?php 
-	
-
-   
-//$xajax->debugOn('');
 $embebido =0;
-$onload="";
-if (isset($_REQUEST['form'])) {$form = $_REQUEST['form'];} else {$form = "";}
-if (isset($_REQUEST['addon'])) {$addon = $_REQUEST['addon'];} else {$addon = "";}
-if (isset($_REQUEST['identificador'])) {$identificador = $_REQUEST['identificador'];} else {$identificador = NULL ;}
 $acceso = 0;
-if(	@$_REQUEST['empresa'] =="") { $id_empresa = "1";}
-else { $id_empresa = $_REQUEST['empresa'];}
-$id = remplacetas('empresa','id',"$id_empresa",'id','') ;
-if($id[0]=="") { $id_empresa = "1";}
-	if(!isset($_REQUEST['set'])){
-	$titulo = remplacetas('empresa','id',"$id_empresa",'razon_social','') ;
-	$descripcion = remplacetas('empresa','id',"$id_empresa",'slogan','') ;
-	$background_imagen = buscar_imagen('',"","","$id_empresa"); 
-	$uri_set = "";
-	$acceso = 1;
-	}
-	else {
-		$empresa = 	remplacetas('form_id','id',$_REQUEST['set'],'id_empresa',"") ;
-		$id_empresa = $empresa[0];
-		$titulo = 	remplacetas('form_id','id',$_REQUEST['set'],'nombre',"") ;
-		$descripcion = 	remplacetas('form_id','id',$_REQUEST['set'],'descripcion',"") ;
-		$background_imagen = buscar_imagen($_REQUEST['set'],"","","$id_empresa"); 
-		$uri_set = "";
-		$publico = remplacetas('form_id','id',$_REQUEST['set'],'publico',"") ;
-			if($publico[0] =='1') {$acceso = 1;}
-	
-	}
-	if( isset($identificador)){
-		$form = 	remplacetas('form_datos','control',$identificador,'form_id',"") ;	
-			if (isset($_REQUEST['t'])) {
-				$t = $_REQUEST['t'];
-				//$opciones= array();
-				//$opciones[]= "$identificador";
-				$onload =" <script type=\"text/javascript\">xajax_formulario_embebido_ajax($form[0],'$identificador','edit')</script>";
-				} else {$t = "";}
-		$empresa = 	remplacetas('form_datos','control',$_REQUEST['identificador'],'id_empresa',"") ;	
-		$id_empresa = $empresa[0];
-		$impresion = mostrar_identificador("$_REQUEST[identificador]","","landingpage",'simple');
-		$impresion = strip_tags($impresion);
-		//$impresion = eregi_replace("[\n|\r|\n\r|\t|\0", " ",$impresion);
-		$titulo = 	remplacetas('form_id','id',$form['0'],'nombre',"") ;
-		$descripcion_meta = $impresion; //	remplacetas('form_id','id',$form['0'],'descripcion',"") ;
-		$background_imagen = buscar_imagen("$form[0]",$_REQUEST['identificador'],"","$id_empresa");
-		$uri_set = "<a class='' href='?set=$form[0]'>$titulo[0]</a>";
-				$publico = remplacetas('form_id','id',$form[0],'publico',"") ;
-			if($publico[0] =='1') {$acceso = 1;}
-		}
-	elseif( isset($form)){
-		if($form!=''){ 
-			if(isset($_REQUEST['embebido']) ){ 
-						$onload = formulario_embebido($form,$opciones);
-			}else {
-						$onload =" <script type=\"text/javascript\">xajax_formulario_embebido_ajax('$form','$opciones','nuevo')</script>";
-					}
-							// echo formulario_embebido($form,$opciones);
-							}
-		
-		}
+$onload="";
+$variable = $_GET['v'];
+/// e = EMPRESA *
+/// s= SET DE DATOS *
+/// i= IDENTIFICADOR *
+/// d= IDENTIFICADOR EDITABLE *
+/// f= FORMULARIO *
+/// g=FORMULARIO EMBEBIDO *
+/// h=ADDON *
+/// j=ADDON EMBEBIDO *
 
-		elseif( isset($_REQUEST['psi'])){$onload ="<script type=\"text/javascript\"> xajax_mostrar_psi()</script>";}
-	else{}
+if (isset($_REQUEST['empresa'])) {$variable = "e".$_REQUEST['empresa'];}
+elseif (isset($_REQUEST['form']) AND isset($_REQUEST['embebido']) ) {$variable = "g".$_REQUEST['form'];} 
+elseif (isset($_REQUEST['identificador']) AND $_REQUEST['t'] =='edit' ) {$variable = "d".$_REQUEST['identificador'];} 
+elseif (isset($_REQUEST['addon']) AND isset($_REQUEST['embebido']) ) {$variable = "j".$_REQUEST['addon'];}
+elseif (isset($_REQUEST['set'])) {$variable = "s".$_REQUEST['set'];}
+elseif (isset($_REQUEST['identificador'])) {$variable = "i".$_REQUEST['identificador'];} 
+elseif (isset($_REQUEST['form'])) {$variable = "f".$_REQUEST['form'];} 
+elseif (isset($_REQUEST['addon'])) {$variable = "h".$_REQUEST['addon'];} 
+else {}
+
+if ($variable !=''){
+ 		$v = decodifica_parametro($variable);
+ 		if($v[0] =='e') {
+ 			/// e = EMPRESA
+			$id_empresa = $v[1]; 
+			$id =$empresa; 
+			$titulo = remplacetas('empresa','id',"$id_empresa",'razon_social','') ;
+			$descripcion = remplacetas('empresa','id',"$id_empresa",'slogan','') ;
+			$background_imagen = buscar_imagen('',"","","$id_empresa"); 
+			$uri_set = "";
+			$acceso = 1;
+ 		}			
+		elseif($v[0] =='s') {
+			/// s= SET DE DATOS
+	  		$set =$v[1]; 
+			$empresa = 	remplacetas('form_id','id',"$set",'id_empresa',"") ;
+			$id_empresa = $empresa[0];
+			$titulo = 	remplacetas('form_id','id',"$set",'nombre',"") ;
+			$descripcion = 	remplacetas('form_id','id',"$set",'descripcion',"") ;
+			$background_imagen = buscar_imagen("$set","","","$id_empresa"); 
+			$uri_set = "";
+			//$onload = landingpage_contenido_formulario($set); 
+			$publico = remplacetas('form_id','id',"$set",'publico',"") ;
+				if($publico[0] =='1') {$acceso = 1;}
+			}			
+		elseif($v[0] =='i') {
+			/// i= IDENTIFICADOR
+	  		$identificador =$v[1]; 
+			$form = 	remplacetas('form_datos','control',$identificador,'form_id',"") ;	
+			$empresa = 	remplacetas('form_id','id',$form['0'],'id_empresa',"") ;
+			$id_empresa = $empresa[0];
+			$id = $empresa[0];
+			$impresion = mostrar_identificador("$identificador","","landingpage",'simple');
+			$impresion = strip_tags($impresion);
+			$descripcion_meta = $impresion; 
+			$titulo = 	remplacetas('form_id','id',$form['0'],'nombre',"") ;
+			$background_imagen = buscar_imagen("$form[0]",$identificador,"","");
+			$uri_set = "<a class='' href='?v=s$form[0]'>$titulo[0]</a>";
+			$publico = remplacetas('form_id','id',$form[0],'publico',"") ;
+			if($publico[0] =='1') {$acceso = 1;}
+		}
+		elseif($v[0] =='d') {
+			/// d= IDENTIFICADOR EDITABLE
+	  		$identificador =$v[1]; 
+			$form = 	remplacetas('form_datos','control',$identificador,'form_id',"") ;	
+			$empresa = 	remplacetas('form_id','id',$form['0'],'id_empresa',"") ;
+			$id_empresa = $empresa[0];
+			$id = $empresa[0];
+			$impresion = mostrar_identificador("$identificador","","landingpage",'simple');
+			$impresion = strip_tags($impresion);
+			$descripcion_meta = $impresion; 
+			$titulo = 	remplacetas('form_id','id',$form['0'],'nombre',"") ;
+			$background_imagen = buscar_imagen("$form[0]",$identificador,"","");
+			$uri_set = "<a class='' href='?v=s$form[0]'>$titulo[0]</a>";
+			$publico = remplacetas('form_id','id',$form[0],'publico',"") ;
+			if($publico[0] =='1') {$acceso = 1;}
+				$t = "edit";
+				$onload =" <script type=\"text/javascript\">xajax_formulario_embebido_ajax($form[0],'$identificador','edit')</script>";
+
+		}
+		elseif($v[0] =='f') {
+			/// f= FORMULARIO
+	  		$form =$v[1];
+	  		$onload =" <script type=\"text/javascript\">xajax_formulario_embebido_ajax('$form','','nuevo')</script>";						
+		}
+		elseif($v[0] =='g') {
+			/// g=FORMULARIO EMBEBIDO
+	  		$form =$v[1];
+	  		$embebido = "1";
+			$onload = formulario_embebido($form,$opciones);
+		}
+		elseif($v[0] =='h') {
+			/// h=ADDON
+	  		$addon =$v[1];
+			$onload = include("milfs/addon/$addon/$addon".".php");
+		}
+		elseif($v[0] =='j') {
+			/// j=ADDON EMBEBIDO
+	  		$addon =$v[1];
+	  		$embebido = "1";
+			$onload = include("milfs/addon/$addon/$addon".".php");
+		}
+		else{}
+ }else {
+  
+}
 $logo = remplacetas('empresa','id',"$id_empresa",'imagen','') ;
 $direccion = remplacetas('empresa','id',"$id_empresa",'direccion','') ;
 $telefono = remplacetas('empresa','id',"$id_empresa",'telefono','') ;
@@ -227,7 +270,7 @@ legend.legend-area {
 
 .intro-message > h3 {
     text-shadow: 2px 2px 3px rgba(0,0,0,0.6);
-    background: url(images/oscuro40.png ) ;
+    background: url(milfs/images/oscuro40.png ) ;
     border-radius: 3px;
 }
 
@@ -288,7 +331,7 @@ legend.legend-area {
 .banner {
     padding: 100px 0;
     color: #f8f8f8;
-    background: url(../img/banner-bg.jpg) no-repeat center center;
+    /* background: url(../img/banner-bg.jpg) no-repeat center center;*/
     background-size: cover;
 }
 
@@ -346,18 +389,11 @@ p.copyright {
 <body>
 <?php 
 	
-	if(isset($_REQUEST['embebido']) ){ /* SI SE SOLICITA UN EMBEBIDO SE MUESTRA ESTO */
-			if( isset($addon)){
-				if($addon!=''){ 
-					if(isset($_REQUEST['embebido']) ){ 
-						include("milfs/addon/$addon/$addon".".php");
-					}
-				}
-			}
- 	echo $onload;  
+	if( $embebido =="1" ){ /* SI SE SOLICITA UN EMBEBIDO SE MUESTRA ESTO */
+		echo $onload;  
 
- 		if(isset($_REQUEST['set'])) { 
-			echo landingpage_contenido_formulario($_REQUEST['set']); 
+ 		if(isset($set)) { 
+			echo landingpage_contenido_formulario($set); 
 		}
 
 ?>
@@ -439,11 +475,11 @@ p.copyright {
     
 <?php
 	if($acceso ==1) {
-		if(isset($_REQUEST['set'])) { 
-			echo landingpage_contenido_formulario($_REQUEST['set']); 
+		if($set != "") { 
+			echo landingpage_contenido_formulario($set); 
 		}
-		elseif(isset($_REQUEST['identificador'])) {
-			echo landingpage_contenido_identificador($_REQUEST['identificador']); 
+		elseif($identificador !="") {
+			echo landingpage_contenido_identificador($identificador); 
 		}
 		else{ 
 			echo landingpage_contenido($id_empresa);
