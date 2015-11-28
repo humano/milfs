@@ -249,7 +249,7 @@ legend.legend-area {
     padding-bottom: 50px;
     text-align: center;
     color: #f8f8f8;
-    background: url(milfs/images/secure/?file=600/<?php echo $background_imagen; ?> ) no-repeat center center;
+    background: url(milfs/images/secure/?file=150/<?php echo $background_imagen; ?> ) no-repeat center center;
     background-size: cover;
 }
 
@@ -407,6 +407,7 @@ p.copyright {
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
     </body>
     </html>
+
 <?php 
 	}
 	else{ /* SI NO SE SOLICITA UN EMBEBIDO SE CONTINUA CON EL FLUJO DEL HTML */
@@ -450,6 +451,10 @@ p.copyright {
 
             <div class="row">
                 <div class="col-lg-12">
+                
+               
+                
+                
                     <div class="intro-message">
                    
                         <h1><?php echo $titulo[0]; ?></h1>
@@ -479,11 +484,14 @@ p.copyright {
 
     <!-- Page Content -->
     <a  name="formularios"></a>
-    
+    <div id='contenido_interior'>
 <?php
 	if($acceso ==1) {
 		if($set != "") { 
-			echo landingpage_contenido_formulario($set); 
+		///	echo landingpage_contenido_formulario($set,'10','',''); 
+		echo consultar_contenido_formulario("$set",'5','','contenido');
+		//echo "<div class='btn btn-default btn-default' onclick=\"xajax_consultar_contenido_formulario('$set','10','','landingpage'); \"><i class='fa fa-eye'></i> Consultar</div>";
+			
 		}
 		elseif($identificador !="") {
 			echo landingpage_contenido_identificador($identificador); 
@@ -499,7 +507,7 @@ p.copyright {
 	}else{ echo multiempresa_listado('',''); }
  ?>
 	
-    
+    </div>
 
 	<a  name="contact"></a>
     <div class="banner">

@@ -1,6 +1,135 @@
 <?php
 date_default_timezone_set('America/Bogota');
 
+function consultar_contenido_formulario($form,$registros,$pagina,$tipo){
+	$imagen ="";
+	$busca ="";
+	$busqueda ="";
+	$fechas ="";
+	$campo ="";
+	$lineas ="";
+	$linea ="";
+	$formato ="";
+	$listado_nombres ="";
+$respuesta = new xajaxResponse('utf-8');
+
+
+$id_form = $form;
+$consulta_principal = "SELECT control,id,form_id FROM form_datos WHERE form_id = '$id_form' GROUP BY form_datos.control ORDER BY form_datos.id DESC ";
+$link=Conectarse();
+mysql_query("SET NAMES 'UTF8'");
+$sql_total=mysql_query($consulta_principal,$link);
+$total_registros =	mysql_num_rows($sql_total);//formulario_contar($id_form);
+/// PAGINACION
+				if ($pagina =='') {$inicio = 0; $pagina = 1; }
+				else { $inicio = ($pagina - 1) * $registros;}
+				if($total_registros < $registros) { $limite ="";}
+				else{$limite ="  LIMIT $inicio, $registros ";}
+					$consulta_limite = $consulta_principal.$limite;
+					$sql=mysql_query($consulta_limite,$link);
+mysql_data_seek($sql_total, 0);
+//$sql=mysql_query($consulta_principal,$link);
+if (mysql_num_rows($sql)!='0'){
+	
+/////// FILTRO
+
+//$fecha = time (); 
+//	$ahora  = date ( "Y-m-d" , $fecha ); 
+//	$campos = listar_campos_formulario($id_form,"select"); 
+	
+
+ $link = "";
+ // $page = $_GET['page'];
+ $page= $pagina;
+  @$pages= ceil($total_registros / $registros); //13; // Hardcoded for testing purpose
+  $limit=10  ;
+    if ($pages >=1 && $page <= $pages)
+    {
+        $counter = 1;
+        $link = "";
+        if (($page -1) > 0)           {
+           	 $link .= "<li><a href='#cabecera' title='Cambiar a la página 1'  onClick=\"xajax_consultar_contenido_formulario('$form','$registros','1','');\"' style='cursor:pointer'><i class='fa fa-step-backward'></i></a> </li>
+           					<li><a href='#cabecera' title='Cambiar a la página ".($pagina-1)."'  onClick=\"xajax_consultar_contenido_formulario('$form','$registros','".($pagina-1)."','');\"' style='cursor:pointer'><i class='fa fa-backward'></i></a> </li>";
+           }
+
+        for ($x=$page; $x<=$pages;$x++)
+        {
+
+
+            if($counter < $limit){
+                    	 if ($page == $x){
+					$link .=  "<li class='active'><a  href='#cabecera'  title='Cambiar a la pagina $x' onClick=\"xajax_consultar_contenido_formulario('$form','$registros','$x','');\"' style='cursor:pointer'>$x</a> </li>";
+													}else{
+                $link .= "<li class=''><a  href='#cabecera' title='Cambiar a la pagina $x' onClick=\"xajax_consultar_contenido_formulario('$form','$registros','$x','');\"' style='cursor:pointer'>$x</a> </li>";
+													}
+												}
+            $counter++;
+        }
+        if ($page < ($pages - ($limit/2)))
+
+         { $link .= "<li><a  href='#cabecera'  title='Cambiar a la pagina ".($pagina+1)."' onClick=\"xajax_consultar_contenido_formulario('$form','$registros','".($pagina+1)."','');\"' style='cursor:pointer'><i class='fa fa-forward'></i></a></li>
+         				<li class=''><a  href='#cabecera'  title='Cambiar a la pagina $pages' onClick=\"xajax_consultar_contenido_formulario('$form','$registros','$pages','');\"' style='cursor:pointer'><i class='fa fa-step-forward'></i> </a></li>"; }
+    }
+   $paginacion = "<ul class='pagination  '>$link</ul>";
+	$encabezado = " 
+		<div class='row'>
+			<div class='col-sm-12'>
+			</div>
+		</div>
+		<div class='row' id='botonera'>
+			<div class='col-sm-12'>
+				<ul class='pagination'>
+					<li  role='presentation'><span>$total_registros registros</span></li>	
+				</ul>
+				     $paginacion
+			</div>
+		</div>";
+						
+//	$total_registros = mysql_num_rows($sql);
+/*	$nombres_campos = listar_campos_formulario("$id_form","nombres");
+	foreach($nombres_campos as $campo_nombre=>$nombre){
+		$listado_nombres .= "<th>$nombre</th>"; 
+	}
+	*/
+//	$listado_nombres = "<tr><th class='actions' ></th><th>Identificador</th><th></th>$listado_nombres </tr>";
+///$listado_campos = listar_campos_formulario("$id_form",'');
+mysql_data_seek($sql_total, 0);
+while( $row = mysql_fetch_array( $sql ) ) {
+
+//	 if (!is_array($listado_campos)){$listado_campos="<td >$listado_campos</td>";}else {$listado_campos=$listado_campos;}
+$linea .= landingpage_contenido_identificador($row['control']);
+//$linea .= "<br>$row[control]";
+															}
+
+$resultado = "
+<a name='cabecera'></a>
+$linea
+$encabezado
+
+";
+										}
+else {
+$resultado ="<div class='alert alert-warning' ><h1>No hay resultados</h1> $consulta_limite</div>";
+$respuesta->addAlert("No hay resultados");
+return $respuesta;
+}
+
+	/*$datos = $resultado;
+	$div ="contenido_de_modal";
+	$resultado = "<div class=''> $datos</div>";
+	$div_contenido = "<div id='$div' >$div</div>";
+	*/
+		if($tipo =="") {	
+				//	$respuesta->addAssign("contenido_interior","innerHTML","$div_contenido");
+					$respuesta->addAssign("contenido_interior","innerHTML","$resultado");
+					return $respuesta;
+		}
+		if($tipo =="contenido") {
+			return $resultado; 
+		}
+}
+$xajax->registerFunction("consultar_contenido_formulario");
+
 	
 function multiempresa_listado($tabla,$div){
 $resultado = "";
@@ -182,7 +311,7 @@ $xajax->registerFunction("autoriza_formulario_mostrar");
 
 function landingpage_contenido_identificador($identificador){
 	$linea="";
-$id_empresa = 	remplacetas('form_datos','control',$identificador,'id_empresa',"") ;
+	$id_empresa = 	remplacetas('form_datos','control',$identificador,'id_empresa',"") ;
 	$form = 	remplacetas('form_datos','control',$identificador,'form_id',"") ;
 	
 	$imagen = buscar_imagen($form[0],$identificador,"","$id_empresa[0]"); 
@@ -215,7 +344,7 @@ $id_empresa = 	remplacetas('form_datos','control',$identificador,'id_empresa',""
 	} else{ 
 	$contenido = mostrar_identificador($identificador,"","");
 	$impresion = "
-		<!-- plantilla landingpage -->
+		<!-- plantilla landingpage $identificador -->
 	<br><div class='clearfix'></div>
 
 <a  name='control_$identificador'></a>
@@ -246,21 +375,96 @@ $id_empresa = 	remplacetas('form_datos','control',$identificador,'id_empresa',""
 	";
 	
 	}
- $linea = "$impresion";
+ $linea = "$impresion ";
 
 	return $linea;
 	}
 
 
-function landingpage_contenido_formulario($form){
-$consulta= "SELECT control FROM form_datos WHERE form_id = '$form' GROUP BY control ORDER BY id DESC limit 50";
+function landingpage_contenido_formulario($form,$registros,$pagina,$div_original){
+	$cantidad =	formulario_contar($form);
+	$div="contenido_interior";
+	//if($registros =="") {$registros ="10";}
+		$consulta= "SELECT control FROM form_datos WHERE form_id = '$form' GROUP BY control ORDER BY id DESC ";
 		$id_empresa = 	remplacetas('form_id','id',$form,'id_empresa',"") ;
 	$link=Conectarse(); 
 	mysql_query("SET NAMES 'utf8'");
-	$sql=mysql_query($consulta,$link);
+	//$sql=mysql_query($consulta,$link);
+				if ($pagina =='') {$inicio = 0; $pagina = 1; }
+				else { $inicio = ($pagina - 1) * $registros;}
+				if($cantidad < $registros) { $limite ="";}
+				else{$limite ="  LIMIT $inicio, $registros ";}
+
+				$consulta_limite = $consulta.$limite;
+				$sql=mysql_query($consulta_limite,$link); 
+				
+	$paginacion ="<ul class='pagination  pull-right'>";
+				$total_paginas = ceil($cantidad / $registros); 
+				if(($pagina - 1) > 0) {
+					$indice .="<li><a title='Cambiar a la página ".($pagina-1)."'  onClick=\"xajax_landingpage_contenido_formulario($form,'$registros','".($pagina-1)."','$div');\"' style='cursor:pointer'>< Anterior</a> </li>";
+													}
+						for ($i=1; $i<=$total_paginas; $i++)
+						   if ($pagina == $i){
+					$indice .=  "<li class='active'><a title='Cambiar a la pagina $i' onClick=\"xajax_landingpage_contenido_formulario($form,'$registros','$i','$div');\"' style='cursor:pointer'>$i</a> </li>";
+													} 
+							else {
+					$indice .=  "<li><a title='Cambiar a la pagina $i' onClick=\"xajax_landingpage_contenido_formulario($form,'$registros','$i','$div');\"' style='cursor:pointer'>$i</a> </li>";
+								}
+
+				if(($pagina + 1)<=$total_paginas) {
+					$indice .= "<li><a  title='Cambiar a la pagina ".($pagina+1)."' onClick=\"xajax_landingpage_contenido_formulario($form,'$registros','".($pagina+1)."','$div');\"' style='cursor:pointer'> Siguiente ></a></li>";
+																}
+					$indice .= "</ul>";
+	$paginacion .= $indice;
+/*
+	/// PAGINACION
+				if ($pagina =='') {$inicio = 0; $pagina = 1; }
+				else { $inicio = ($pagina - 1) * $registros;}
+				if($cantidad < $registros) { $limite ="";}
+				else{$limite ="  LIMIT $inicio, $registros ";}
+
+				$consulta_limite = $consulta.$limite;
+				$sql=mysql_query($consulta_limite,$link);  
+				$page= $pagina;
+  @$pages= ceil($cantidad / $registros); //13; // Hardcoded for testing purpose
+  $limit= 20  ;
+    if ($pages >=1 && $page <= $pages)
+    {
+        $counter = 1;
+        $link = "";
+        if (($page -1) > 0)           {
+           	 $link .= "<li><a title='Cambiar a la página 1'  onClick=\"xajax_landingpage_contenido_formulario($form,'$registros','1','$div'); \"' style='cursor:pointer'><i class='fa fa-step-backward'></i></a> </li>
+           					<li><a title='Cambiar a la página ".($pagina-1)."'  onClick=\"xajax_landingpage_contenido_formulario($form,'$registros','".($pagina-1)."','$div'); \"' style='cursor:pointer'><i class='fa fa-backward'></i></a> </li>";
+           }
+
+        for ($x=$page; $x<=$pages;$x++)
+        {
+
+
+            if($counter < $limit){
+                    	 if ($page == $x){
+					$link .=  "<li class='active'><a title='Cambiar a la pagina $x' onClick=\"xajax_landingpage_contenido_formulario($form,'$registros','$x','$div');\"' style='cursor:pointer'>$x</a> </li>";
+													}else{
+                $link .= "<li class=''><a title='Cambiar a la pagina $x' onClick=\"xajax_landingpage_contenido_formulario($form,'$registros','$x','$div');;\"' style='cursor:pointer'>$x</a> </li>";
+													}
+												}
+            $counter++;
+        }
+        if ($page < ($pages - ($limit/2)))
+
+         { $link .= "<li><a  title='Cambiar a la pagina ".($pagina+1)."' onClick=\"xajax_landingpage_contenido_formulario($form,'$registros','".($pagina+1)."','$div');\"' style='cursor:pointer'><i class='fa fa-forward'></i></a></li>
+         				<li class=''><a title='Cambiar a la pagina $pages' onClick=\"xajax_landingpage_contenido_formulario($form,'$registros','".($pagina+1)."','$div');\"' style='cursor:pointer'><i class='fa fa-step-forward'></i> </a></li>"; }
+    }
+
+   $paginacion = "<ul class='pagination  '>$link</ul>";
+						
+	*/	
+		
+	//// PAGINACION
 if (mysql_num_rows($sql)!='0'){
-	$linea="";
+	$linea=" ( $cantidad ) $paginacion";
 	$fila = 1;
+	mysql_data_seek($sql, 0);
 while( $row = mysql_fetch_array( $sql ) ) {
 	$impresion = mostrar_identificador($row['control'],"","landingpage");
 	$imagen = buscar_imagen($form,$row['control'],"","$id_empresa[0]"); 
@@ -268,10 +472,30 @@ while( $row = mysql_fetch_array( $sql ) ) {
 	$uri = "<a href='i$row[control]' > Ver mas ...</a>";
 	$linea .= landingpage_contenido_identificador($row['control']);
 	}	
+	$resultado_linea="<div id='x_$div'>$linea</div>";
 	}
-	return $linea;
-	}
+	if($div_original=="") {
+		
+	return $resultado_linea;
+	}else {
+	$respuesta = new xajaxResponse('utf-8');
+	$respuesta->addAssign("$div","innerHTML","$linea");
 
+			return $respuesta;
+			
+	}
+	}    
+$xajax->registerFunction("landingpage_contenido_formulario");
+/*
+$respuesta = new xajaxResponse('utf-8');
+$resultado ="<h1><i class='fa fa-spinner fa-pulse'></i> $mensaje Procesando ...</h1>";
+$respuesta->addAssign("$div","innerHTML","$resultado");
+
+			return $respuesta;
+
+}
+
+*/
 function landingpage_contenido($id_empresa){
 $consulta= "SELECT * FROM form_id WHERE publico ='1' AND id_empresa= '$id_empresa' ORDER BY id DESC";
 $miniatura ="";
