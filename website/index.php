@@ -12,6 +12,7 @@ if(isset($_REQUEST['debug'])) {ini_set('display_errors', 'On');}
 <!DOCTYPE html>
 <html lang="en">
    <head >
+   <title>Portal de datos</title>
    <meta http-equiv="Cache-control" content="public">
     <meta charset="utf-8">
     <meta name="viewport" content="user-scalable=no, width=device-width,  maximum-scale=1,  initial-scale=1">
@@ -82,7 +83,7 @@ if ($variable !=''){
 			$descripcion_meta = $impresion; 
 			$titulo = 	remplacetas('form_id','id',$form['0'],'nombre',"") ;
 			$background_imagen = buscar_imagen("$form[0]",$identificador,"","");
-			$uri_set = "<a class='' href='?v=s$form[0]'>$titulo[0]</a>";
+			$uri_set = "<a class='' href='s$form[0]'>$titulo[0]</a>";
 			$publico = remplacetas('form_id','id',$form[0],'publico',"") ;
 			if($publico[0] =='1') {$acceso = 1;}
 		}
@@ -98,7 +99,7 @@ if ($variable !=''){
 			$descripcion_meta = $impresion; 
 			$titulo = 	remplacetas('form_id','id',$form['0'],'nombre',"") ;
 			$background_imagen = buscar_imagen("$form[0]",$identificador,"","");
-			$uri_set = "<a class='' href='?v=s$form[0]'>$titulo[0]</a>";
+			$uri_set = "<a class='' href='s$form[0]'>$titulo[0]</a>";
 			$publico = remplacetas('form_id','id',$form[0],'publico',"") ;
 			if($publico[0] =='1') {$acceso = 1;}
 				$t = "edit";
@@ -128,18 +129,23 @@ if ($variable !=''){
 			$onload = include("milfs/addon/$addon/$addon".".php");
 		}
 		else{}
- }else {
-  
-}
 $logo = remplacetas('empresa','id',"$id_empresa",'imagen','') ;
 $direccion = remplacetas('empresa','id',"$id_empresa",'direccion','') ;
 $telefono = remplacetas('empresa','id',"$id_empresa",'telefono','') ;
 $email = remplacetas('empresa','id',"$id_empresa",'email','') ;
 $facebook = remplacetas('empresa','id',"$id_empresa",'facebook','') ;
 $twitter = remplacetas('empresa','id',"$id_empresa",'twitter','') ;
-
 $razon_social = remplacetas('empresa','id',"$id_empresa",'razon_social','') ;
 $sigla = remplacetas('empresa','id',"$id_empresa",'sigla','') ;
+$link_empresa = "e$id_empresa"; 
+ }else {
+  $id_empresa="";
+  $id="";
+  $titulo[0] ="Portal de datos";
+  $descripcion[0] ="Los datos no hacen la felicidad, pero pueden medirla";
+  $twitter[0] ="qwerty_co";
+  $facebook[0] ="https://www.facebook.com/Qwerty-co-146226688795185";
+}
 
 $uri = trim($_SESSION[site], '/').$_SERVER[REQUEST_URI];
 
@@ -416,7 +422,8 @@ p.copyright {
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand topnav" href="?empresa=<?php echo $id_empresa; ?>"><i class='fa fa-home'></i> <?php echo $sigla[0]; ?></a>
+                <a class="navbar-brand topnav" href="./"><i class='fa fa-home'></i>  Portal</a>
+                <a class="navbar-brand topnav" href="<?php echo $link_empresa; ?>"><?php echo $sigla[0]; ?> Inicio</a>
                 
             </div>
             <!-- Collect the nav links, forms, and other content for toggling -->
@@ -457,7 +464,7 @@ p.copyright {
                                 <a target='redes' href="https://github.com/humano/milfs/" class="btn btn-default btn-lg"><i class="fa fa-github fa-fw"></i> <span class="network-name">Github</span></a>
                             </li>
                             <li>
-                                <a target='redes'  href="https://www.facebook.com/<?php echo $facebook[0]; ?>" class="btn btn-default btn-lg"><i class="fa fa-facebook fa-fw"></i> <span class="network-name"><?php echo $facebook[0]; ?></span></a>
+                                <a target='redes'  href="https://www.facebook.com/<?php echo $facebook[0]; ?>" class="btn btn-default btn-lg"><i class="fa fa-facebook fa-fw"></i> <span class="network-name"></span></a>
                             </li>
                         </ul>
                     </div>
@@ -482,9 +489,14 @@ p.copyright {
 			echo landingpage_contenido_identificador($identificador); 
 		}
 		else{ 
-			echo landingpage_contenido($id_empresa);
+					 if($id_empresa =="") {
+					 	//echo multiempresa_listado('','')."Hola mundo";
+					 }
+					 else {
+						echo landingpage_contenido($id_empresa);
+					}
 		}
-	}
+	}else{ echo multiempresa_listado('',''); }
  ?>
 	
     

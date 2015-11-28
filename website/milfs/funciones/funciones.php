@@ -1,6 +1,63 @@
 <?php
 date_default_timezone_set('America/Bogota');
 
+	
+function multiempresa_listado($tabla,$div){
+$resultado = "";
+$link=Conectarse(); 
+
+mysql_query("SET NAMES 'utf8'");
+$consulta = "SELECT * FROM empresa ORDER BY id DESC ";
+$sql=mysql_query($consulta,$link);
+
+if (mysql_num_rows($sql)!='0'){
+
+
+mysql_data_seek($sql, 0);
+$fila=1;
+$divider=3;
+$cols = (12/$divider);
+$i =0;
+while( $row = mysql_fetch_array( $sql ) ) {
+	if($i % $divider==0) {
+		$encontrados .= "<div class='container-fluid ' role='row' id='grid_$i'  style=''>";
+	}
+		$i++;
+	$logo="<img class='img img-responsivve img-rounded center-block' src='milfs/images/secure/?file=300/$row[imagen]'>";
+	$contenido ="
+	<div class='col-sm-$cols' style=''>
+		<a href='e$row[id]'>	
+			<div class='alert center-block' style='background-color: white; min-height: 400px;'>
+				$logo
+				<br>
+				<h2 class='text-center'>$row[razon_social]<br><small>$row[slogan]</small></h2>
+			</div>
+		</a>
+	</div>";     	
+		$encontrados .="$contenido";
+	$fila++;
+	if( $i % $divider==0) {
+		$encontrados .= "</div>	";
+	}
+														}
+	$resultado ="
+		<div class='container-fluid'>
+			$encontrados
+		</div>	
+	";
+										}else{
+	$resultado = "<div class='alert alert-warning'><i class='fa fa-exclamation-triangle'></i> No hay resultados</div>";
+	}
+if($div =="") { return $resultado; }else {
+    		$respuesta = new xajaxResponse('utf-8');
+			$respuesta->addAssign("$div","innerHTML","$resultado");
+			return $respuesta;
+			}
+}
+$xajax->registerFunction("multiempresa_listado");
+
+
+
 function decodifica_parametro ($string)
 {
 	$inicial = substr($string,0,1);
