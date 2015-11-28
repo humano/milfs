@@ -131,20 +131,20 @@ $id_empresa = 	remplacetas('form_datos','control',$identificador,'id_empresa',""
 	$imagen = buscar_imagen($form[0],$identificador,"","$id_empresa[0]"); 
 	$plantilla = remplacetas('form_parametrizacion','opcion',"plantilla:landingpage",'id',"campo = '$form[0]'") ;
 	
-	$uri = "$_SESSION[site]?identificador=$identificador";
+	$uri = "$_SESSION[site]i$identificador";
 	$qr = "http://qwerty.co/qr/?d=$uri";
 	if($imagen !="") { 
 		
 			$mostrar_imagen ="<img class='img-responsive img-rounded ' src='milfs/images/secure/?file=600/$imagen' alt=''>";
 			$miniatura = "
 			<div class='thumbnail'>
-				<a href='?identificador=$identificador' >
+				<a href='i$identificador' >
 							<img src='$qr' alt='$identificador' title='' class='img img-rounded'>
 				</a>
 			</div>$uri";
 					
 	}else {
-		$miniatura ="<a href='?identificador=$identificador' >$uri</a>";
+		$miniatura ="<a href='i$identificador' >$uri</a>";
 		$mostrar_imagen = "<img src='$qr' alt='$identificador' title='' style='width:100%'; class='img img-responsive img-rounded'>";
 
 			
@@ -208,7 +208,7 @@ while( $row = mysql_fetch_array( $sql ) ) {
 	$impresion = mostrar_identificador($row['control'],"","landingpage");
 	$imagen = buscar_imagen($form,$row['control'],"","$id_empresa[0]"); 
 	if($imagen !="") { $clase = "col-lg-5 col-sm-6";}else {$clase = "col-lg-12 col-sm-12";}
-	$uri = "<a href='?identificador=$row[control]' > Ver mas ...</a>";
+	$uri = "<a href='i$row[control]' > Ver mas ...</a>";
 	$linea .= landingpage_contenido_identificador($row['control']);
 	}	
 	}
@@ -229,7 +229,7 @@ if (mysql_num_rows($sql)!='0'){
 	$contenido = "";
 			if(!isset($mapbox_token)) {		include("milfs/includes/datos.php"); if(!isset($mapbox_token)) {$error_token = 1; } else {$error_token = "";}}
 		while( $row = mysql_fetch_array( $sql ) ) {
-							$contenido = "<a href='?set=$row[id]'><h3>Mas información</h3></a>";
+							$contenido = "<a href='s$row[id]'><h3>Mas información</h3></a>";
 							$imagen = buscar_imagen($row['id'],'','','');
 							$geo = buscar_campo_tipo($row['id'],"14");
 							$ultimo_mapa = remplacetas('form_datos','form_id',$row['id'],'contenido'," id_campo = '$geo[0]'") ;
@@ -1089,7 +1089,7 @@ $cuerpo ="
 $impresion
 <!-- plantilla email -->
 </p>Se ha completado el formulario <b>$nombre_formulario[0]</b></p>
-<p>Puede revisar los datos en <a href='http://$_SERVER[HTTP_HOST]/milfs/?identificador=$control'>http://$_SERVER[HTTP_HOST]/milfs?id=$id&c=$control</a></p>
+<p>Puede revisar los datos en <a href='$_SESSION[site]i$control'>$_SESSION[site]i$control</a></p>
 <p>Saludos de MILFS</p>
 ";
 			if(mail("$email_envio","$asunto","$cuerpo","$headers")){ $exito .="<strong class='text-suggest'>Se envió un email a $email_envio</strong>"; }else {$exito .="error enviando correo";}
@@ -1650,7 +1650,7 @@ while( $row = mysql_fetch_array( $sql ) ) {
 	$datos = contenido_mostrar("$formulario","$row[control]",'',"$plantilla");
 	if($plantilla == "") {
 $listado .= "<div class='panel panel-default'>
-				<div class='panel-heading'><h3>$cadena[0]<a class='btn btn-info pull-right' target='api' href='http://$_SERVER[HTTP_HOST]/milfs/api.php?identificador=$row[control]' >{json}</a></h3> </div>
+				<div class='panel-heading'><h3>$cadena[0]<a class='btn btn-info pull-right' target='api' href='$_SESSION[site]/milfs/api.php?identificador=$row[control]' >{json}</a></h3> </div>
 				<div class='panel-body'>
 				
 					$datos
@@ -1694,7 +1694,7 @@ $listado .= "<li class='list-group-item'><a href='#' onclick=\"xajax_portal_filt
 $resultado = "	
 		 <ul class='list-group'>
 		 <h4 ><span title='$formulario_descripcion[0]'>$formulario_nombre[0]</span> / <span title='$campo_descripcion[0]'>$campo_nombre[0]</span></h4>
-		 <li class='list-group-item'><a class='btn btn-block btn-info' target='api' href='http://$_SERVER[HTTP_HOST]/milfs/api.php?id=$formulario&tipo=simple' >{json}</a></li>
+		 <li class='list-group-item'><a class='btn btn-block btn-info' target='api' href='$_SESSION[url]api.php?id=$formulario&tipo=simple' >{json}</a></li>
 		 $listado 
 		 </ul>
 ";
@@ -1747,7 +1747,7 @@ $resultado = "
 		 <ul class='list-group'>
 		 
 		 <legend title='$formulario_descripcion'>$formulario_nombre[0]</legend>
-		 <li class='list-group-item'><a class='btn btn-block btn-info' target='api' href='http://$_SERVER[HTTP_HOST]/milfs/api.php?id=$formulario&tipo=simple' >{json}</a></li>
+		 <li class='list-group-item'><a class='btn btn-block btn-info' target='api' href='$_SESSION[URL]/api.php?id=$formulario&tipo=simple' >{json}</a></li>
 		 $listado
 		 
 		 </ul>
@@ -1766,7 +1766,7 @@ $sql=mysql_query($consulta,$link);
 if (mysql_num_rows($sql)!=0){
 
 while( $row = mysql_fetch_array( $sql ) ) {
-$listado .= "<li><a href='?formulario=$row[id]' title='$row[descripcion]'>$row[nombre]</a></li>";
+$listado .= "<li><a href='f$row[id]' title='$row[descripcion]'>$row[nombre]</a></li>";
 }
 $resultado = "	
 	<li class='dropdown'>
@@ -2816,7 +2816,7 @@ if (mysql_num_rows($sql)!='0'){
 	<div class='alert alert-info'  >
 		<div class='row'>
 		<div class='col-md-3'>	
-			<img class='img img-responsive' src='http://qwerty.co/qr/?d=$_SESSION[url]?id=$perfil'>
+			<img class='img img-responsive' src='http://qwerty.co/qr/?d=$_SESSION[site]f$perfil'>
 		</div>
 		<div class='col-md-9'>
 		<h2>$nombre<small style='display:block;'>$descripcion</small></h2>
@@ -2824,8 +2824,8 @@ if (mysql_num_rows($sql)!='0'){
 	</div>
 <!-- 	<label >Compartir este formulario</label>
 		<div class='input-group'>
-  			<span class='input-group-addon'><a href='$_SESSION[url]?id=$perfil'><i class='fa fa-share-square-o'></i></a></span>
-  			<input  onclick=\"this.select(); \"  type='text' class='form-control' placeholder='$_SESSION[url]?id=$perfil' value='$_SESSION[url]?id=$perfil'> 
+  			<span class='input-group-addon'><a href='$_SESSION[site]f$perfil'><i class='fa fa-share-square-o'></i></a></span>
+  			<input  onclick=\"this.select(); \"  type='text' class='form-control' placeholder='$_SESSION[site]f$perfil' value='$_SESSION[site]f$perfil'> 
 		</div>	
 -->
 </div>";
@@ -3273,7 +3273,7 @@ $claves = $claves[0];
 			$limit = $limit[1];
 if($valor !="") {
 $valor_actual = contenido_mostrar("$formulario",$valor,'','5');
-$link = "<a href = '$_SESSION[url]/?id=$formulario&c=$valor' target='referencia'>Ver referencia</a> ";
+$link = "<a href = '$_SESSION[site]/?i$valor' target='referencia'>Ver referencia</a> ";
 }
 
 	return " $valor_actual $link";
@@ -3655,7 +3655,7 @@ while( $row = mysql_fetch_array( $sql ) ) {
 	$imagen = remplacetas('form_datos','control',$row[control],'contenido',"id_campo = '$id_campo'") ;
 	$items .= " <div class='item $activo'>
 						<div style='height:100%' class=''>
-							<!-- <img class='img img-responsive center-block' style='height:100%; display: table; margin: 0 auto;' src='http://$_SERVER[HTTP_HOST]/milfs/images/secure/?file=600/$imagen[0]'> -->
+							<!-- <img class='img img-responsive center-block' style='height:100%; display: table; margin: 0 auto;' src='$_SESSION[site]milfs/images/secure/?file=600/$imagen[0]'> -->
 							$contenido_desplegado
 						</div>
 					</div>";
@@ -4177,7 +4177,7 @@ $bg = "background-color: gray ;";
 				<h3>$descripcion_corta</h3>
 			</div>
 	 		$contenido <br>
-	 		<a class='btn btn-success btn-block ' href='?id=$row[id]'>Leer</a>
+	 		<a class='btn btn-success btn-block ' href='f$row[id]'>Leer</a>
 							</div>";
 		$resultado_banner .= "
 	<div class='col-md-12 div_aplicacion' id='div_aplicacion_$row[id]' style ='height:300px; $bg '>
@@ -4187,7 +4187,7 @@ $bg = "background-color: gray ;";
 				<h3>$descripcion_corta</h3>
 			</div>
 	 		$contenido <br>
-	 		<a class='btn btn-default btn-block ' href='?id=$row[id]'>Visitar</a>
+	 		<a class='btn btn-default btn-block ' href='f$row[id]'>Visitar</a>
 							$botonera</div>";
 			if($i % $divider==0) { $resultado_final = " </div>	"; }
 			if($tipo =='carrusel') {$resultado_carrusel .= aplicacion_carrusel("","$row[id]","galeria") ;	}
@@ -5025,8 +5025,8 @@ if (mysql_num_rows($sql)!='0'){
 		
 
 			if($campo_tipo =='15' AND $tipo==""){if($contenido !=""){
-				$contenido = "<img class='img img-responsive' style='width:100%' src='http://$_SERVER[HTTP_HOST]/milfs/images/secure/?file=600/$contenido'>
-									<a href='http://$_SERVER[HTTP_HOST]/milfs/images/secure/?file=full/$contenido' target='imagen'>Mostrar <i class='fa fa-search-plus'></i></a>
+				$contenido = "<img class='img img-responsive' style='width:100%' src='$_SESSION[url]images/secure/?file=600/$contenido'>
+									<a href='$_SESSION[url]milfs/images/secure/?file=full/$contenido' target='imagen'>Mostrar <i class='fa fa-search-plus'></i></a>
 									"; }else{$contenido="";}}		
 		elseif($campo_tipo=='14'){
 			if($contenido !='') {
@@ -5041,7 +5041,7 @@ if (mysql_num_rows($sql)!='0'){
 				$url_pin = urlencode("$_SESSION[site]milfs/images/iconos/negro.png");
 			$contenido = "
 
-			<img class=' img-responsive'  style='width:100%'  src='http://api.tiles.mapbox.com/v4/examples.map-zr0njcqy/url-".$url_pin."($lat,$lon,$zoom)/$lat,$lon,$zoom/600x250.png?access_token=$mapbox_token' >
+			<img class=' img-responsive'  style='width:100%'  src='https://api.tiles.mapbox.com/v4/examples.map-zr0njcqy/url-".$url_pin."($lat,$lon,$zoom)/$lat,$lon,$zoom/600x250.png?access_token=$mapbox_token' >
 			"; }else{	$contenido ="<div class='alert alert-danger'>No se ha definido un token de mapbox</div>";}
 										}
 			}
@@ -5185,7 +5185,7 @@ if (mysql_num_rows($sql)!='0'){
 	<h4>Responder con:</h4>
 						<table class='table table-condensed '>";
 	while( $row = mysql_fetch_array( $sql ) ) {
-		$resultado .= "<tr><td><a href ='?id=$row[id]&c=$control&t=r' title='$row[descripcion]'>$row[nombre]</a></td></tr>";
+		$resultado .= "<tr><td><a href ='?f$row[id]&c=$control&t=r' title='$row[descripcion]'>$row[nombre]</a></td></tr>";
 
 }
 	$resultado .="</table></div>";	
@@ -5574,7 +5574,7 @@ $td .= "<td>$imagen</td>";
 			if($size > $limite) {
 			$contenido = substr($contenido,0, $length = 300)."... ";//$contenido;
 										}
-			if($campo_tipo=='15' AND $tipo==""){if($contenido !=""){$contenido = "<img class='img-responsive' src='http://$_SERVER[HTTP_HOST]/milfs/images/secure/?file=600/$contenido'>"; }else{$contenido="";}}
+			if($campo_tipo=='15' AND $tipo==""){if($contenido !=""){$contenido = "<img class='img-responsive' src='$_SESSION[site]milfs/images/secure/?file=600/$contenido'>"; }else{$contenido="";}}
 			if($campo_tipo=='14'){
 				if($contenido !='') {
 													$campos = explode(" ",$contenido);
@@ -5585,7 +5585,7 @@ $td .= "<td>$imagen</td>";
 			$url_pin =urlencode("$_SESSION[site]milfs/images/iconos/negro.png");
 			$contenido = "
 			<!-- <img class='img-round'  src='http://dev.openstreetmap.de/staticmap/staticmap.php?center=$lon,$lat&zoom=$zoom&size=350x100&maptype=mapnik&markers=$lon,$lat,red-pushpin' > -->
-						<img class='img-round '  src='http://api.tiles.mapbox.com/v4/examples.map-zr0njcqy/url-".$url_pin."($lat,$lon,$zoom)/$lat,$lon,$zoom/350x100.png?access_token=$mapbox_token' >";
+						<img class='img-round '  src='https://api.tiles.mapbox.com/v4/examples.map-zr0njcqy/url-".$url_pin."($lat,$lon,$zoom)/$lat,$lon,$zoom/350x100.png?access_token=$mapbox_token' >";
 											} else { $contenido ='';}
 			}
 			elseif($campo_tipo=='4'){ $contenido = "<a href='$contenido' target='_blank'>$contenido</a>";}
@@ -5838,8 +5838,8 @@ $fila=0;
 							<div class='btn-toolbar '>
 							<div class='btn-group btn-group-xs'>
 								<a class='btn btn-default' onclick=\"xajax_formulario_modal('$row[form_id]','','$row[control]',''); \"><i class='fa fa-eye'></i></a>
-								<a class='btn btn-default' target='form' href='?id=$row[form_id]&c=$row[control]'><i class='fa fa-share-square-o'></i></a>
-								<a class='btn btn-default' target='form' href='?id=$row[form_id]&c=$row[control]&t=edit'><i class='fa fa-pencil'></i></a>
+								<a class='btn btn-default' target='form' href='../f$row[form_id]&c=$row[control]'><i class='fa fa-share-square-o'></i></a>
+								<a class='btn btn-default' target='form' href='d$row[control]&t=edit'><i class='fa fa-pencil'></i></a>
 								$imagen 
 							</div>
 							</div>
@@ -7778,7 +7778,7 @@ $cuerpo ="
 $mensaje_agradecimiento[0]
 $impresion
 </p>Se ha completado el formulario <b>$nombre_formulario[0]</b></p>
-<p>Puede revisar los datos en <a href='http://$_SERVER[HTTP_HOST]/milfs/?identificador=$formulario[control]'>http://$_SERVER[HTTP_HOST]/milfs?id=$formulario[form_id]&c=$formulario[control]</a></p>
+<p>Puede revisar los datos en <a href='$_SESSION[site]/milfs/i$formulario[control]'>$_SESSION[site]/milfs/i$formulario[control]</a></p>
 <p>Saludos de MILFS</p>
 ";
 			if(mail("$email[0]","$asunto","$cuerpo","$headers")){ $exito .=""; }else {$exito .="error enviando correo";}
