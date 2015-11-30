@@ -29,7 +29,9 @@ $onload="";
 $variable = $_GET['v'];
 /// e = EMPRESA *
 /// s= SET DE DATOS *
+/// S= SET DE DATOS EMBEBIDO
 /// i= IDENTIFICADOR *
+/// I= IDENTIFICADOR EMBEBIDO*
 /// d= IDENTIFICADOR EDITABLE *
 /// f= FORMULARIO *
 /// g=FORMULARIO EMBEBIDO *
@@ -70,6 +72,20 @@ if ($variable !=''){
 			//$onload = landingpage_contenido_formulario($set); 
 			$publico = remplacetas('form_id','id',"$set",'publico',"") ;
 				if($publico[0] =='1') {$acceso = 1;}
+			}			
+		elseif($v[0] =='S') {
+			$set =$v[1];
+			/// s= SET DE DATOS
+	  		$embebido = "1";
+			$onload = "".consultar_contenido_formulario("$set",'5','','contenido')."";
+
+			}		
+		elseif($v[0] =='I') {
+			$identificador =$v[1];
+			/// s= SET DE DATOS
+	  		$embebido = "1";
+			$onload = mostrar_identificador("$identificador","","landingpage",'simple');
+
 			}			
 		elseif($v[0] =='i') {
 			/// i= IDENTIFICADOR
@@ -393,6 +409,7 @@ p.copyright {
 </head>
 
 <body>
+<div id='contenido_interior'>
 <?php 
 	
 	if( $embebido =="1" ){ /* SI SE SOLICITA UN EMBEBIDO SE MUESTRA ESTO */
@@ -403,6 +420,7 @@ p.copyright {
 		}
 
 ?>
+<div id='contenido_interior'>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
     </body>
