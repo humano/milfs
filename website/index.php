@@ -420,7 +420,28 @@ p.copyright {
 		}
 
 ?>
-<div id='contenido_interior'>
+</div>
+<!-- Modal -->
+
+<div class='modal fade ' id='muestraInfo' tabindex='-1' role='dialog' aria-labelledby='myModalLabel' aria-hidden='true'>
+  <div class='modal-dialog modal-lg' >
+    <div class='modal-content'>
+      <div class='modal-header' >
+        <button type='button' class='close' data-dismiss='modal' aria-hidden='true'><i class='fa fa-times-circle'></i></button>
+        <h4 class='modal-title' id='myModalLabel_info'><div id='titulo_modal'></div></h4>
+      </div>
+      <div class='modal-body'>
+	
+       <div id='muestra_form'></div>
+      </div>
+      <div class='modal-footer' id='pie_modal'>
+        
+       
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Modal -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
     </body>
