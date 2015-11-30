@@ -100,12 +100,26 @@ while( $row = mysql_fetch_array( $sql ) ) {
 $linea .= landingpage_contenido_identificador($row['control']);
 //$linea .= "<br>$row[control]";
 															}
+$buscador = buscar_datos("*formato*","$form","landingpage","mostrar_resultado");
+$filtro = portal_filtro_campos_select($form,"$campo_filtro","mostrar_resultado","landingpage");
+$acciones="	<div class='row'>
+		<div class='col-sm-7 col-md-2' >
+		
+		<div class='btn btn-success btn-block' onclick =\"xajax_formulario_embebido_ajax('$form','','nuevo');\"> <i class='fa fa-plus-square'></i> Agregar </a></div>
+		</div>
+		<div class='col-sm-7 col-md-5' >
+		$filtro
+		</div>
+		 $buscador
+	</div>";
 
 $resultado = "
 <a name='cabecera'></a>
+$acciones
+<div id='mostrar_resultado'>
 $linea
 $encabezado
-
+</div>
 ";
 										}
 else {
@@ -152,7 +166,7 @@ while( $row = mysql_fetch_array( $sql ) ) {
 		$encontrados .= "<div class='container-fluid ' role='row' id='grid_$i'  style=''>";
 	}
 		$i++;
-	$logo="<img class='img img-responsivve img-rounded center-block' src='milfs/images/secure/?file=300/$row[imagen]'>";
+	$logo="<img class='img img-responsive img-rounded center-block' src='milfs/images/secure/?file=300/$row[imagen]'>";
 	$contenido ="
 	<div class='col-sm-$cols' style=''>
 		<a href='e$row[id]'>	
@@ -1986,12 +2000,24 @@ return $resultado;
 
 
 function portal_filtro_campos_select($formulario,$id_campo,$div,$plantilla){
+
+if($id_campo =="") {
+	$campo_titulo = remplacetas('form_parametrizacion','campo',$formulario,'descripcion'," tabla='form_id' and  opcion = 'titulo'") ;
+	$id_campo = $campo_titulo[0];
+	if($id_campo =="") { $resultado = ""; return $resultado;}
+							}
 $formulario_descripcion = remplacetas('form_id','id',"$formulario",'descripcion',"") ;
 $formulario_nombre = remplacetas('form_id','id',"$formulario",'nombre',"") ;
 $campo_nombre = remplacetas('form_campos','id',"$id_campo",'campo_nombre',"") ;
 $campo_descripcion = remplacetas('form_campos','id',"$id_campo",'campo_descripcion',"") ;
 
-$consulta ="SELECT * FROM form_campos ,form_datos WHERE form_datos.form_id = '$formulario' AND form_campos.id = form_datos.id_campo AND form_datos.id_campo = '$id_campo'  GROUP BY  contenido ORDER BY contenido";
+$consulta ="SELECT * 
+				FROM form_campos ,form_datos 
+				WHERE form_datos.form_id = '$formulario' 
+					AND form_campos.id = form_datos.id_campo 
+					AND form_datos.id_campo = '$id_campo'  
+				GROUP BY  contenido 
+				ORDER BY contenido";
 $link=Conectarse(); 
 mysql_query("SET NAMES 'utf8'");
 $sql=mysql_query($consulta,$link);
@@ -2007,6 +2033,11 @@ $resultado = "
 		 </select>
 ";
 }
+$resultado ="
+			<div class='input-group'>
+			<span class='input-group-addon'>Filtro <i class='fa fa-filter'></i> </span>
+			$resultado
+			</div>";
 return $resultado;
 }
 
@@ -2807,11 +2838,17 @@ $xajax->registerFunction("milfs_session");
 
 function buscar_datos($valores,$id_form,$plantilla,$div){
 	$valores = mysql_seguridad($valores);
+	$respuesta = new xajaxResponse('utf-8');
+if($valores =="") {
+	$alerta = "<div class='alert alert-warning'><h1>Por favor escriba que desea buscar</h1></div>";
+$respuesta->addAssign("$div","innerHTML",$alerta);
+			return $respuesta;
+}
 	if (is_array($valores) ){
 	$valor = $valores['valor'];
 									}
 	else {$valor=$valores;}
-if($valor =='') {
+if($valor =='*formato*') {
 $resultado="
 <div class='col-sm-5 col-md-5'>
 	<!-- <form class='navbar-form' role='search' id='formulario_buscar_datos' name='formulario_buscar_datos'> -->
@@ -2834,7 +2871,7 @@ $sql=mysql_query($consulta,$link);
 if (mysql_num_rows($sql)!=0){
 mysql_data_seek($sql, 0);
 $fila=1;
-$divider=3;
+$divider=2;
 $cols = (12/$divider);
 $i =0;
 while( $row = mysql_fetch_array( $sql ) ) {
@@ -2854,7 +2891,8 @@ if($i % $divider==0) {
                     $s3 = substr($contenido, ($p + strlen($valor)));
                     $r = $s1."<font color='red'>$s2</font>".$s3;
                     */
-   $datos = contenido_mostrar("$row[form_id]","$row[control]",'',"$plantilla");
+   $datos = landingpage_contenido_identificador($row['control']);
+   //$datos = contenido_mostrar("$row[form_id]","$row[control]",'',"$plantilla");
 	$contenido ="<div class='col-sm-$cols' style=''>$datos</div>";     	
 	
 	$encontrados .="$contenido";
@@ -2865,7 +2903,7 @@ if($i % $divider==0) {
 														}
 										}
 $resultado .="<div class='container-fluid'><h2>Resultados de: $valor</h2>$encontrados  </div>  ";						
-$respuesta = new xajaxResponse('utf-8');
+
 $respuesta->addAssign("$div","innerHTML",$resultado);
 			return $respuesta;
 			
@@ -3128,6 +3166,7 @@ if($tipo != "campos") {
 			 		$subir_imagen  
 					</div>
 			</div>
+			hola mundo
 		";
 	
 	}else {$imagen =" ";}
@@ -3137,21 +3176,18 @@ if($tipo != "campos") {
 	<div id ='div_$control'  >
 		<div class=''>
 			<div class='form-group' id='input_".$campo_imagen."[0]' >
-			<label for='UploadFile'>".$campo_imagen_nombre."</label>
-			<div class='col-lg-12'>
-			 $subir_imagen  
+				<label for='UploadFile'>".$campo_imagen_nombre."</label>
+				<div class='col-lg-12'>
+				 $subir_imagen  
+				</div>
 			</div>
-			
-		</div>
-	  
-	
-		</div>
+	  </div>
 		<form role='form' id='$control'  name='$control' class='form-horizontal'   >
 			<input type='hidden' id='control' name='control' value='$control'>
 			<input type='hidden'  id= 'form_id'  name= 'form_id' value='$perfil' >
 			<input type='hidden'  id= 'form_nombre'  name= 'form_nombre' value='$nombre' >
 			<input type='hidden'  id= 'tipo'  name= 'tipo' value='$tipo' >
-				<!-- <input class='form-control'   class='sr-only' type='' id='imagen' name='imagen' > -->
+
 	";
 	if($tipo=="edit") {$control_edit = "$control";}else {$control_edit = "";}
 
@@ -3172,7 +3208,9 @@ while( $row = mysql_fetch_array( $sql ) ) {
 	//$producto = remplacetas('farmacia_cum','id',$row[id_producto],'fabricante_importador') ;
 	///// para pasar el parametro de medicamentos al formulario no pos se adiciona ".func_get_arg(2)."
 	$campos = formulario_area_campos($perfil,$row['campo_area'],"$control_respuesta");
-$resultado_campos .= "<fieldset class='fieldset-borde ' id ='fieldset_$area_nombre'><legend class='legend-area' id ='legend_$area_nombre'>$area_nombre</legend>
+$resultado_campos .= "
+<fieldset class='fieldset-borde ' id ='fieldset_$area_nombre'>
+<legend class='legend-area' id ='legend_$area_nombre'>$area_nombre</legend>
 $campos
 </fieldset>";
 															}
@@ -3183,10 +3221,10 @@ $campos
 $muestra_form .="$resultado_campos <br><div class='row' id='respuesta_$control' name='respuesta_$control' ></div>
 	<div class='row'>
 		<div class='col-xs-6'>
-						<div onclick=\" xajax_formulario_grabar(xajax.getFormValues('$control'));\"  class='btn btn-block btn-success'>Grabar</div>
+			<div onclick=\" xajax_formulario_grabar(xajax.getFormValues('$control'));\"  class='btn btn-block btn-success'>Grabar</div>
 		</div>
 		<div class='col-xs-6'>
-						<div onclick=\" xajax_limpia_div('muestra_form');\" data-dismiss='modal' class='btn btn-block btn-danger'>Cancelar</div>
+			<div onclick=\" xajax_limpia_div('muestra_form');\" data-dismiss='modal' class='btn btn-block btn-danger'>Cancelar</div>
 		</div>
 	</div>
 							";
@@ -4075,8 +4113,9 @@ function formulario_embebido_ajax($id,$opciones,$tipo){
 
 	<div class='container-fluid' style='  background-color:white; max-width:800px;  overflow:no;' id='contenedor_datos' >			
 			<h4><small><i class='fa fa-eye'></i> $visitas</small></h4>
-				<!-- <h1 class='formulario_nombre'>$formulario_nombre[0]<br><small class='formulario_descripcion'>$formulario_descripcion[0] </h1> -->
+			<!-- formulario_areas -->
 				$impresion
+			<!-- formulario_areas -->
 	</div>
 	";
 		//	return $muestra_form ;
@@ -5485,14 +5524,12 @@ if ($id ==''){$id='imagen';}
 $size = ($_SESSION['upload_size']*1024*1024)." bytes";
 $resultado ="
 
-<form method='post' class='' enctype='multipart/form-data'
-action=  $javascript 
-target='iframeUpload' class='form-horizontal' name='subir_imagen_$id' id='subir_imagen_$id'>
+<form method='post' class='' enctype='multipart/form-data' action=  ' $javascript ' target='iframeUpload' class='form-horizontal' name='subir_imagen_$id' id='subir_imagen_$id' >
 <input type='hidden' id='id_imagen' name='id_imagen' value='$id'>
 <input type='hidden' id='campo_mapa' name='campo_mapa' value='$campo_mapa'>
-<input class='form-control'  name='fileUpload' type='file' onchange=\"this.form.taget= 'iframeUpload'; this.form.action = '$javascript';this.form.submit();\" />
-<iframe name='iframeUpload' style='display:none' ></iframe>
-<div class='alert alert-info text-center' id='formUpload'>La imagen debe estar en formato .jpg y de tamaño m&aacute;ximo  $_SESSION[upload_size] MB ( $size)</div>
+ <input class='form-control'  name='fileUpload' type='file' onchange=\"this.form.taget= 'iframeUpload'; this.form.action = '$javascript';this.form.submit();\" /> 
+ <iframe name='iframeUpload' style='display:none;' ></iframe>
+<div class='alert alert-info text-center' id='formUpload'>La imagen debe estar en formato .jpg y de tamaño m&aacute;ximo  $_SESSION[upload_size] MB ( $size)</div> 
 </form>
 ";
 return $resultado;
@@ -7654,17 +7691,13 @@ elseif($campo_tipo_accion == 'email'){$render = "
 		if($cols =="") {$cols = "6";}
 		$input = "
 		<div class='col-md-$cols' style='$style'>
-		<div class='form-group ' id='input_".$id_campo."[".$item."]' >
-			
-			$label 
-			<div class='col-md-12'>
-			
-			$render 
-			$campo_descripcion
-			
-			
-		</div>
-		</div>
+			<div class='form-group ' id='input_".$id_campo."[".$item."]' >
+					$label 
+				<div class='col-md-12'>
+				$render 
+					$campo_descripcion
+				</div>
+			</div>
 		</div>
 $campo_multiple
 		";
@@ -8225,7 +8258,7 @@ $subir_imagen = subir_imagen("$id","$campo_imagen"."[0]");
 			<input type='hidden'  id= 'form_id'  name= 'form_id' value='$id' >
 			<input type='hidden'  id= 'form_nombre'  name= 'form_nombre' value='$nombre' >
 			<input type='hidden'  id= 'tipo'  name= 'tipo' value='$tipo' >
-				<!-- <input class='form-control'   class='sr-only' type='' id='imagen' name='imagen' > -->
+
 	<div class='row'>
 	";
 	if($tipo=="edit") {
