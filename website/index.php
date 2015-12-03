@@ -77,7 +77,7 @@ if ($variable !=''){
 			$set =$v[1];
 			/// s= SET DE DATOS
 	  		$embebido = "1";
-			$onload = "".consultar_contenido_formulario("$set",'5','','contenido')."";
+			$onload = "".consultar_contenido_formulario("$set",'5','','embebido')."";
 
 			}		
 		elseif($v[0] =='I') {
@@ -446,7 +446,7 @@ p.copyright {
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
     </body>
     </html>
-
+<!-- fin embebido -->
 <?php 
 	}
 	else{ /* SI NO SE SOLICITA UN EMBEBIDO SE CONTINUA CON EL FLUJO DEL HTML */

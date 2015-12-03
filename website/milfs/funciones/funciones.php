@@ -102,6 +102,7 @@ $linea .= landingpage_contenido_identificador($row['control']);
 															}
 $buscador = buscar_datos("*formato*","$form","landingpage","mostrar_resultado");
 $filtro = portal_filtro_campos_select($form,"$campo_filtro","mostrar_resultado","landingpage");
+if($tipo !=="embebido") {
 $acciones="	<div class='row'>
 		<div class='col-sm-7 col-md-2' >
 		
@@ -112,7 +113,7 @@ $acciones="	<div class='row'>
 		</div>
 		 $buscador
 	</div>";
-
+}
 $resultado = "
 <a name='cabecera'></a>
 $acciones
@@ -138,7 +139,7 @@ return $respuesta;
 					$respuesta->addAssign("contenido_interior","innerHTML","$resultado");
 					return $respuesta;
 		}
-		if($tipo =="contenido") {
+		if($tipo =="contenido" OR $tipo =="embebido" ) {
 			return $resultado; 
 		}
 }
@@ -344,7 +345,7 @@ function landingpage_contenido_identificador($identificador){
 			</div>$uri";
 					
 	}else {
-		$miniatura ="<a href='i$identificador' >$uri</a>";
+		$miniatura ="<a href='i$identificador' >i$identificador</a>";
 		$mostrar_imagen = "<img src='$qr' alt='$identificador' title='' style='width:100%'; class='img img-responsive img-rounded'>";
 
 			
@@ -378,7 +379,7 @@ function landingpage_contenido_identificador($identificador){
                 </div>
             </div>
 
-			<div class='link-compartir text-center'><a href='$uri' ><i class='fa fa-share-square'></i> Compartir </a></div>
+			<div class='link-compartir text-center'><a href='i$identificador' ><i class='fa fa-share-square'></i> Compartir </a></div>
         </div>
         <!-- /.container -->
 
