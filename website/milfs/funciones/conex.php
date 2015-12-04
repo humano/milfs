@@ -4,7 +4,7 @@ function Conectarse(){
 		
 	@include("includes/datos.php");
    		if(!isset($db)) {
-   @include("milfs/includes/datos.php");
+   include("milfs/includes/datos.php");
    		}
 
    if (!($link=mysql_connect($servidor,$usuario,$password)))

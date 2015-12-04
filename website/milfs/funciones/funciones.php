@@ -102,7 +102,7 @@ $linea .= landingpage_contenido_identificador($row['control']);
 															}
 $buscador = buscar_datos("*formato*","$form","landingpage","mostrar_resultado");
 $filtro = portal_filtro_campos_select($form,"$campo_filtro","mostrar_resultado","landingpage");
-if($tipo !=="embebido") {
+if( $tipo !== "" AND $tipo !=="embebido" ) {
 $acciones="	<div class='row'>
 		<div class='col-sm-7 col-md-2' >
 		
@@ -116,8 +116,9 @@ $acciones="	<div class='row'>
 }
 $resultado = "
 <a name='cabecera'></a>
-$acciones
 <div id='mostrar_resultado'>
+$acciones
+
 $linea
 $encabezado
 </div>
@@ -136,7 +137,7 @@ return $respuesta;
 	*/
 		if($tipo =="") {	
 				//	$respuesta->addAssign("contenido_interior","innerHTML","$div_contenido");
-					$respuesta->addAssign("contenido_interior","innerHTML","$resultado");
+					$respuesta->addAssign("mostrar_resultado","innerHTML","$resultado");
 					return $respuesta;
 		}
 		if($tipo =="contenido" OR $tipo =="embebido" ) {
@@ -3830,6 +3831,7 @@ $xajax->registerFunction("buscador_select");
 
 function relacion_select($id_campo,$form_id,$valor,$name,$control,$tipo){
 $link=Conectarse(); 
+$valor_actual ="";
 mysql_query("SET NAMES 'utf8'");
 
 $claves = remplacetas("form_campos_valores","id_form_campo","$id_campo","campo_valor","");
@@ -3863,7 +3865,7 @@ $resultado=" <SELECT class='form-control' NAME='$name' id='$name' onchange=\"$on
 
 while( $row = mysql_fetch_array( $sql ) ) {
 
-		if($row[control] == "$valor") {
+		if($row['control'] == "$valor") {
 
 					$selected = "selected";
 					}else{ $selected = "";}
@@ -4021,7 +4023,7 @@ function formulario_embebido($id){
 			//$impresion = formulario_modal("$id",$form_respuesta,$control,"embebido");
 			//($perfil,$tipo,$form_respuesta,$control_respuesta)
 
-			$impresion = formulario_areas($id,"embebido",'');
+			$impresion = formulario_areas($id,"embebido",'','');
 			$formulario_nombre = remplacetas('form_id','id',$id,'nombre','') ;
 			$formulario_descripcion = remplacetas('form_id','id',$id,'descripcion','') ;
 			$visitas= contar_visitas($id,'formulario') ;

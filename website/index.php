@@ -26,6 +26,8 @@ if(isset($_REQUEST['debug'])) {ini_set('display_errors', 'On');}
 $embebido =0;
 $acceso = 0;
 $onload="";
+$id_empresa="";
+$opciones="";
 $variable = $_GET['v'];
 /// e = EMPRESA *
 /// s= SET DE DATOS *
@@ -163,7 +165,7 @@ $link_empresa = "e$id_empresa";
   $facebook[0] ="https://www.facebook.com/Qwerty-co-146226688795185";
 }
 
-$uri = trim($_SESSION[site], '/').$_SERVER[REQUEST_URI];
+$uri = trim($_SESSION['site'], '/').$_SERVER['REQUEST_URI'];
 
 	?>
     <meta NAME="Language" CONTENT="Spanish">
@@ -207,7 +209,7 @@ $uri = trim($_SESSION[site], '/').$_SERVER[REQUEST_URI];
 
 body,
 html {
-	 background-color: #A4A4A4;
+	 background-color: white;
     width: 100%;
     height: 100%;
 }
@@ -416,7 +418,8 @@ p.copyright {
 		echo $onload;  
 
  		if(isset($set)) { 
-			echo landingpage_contenido_formulario($set); 
+			//echo landingpage_contenido_formulario($set); 
+			//echo consultar_contenido_formulario("$set",'5','','contenido'); 
 		}
 
 ?>
