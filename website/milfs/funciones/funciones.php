@@ -513,7 +513,7 @@ $respuesta->addAssign("$div","innerHTML","$resultado");
 
 */
 function landingpage_contenido($id_empresa){
-$consulta= "SELECT * FROM form_id WHERE publico ='1' AND id_empresa= '$id_empresa' ORDER BY id DESC";
+$consulta= "SELECT * FROM form_id WHERE publico ='1' AND id_empresa= '$id_empresa' ORDER BY orden ASC";
 $miniatura ="";
 	$link=Conectarse(); 
 	mysql_query("SET NAMES 'utf8'");
@@ -8420,7 +8420,7 @@ while( $row = mysql_fetch_array( $sql ) ) {
 if($row[$value]=="") {$resultado.="";}else{
 if($row[$value] ==="$valor"){$selected="selected";}else{$selected ="";}
 $mostrar_id = "[$row[$value]]";
-$resultado .= "<option value='@$row[$value]' $selected > ".substr(@$row[$campo1], 0, 150 )." ".substr(@$row[$campo2], 0, 30 )." $mostrar_id </option>";
+$resultado .= "<option value='$row[$value]' $selected > ".substr(@$row[$campo1], 0, 150 )." ".substr(@$row[$campo2], 0, 30 )." $mostrar_id </option>";
 															}
 														}
 $resultado .= "</select>";
