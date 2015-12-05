@@ -1,6 +1,62 @@
 <?php
 date_default_timezone_set('America/Bogota');
 
+function respuestas_formulario($id,$identificador) {
+	if($id=='') {return;}
+	$id = mysql_seguridad($id);
+		$formulario_respuesta = formulario_respuesta("$id","$identificador");
+	$consulta = "SELECT form_id , timestamp FROM form_datos 
+						WHERE control = '$identificador' AND form_id != '$id' GROUP BY form_id , timestamp
+						";
+					
+$link=Conectarse(); 
+mysql_query("SET NAMES 'utf8'");
+$sql=mysql_query($consulta,$link);
+ 
+if (mysql_num_rows($sql)!='0'){
+	mysql_data_seek($sql, 0);
+
+	$resultado ="<div class='alert alert-success'>
+	<h4>Respuestas:</h4>
+						<table class='table table-condensed '>";
+	while( $row = mysql_fetch_array( $sql ) ) {
+			$respuesta = mostrar_identificador("$identificador","$row[form_id]","",'simple');
+			$fecha = date($format, $row['timestamp']);
+		$resultado .= "<tr><td> $respuesta <small>$timestamp</small></td></tr>";
+
+}
+	$resultado .="</table>
+	</div>";	
+}else{$resultado ="";}
+$resultado = "$resultado $formulario_respuesta";
+return $resultado;
+}
+
+
+function formulario_respuesta($id,$identificador) {
+	if($id=='') {return;}
+	$id = mysql_seguridad($id);
+	$consulta = "SELECT * FROM form_id 
+						WHERE formulario_respuesta = '$id' 
+						";
+					
+$link=Conectarse(); 
+mysql_query("SET NAMES 'utf8'");
+$sql=mysql_query($consulta,$link);
+ 
+if (mysql_num_rows($sql)!='0'){
+	mysql_data_seek($sql, 0);
+	$resultado ="
+						<table class='table table-condensed '>";
+	while( $row = mysql_fetch_array( $sql ) ) {
+		$resultado .= "<tr><td><a class='btn btn-success' onclick = \"xajax_formulario_embebido_ajax('$row[id]','$identificador','respuesta') \" title='$row[descripcion]'>$row[nombre]</a> $row[descripcion] </td></tr>";
+
+}
+	$resultado .="</table>";	
+}else{$resultado ="";}
+return $resultado;
+}
+
 function consultar_contenido_formulario($form,$registros,$pagina,$tipo){
 	$imagen ="";
 	$busca ="";
@@ -97,7 +153,8 @@ mysql_data_seek($sql_total, 0);
 while( $row = mysql_fetch_array( $sql ) ) {
 
 //	 if (!is_array($listado_campos)){$listado_campos="<td >$listado_campos</td>";}else {$listado_campos=$listado_campos;}
-$linea .= landingpage_contenido_identificador($row['control']);
+$linea .= landingpage_contenido_identificador("$row[control]","$id_form","landingpage",'');
+//$linea .= mostrar_identificador("$row[control]","$id_form","landingpage",'simple');;
 //$linea .= "<br>$row[control]";
 															}
 $buscador = buscar_datos("*formato*","$form","landingpage","mostrar_resultado");
@@ -324,14 +381,16 @@ if($comprobar_clave[0] !== $password ) {
 $xajax->registerFunction("autoriza_formulario_mostrar");
 
 
-
-function landingpage_contenido_identificador($identificador){
+//($control,$form,$plantilla,$tipo)
+function landingpage_contenido_identificador($identificador,$form,$plantilla,$tipo){
 	$linea="";
-	$id_empresa = 	remplacetas('form_datos','control',$identificador,'id_empresa',"") ;
-	$form = 	remplacetas('form_datos','control',$identificador,'form_id',"") ;
 	
+	$id_empresa = 	remplacetas('form_datos','control',$identificador,'id_empresa',"") ;
+	//$form = 	remplacetas('form_datos','control',$identificador,'form_id',"") ;
+
+	$respuestas =  respuestas_formulario($form,$identificador);
 	$imagen = buscar_imagen($form[0],$identificador,"","$id_empresa[0]"); 
-	$plantilla = remplacetas('form_parametrizacion','opcion',"plantilla:landingpage",'id',"campo = '$form[0]'") ;
+	$plantilla = remplacetas('form_parametrizacion','opcion',"plantilla:$plantilla",'id',"campo = '$form'") ;
 	
 	$uri = "$_SESSION[site]i$identificador";
 	$qr = "http://qwerty.co/qr/?d=$uri";
@@ -391,7 +450,17 @@ function landingpage_contenido_identificador($identificador){
 	";
 	
 	}
- $linea = "$impresion ";
+ $linea = "
+ 			$impresion 
+ 			 <!-- formulario de respuesta -->
+ 			 <div class='center-block' style='max-width:600px;'>
+ 			 <div class='container-fluid'>
+ 			 $respuestas
+
+ 			 </div>
+ 			 </div>
+ 			 <!-- formulario de respuesta -->
+ 					";
 
 	return $linea;
 	}
@@ -1189,8 +1258,8 @@ foreach($listado_campos as $campo=>$valor){
 
 							<div class='btn-toolbar '>
 							<div class='btn-group btn-group'>
-								<a class='btn btn-default' target='form' href='$_SESSION[site]?identificador=$row[control]'><i class='fa fa-eye'></i></a>
-								<a class='btn btn-default' target='form' href='$_SESSION[site]?form=$row[form_id]&identificador=$row[control]&t=edit'><i class='fa fa-pencil'></i></a>
+								<a class='btn btn-default' target='form' href='../i$row[control]'><i class='fa fa-eye'></i></a>
+								<a class='btn btn-default' target='form' href='../d$row[control]'><i class='fa fa-pencil'></i></a>
 								$imagen 
 							</div>
 							</div>
@@ -3168,7 +3237,7 @@ if($tipo != "campos") {
 			 		$subir_imagen  
 					</div>
 			</div>
-			hola mundo
+			
 		";
 	
 	}else {$imagen =" ";}
@@ -3206,10 +3275,10 @@ while( $row = mysql_fetch_array( $sql ) ) {
 	$area_nombre = $area_nombre[0];
 		}
 	$fila = $fila +1;
-	if ($fila %2 == 0){$bg='LightCyan';}else{ $bg='FFFFFF';}
+	
 	//$producto = remplacetas('farmacia_cum','id',$row[id_producto],'fabricante_importador') ;
 	///// para pasar el parametro de medicamentos al formulario no pos se adiciona ".func_get_arg(2)."
-	$campos = formulario_area_campos($perfil,$row['campo_area'],"$control_respuesta");
+	$campos = formulario_area_campos($perfil,$row['campo_area'],"$control_edit");
 $resultado_campos .= "
 <fieldset class='fieldset-borde ' id ='fieldset_$area_nombre'>
 <legend class='legend-area' id ='legend_$area_nombre'>$area_nombre</legend>
@@ -3258,7 +3327,7 @@ return $resultado;
 
 $resultado = "
 $cabecera
-$muestra_form
+$muestra_form 
 <span>Poweredy by <a href='https://github.com/humano/milfs' target='milfs'>MILFS</a></span>
 <a href='?psi' target='_psi'><i class='fa fa-smile-o '></i> Políticas de privacidad y protección de datos.</a>
 
@@ -4077,7 +4146,7 @@ function formulario_embebido_ajax($id,$opciones,$tipo){
 		
 		
 		
-		if($_SESSION['id_empresa'] !== $id_empresa[0] AND $permiso_identificador != $opciones) {
+		if($tipo =='edit' AND $_SESSION['id_empresa'] !== $id_empresa[0] AND $permiso_identificador != $opciones) {
 			$password = buscar_campo_tipo($id,"18");
 
 			$aviso = "<div class='alert alert-warning text-center '><h1><i class='fa fa-exclamation-triangle'></i> ATENCIÓN<br><small>No está autorizado</small></h1></div>";
@@ -4107,8 +4176,8 @@ function formulario_embebido_ajax($id,$opciones,$tipo){
 			return $respuesta;
 		}			
 			
-			
-			$impresion = formulario_areas("$id","$tipo","","$opciones");
+			if($tipo=="respuesta") { $form_respuesta = "respuesta";}
+			$impresion = formulario_areas("$id","$tipo","$form_respuesta","$opciones");
 			$formulario_nombre = remplacetas('form_id','id',$id,'nombre','') ;
 			$formulario_descripcion = remplacetas('form_id','id',$id,'descripcion','') ;
 			$visitas= contar_visitas($id,'formulario') ;
@@ -4902,11 +4971,13 @@ $consulta ="SELECT count(distinct control) as cantidad FROM form_datos WHERE for
 return $resultado;
 }
 
-function formulario_uso($id,$id_campo,$tipo) {
+function formulario_uso($id,$control,$tipo) {
 	$resultado="";
 	if($tipo =='primer') {$orden = 'ASC';}
 	if($tipo =='ultimo') {$orden = 'DESC';}
-$consulta ="SELECT *  FROM form_datos WHERE form_id = '$id' order by timestamp $orden LIMIT 1 ";
+	if($control != ""){$where = "control = '$control'";}
+	else{$where = "form_id = '$id'";}
+$consulta ="SELECT *  FROM form_datos WHERE $where order by timestamp $orden LIMIT 1 ";
 	$link=Conectarse(); 
 	mysql_query("SET NAMES 'utf8'");
 		$sql=mysql_query($consulta,$link);
@@ -4914,6 +4985,7 @@ $consulta ="SELECT *  FROM form_datos WHERE form_id = '$id' order by timestamp $
 		$resultado[0]=mysql_result($sql,0,"timestamp");
 		$resultado[1]=mysql_result($sql,0,"control");
 		$resultado[2]=$consulta;
+		$resultado[3]=mysql_result($sql,0,"form_id");
 		}else {}
 return $resultado;
 }
@@ -5458,7 +5530,7 @@ if($contenido_original !="") {
 //}else {$resultado ="<div class='alert alert-warning'><h1>No se encontraron resultados</h1></div>"; return $resultado;}
 //if($id=="6" OR $id=="10") {
 	$plantilla="";
-	$class="";
+	$class="alert alert-info";
 	if($tipo !="" AND (!is_numeric($tipo)) AND $tipo !="metadatos" ) {
 ////Usa una plantilla apra cada id 
 
@@ -5491,30 +5563,6 @@ eval("\$plantilla = \"$plantilla \";");
 	}else {$resultado =""; return $resultado;}
 }
 
-function formulario_respuesta($id,$control) {
-	if($id=='') {return;}
-	$id = mysql_seguridad($id);
-	$consulta = "SELECT * FROM form_id 
-						WHERE formulario_respuesta = '$id' 
-						";
-					
-$link=Conectarse(); 
-mysql_query("SET NAMES 'utf8'");
-$sql=mysql_query($consulta,$link);
- 
-if (mysql_num_rows($sql)!='0'){
-	mysql_data_seek($sql, 0);
-	$resultado ="<div class='alert alert-warning'>
-	<h4>Responder con:</h4>
-						<table class='table table-condensed '>";
-	while( $row = mysql_fetch_array( $sql ) ) {
-		$resultado .= "<tr><td><a href ='?f$row[id]&c=$control&t=r' title='$row[descripcion]'>$row[nombre]</a></td></tr>";
-
-}
-	$resultado .="</table></div>";	
-}else{$resultado ="";}
-return $resultado;
-}
 
 function subir_imagen($respuesta,$id){
 $resultado ="";
@@ -7286,7 +7334,7 @@ $item .=  "<!-- <div class='col-sm-$columnas' style=';'> -->
 							 		
 								 		<div class='col-xs-6'>
 								 			<a class='btn btn-default btn-warning' onclick =\" xajax_formulario_importar_subir('$id') \"  ><i class='fa fa-upload'></i> Importar (Experimental)</a>
-								 			<a class='btn btn-default ' href='$_SESSION[site]?form=$id' target='formulario'><i class='fa fa-save'></i> Llenar</a>
+								 			<a class='btn btn-default ' href='$_SESSION[site]f$id' target='formulario'><i class='fa fa-save'></i> Llenar</a>
 <!-- 								    		<a class='btn btn-default' href='#' onclick=\"xajax_formulario_modal('$row[id]','','',''); \"><i class='fa fa-save'></i></a> -->
 								    		<div class='btn btn-default btn-default' onclick=\"xajax_consultar_formulario('$row[id]','10','','modal'); \"><i class='fa fa-eye'></i> Consultar</div>
 								    		<a class='collapsed' role='button' data-toggle='collapse' data-parent='#acordion_grid' href='#collapse$row[id]' aria-expanded='false' aria-controls='collapse$row[id]'>
@@ -8033,7 +8081,7 @@ $otro_formulario ="
 ";
 }else {
 	$otro_formulario = "
-			 	<a href ='?id=$formulario[form_id]' class='btn btn-block btn-success'>
+			 	<a href ='f$formulario[form_id]' class='btn btn-block btn-success'>
 			 		Llenar otro formulario
 			 	</a>	
 	
@@ -8095,7 +8143,7 @@ $cuerpo ="
 $mensaje_agradecimiento[0]
 $impresion
 </p>Se ha completado el formulario <b>$nombre_formulario[0]</b></p>
-<p>Puede revisar los datos en <a href='$_SESSION[site]/milfs/i$formulario[control]'>$_SESSION[site]/milfs/i$formulario[control]</a></p>
+<p>Puede revisar los datos en <a href='$_SESSION[site]i$formulario[control]'>$_SESSION[site]i$formulario[control]</a></p>
 <p>Saludos de MILFS</p>
 ";
 			if(mail("$email[0]","$asunto","$cuerpo","$headers")){ $exito .=""; }else {$exito .="error enviando correo";}
@@ -8177,7 +8225,7 @@ function formulario_modal($id,$form_respuesta,$control,$tipo) {
 	$formulario_nombre = remplacetas('form_id','id',$id,'nombre','') ;
 	$cabecera ="<h3>".$formulario_nombre['0']."</h3><p>".$formulario_descripcion['0']."</p>  ";
 
-		$nuevo_formulario = "<a href ='?form=$id'>Llenar otro formulario </a>";
+		$nuevo_formulario = "<a href ='f$id'>Llenar otro formulario </a>";
 if($control !='' AND  $tipo =='' ) {
 			$impresion = formulario_imprimir("$id","$control",""); 
 			$formulario_nombre = remplacetas('form_id','id',$id,'nombre','') ;
@@ -8457,7 +8505,7 @@ $resultado .= "<option value='$row[$value]' $selected > ".substr(@$row[$campo1],
 															}
 														}
 $resultado .= "</select>";
-										}else{$resultado = "<div class='alert alert-warning'><i class='fa fa-exclamation-triangle'></i> No hay resultados $consulta</div>";}
+										}else{$resultado = "<div class='alert alert-warning'><i class='fa fa-exclamation-triangle'></i> No hay resultados </div>";}
 
 return $resultado;
 }

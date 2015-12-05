@@ -85,21 +85,29 @@ if ($variable !=''){
 		elseif($v[0] =='I') {
 			$identificador =$v[1];
 			/// s= SET DE DATOS
+			$primer = 	formulario_uso("","$identificador",'primer') ;
+			$id_form="$primer[3]";
 	  		$embebido = "1";
-			$onload = mostrar_identificador("$identificador","","landingpage",'simple');
+			//$onload = mostrar_identificador("$identificador","$id_form","landingpage",'simple');
+			$onload = landingpage_contenido_identificador("$identificador","$id_form","landingpage",'simple');
 
 			}			
 		elseif($v[0] =='i') {
 			/// i= IDENTIFICADOR
 	  		$identificador =$v[1]; 
-			$form = 	remplacetas('form_datos','control',$identificador,'form_id',"") ;	
+	  					$primer = 	formulario_uso("","$identificador",'primer') ;
+			$form[0]="$primer[3]";
+			//$form = 	remplacetas('form_datos','control',$identificador,'form_id',"") ;	
 			$empresa = 	remplacetas('form_id','id',$form['0'],'id_empresa',"") ;
 			$id_empresa = $empresa[0];
 			$id = $empresa[0];
-			$impresion = mostrar_identificador("$identificador","","landingpage",'simple');
+			//$impresion = mostrar_identificador("$identificador","$id_form[0]","landingpage",'simple');
+			$impresion = landingpage_contenido_identificador("$identificador","$id_form[0]","",'');
+
 			$impresion = strip_tags($impresion);
 			$descripcion_meta = $impresion; 
 			$titulo = 	remplacetas('form_id','id',$form['0'],'nombre',"") ;
+			$descripcion = 	remplacetas('form_id','id',$form['0'],'descripcion',"") ;
 			$background_imagen = buscar_imagen("$form[0]",$identificador,"","");
 			$uri_set = "<a class='' href='s$form[0]'>$titulo[0]</a>";
 			$publico = remplacetas('form_id','id',$form[0],'publico',"") ;

@@ -18,9 +18,9 @@
 
 <div id='map'></div>
 <?php 
-	if ($_REQUEST[lat] !='') {$lat=$_REQUEST[lat];}else {$lat= "-75.5570125579834";}
-	if ($_REQUEST[lon] !='') {$lon=$_REQUEST[lon];}else {$lon= "6.2463742841860";}
-	if ($_REQUEST[zoom] !='') {$zoom=$_REQUEST[zoom];}else {$zoom= "16";}
+	if ($_REQUEST[lat] !='') {$lat=$_REQUEST[lat];}else {$lat= "-72";}
+	if ($_REQUEST[lon] !='') {$lon=$_REQUEST[lon];}else {$lon= "4";}
+	if ($_REQUEST[zoom] !='') {$zoom=$_REQUEST[zoom];}else {$zoom= "5";}
 	
  ?>
 <script>
