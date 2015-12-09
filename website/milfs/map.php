@@ -1,4 +1,4 @@
-<?php 
+<?php session_start();
 //ini_set('display_errors', 'On');
 require ('xajax/xajax.inc.php');
 $xajax = new xajax();
@@ -130,12 +130,24 @@ code {
 <body>
  
 <div id='map'> 
+
+	<?php  $categorias = lista_categorias($_REQUEST['id'],'','') ;
+	if($categorias !="") {
+	$pie="
 <div class='footer' id='contenedor_pie' >
-	<div  style=" " class='container' >
-	<a href="#" onclick="xajax_limpia_div('contenedor_pie'); "><span class='pull-right'><i class='fa fa-times'></i></span></a>
-	<?php echo $categorias = lista_categorias($_REQUEST[id],'','') ; ?>
-	</div></div>
-</div>
+	<div  style='' class='container' >
+	<a href='#' onclick=\"xajax_limpia_div('contenedor_pie'); \"><span class='pull-right'><i class='fa fa-times'></i></span></a>
+	$categorias
+		</div></div>
+</div>";
+	
+		
+	}else{
+	
+	}
+	echo $pie;
+	 ?>
+
 
 <script>
 L.mapbox.accessToken = 'pk.eyJ1IjoiZmNhc3Ryb3QiLCJhIjoiY2lnOWw1bmd1MG93eXVsbTJpcmluYTBxdCJ9.yG7C1rEH6-MpZBEEb68IVg';

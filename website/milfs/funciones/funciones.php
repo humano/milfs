@@ -1,6 +1,7 @@
 <?php
 date_default_timezone_set('America/Bogota');
 
+
 function respuestas_formulario($id,$identificador) {
 	if($id=='') {return;}
 	$id = mysql_seguridad($id);
@@ -16,17 +17,14 @@ $sql=mysql_query($consulta,$link);
 if (mysql_num_rows($sql)!='0'){
 	mysql_data_seek($sql, 0);
 
-	$resultado ="<div class='alert alert-success'>
-	<h4>Respuestas:</h4>
-						<table class='table table-condensed '>";
+	$resultado ="";
 	while( $row = mysql_fetch_array( $sql ) ) {
-			$respuesta = mostrar_identificador("$identificador","$row[form_id]","",'simple');
+			$respuesta = mostrar_identificador("$identificador","$row[form_id]","respuesta",'simple',"$row[timestamp]");
 			$fecha = date($format, $row['timestamp']);
-		$resultado .= "<tr><td> $respuesta <small>$timestamp</small></td></tr>";
+		$resultado .= "<!-- ($identificador','$row[form_id]','','simple','$row[timestamp]')  --> $respuesta ";
 
 }
-	$resultado .="</table>
-	</div>";	
+	$resultado .="";	
 }else{$resultado ="";}
 $resultado = "$resultado $formulario_respuesta";
 return $resultado;
@@ -56,7 +54,6 @@ if (mysql_num_rows($sql)!='0'){
 }else{$resultado ="";}
 return $resultado;
 }
-
 function consultar_contenido_formulario($form,$registros,$pagina,$tipo){
 	$imagen ="";
 	$busca ="";
@@ -128,18 +125,16 @@ if (mysql_num_rows($sql)!='0'){
     }
    $paginacion = "<ul class='pagination  '>$link</ul>";
 	$encabezado = " 
-		<div class='row'>
-			<div class='col-sm-12'>
-			</div>
-		</div>
 		<div class='row' id='botonera'>
 			<div class='col-sm-12'>
+			 <div class='text-center center-block'>
 				<ul class='pagination'>
 					<li  role='presentation'><span>$total_registros registros</span></li>	
 				</ul>
 				     $paginacion
+			 </div>
 			</div>
-		</div>";
+		</div> ";
 						
 //	$total_registros = mysql_num_rows($sql);
 /*	$nombres_campos = listar_campos_formulario("$id_form","nombres");
@@ -451,6 +446,7 @@ function landingpage_contenido_identificador($identificador,$form,$plantilla,$ti
 	
 	}
  $linea = "
+ 		<div class='mostrar_identificador_full container-fluid' style='background-color:white; max-width:650px;'>
  			$impresion 
  			 <!-- formulario de respuesta -->
  			 <div class='center-block' style='max-width:600px;'>
@@ -460,6 +456,8 @@ function landingpage_contenido_identificador($identificador,$form,$plantilla,$ti
  			 </div>
  			 </div>
  			 <!-- formulario de respuesta -->
+ 		</div>
+ 		<br>
  					";
 
 	return $linea;
@@ -1376,20 +1374,59 @@ while($row = mysql_fetch_array( $sql ))
 
 function parametrizacion_linea($tabla,$campo,$opcion,$descripcion,$div){
 		$respuesta = new xajaxResponse('utf-8');	
-
-
+if($campo =="") {
+$resultado = "
+<div id='resultado_parametrizacion'></div>
+<form id='otra_parametrizacion'>
+	<fieldset>	
+	<legend>Hiperparametrizador <span class='badge'>Experimental</span></legend>
+		<div class='row'>
+			<div class='col-sm-4'>
+				
+				<div class='form-group'>
+					<label for='tabla'>Tabla</label>
+					<input class='form-control' id='tabla' name='tabla'>
+				</div>
+			</div>
+			<div class='col-sm-4'>
+				<div class='form-group'>
+					<label for='campo'>Campo</label>
+					<input class='form-control' id='campo' name='campo'>
+				</div>
+			</div>
+			<div class='col-sm-4'>
+				<div class='form-group'>
+					<label for='opcion'>Opción</label>
+					<input class='form-control' id='opcion' name='opcion'>
+				</div>
+			</div>
+		</div>
+				<div class='form-group'>
+					<label for='descripcion'>Descripción</label>
+					<textarea class='form-control' id='descripcion' name='descripcion'></textarea>
+				</div>
+				<div class='form-group'>
+					<div class='input-group-btn'>
+						<div class='btn btn-default btn-warning pull-right' onclick=\"xajax_parametrizacion_linea(document.getElementById('tabla').value,document.getElementById('campo').value,document.getElementById('opcion').value,document.getElementById('descripcion').value,'resultado_parametrizacion'); \"><i class='fa fa-save'></i> Grabar</div>
+					</div>
+				</div>
+	</fieldset>
+</form>
+";
+return $resultado;
+}
 	$link=Conectarse(); 
 mysql_query("SET NAMES 'utf8'");
-$limpiar ="DELETE FROM `form_parametrizacion` WHERE tabla = '".mysql_real_escape_string($tabla)."' AND campo ='".mysql_real_escape_string($campo)."' AND opcion ='".mysql_real_escape_string($opcion)."' LIMIT 1 ";
+$limpiar ="DELETE FROM `form_parametrizacion` WHERE tabla = '".mysql_real_escape_string($tabla)."' AND campo ='".mysql_real_escape_string($campo)."' AND opcion ='".mysql_real_escape_string($opcion)."' AND  id_empresa = '$_SESSION[id_empresa]' LIMIT 1 ";
 $sql=mysql_query($limpiar,$link);
-$consulta="INSERT INTO form_parametrizacion set tabla = '".mysql_real_escape_string($tabla)."' , campo ='".mysql_real_escape_string($campo)."', opcion ='".mysql_real_escape_string($opcion)."', descripcion ='".mysql_real_escape_string($descripcion)."', visible='1' ";
+$consulta="INSERT INTO form_parametrizacion set tabla = '".mysql_real_escape_string($tabla)."' , campo ='".mysql_real_escape_string($campo)."', opcion ='".mysql_real_escape_string($opcion)."', descripcion ='".mysql_real_escape_string($descripcion)."', visible='1' , id_empresa = '$_SESSION[id_empresa]'";
 $sql=mysql_query($consulta,$link);
 if($sql) {
 	$resultado = "$descripcion";
 	$respuesta->addAssign("$div","innerHTML",$resultado);
 
 	}else {
-$respuesta->addAlert("$consulta");
+//$respuesta->addAlert("$consulta");
 }
 //$respuesta->addAssign("confirmar_envio_email","innerHTML",$exito);
 return $respuesta;
@@ -1469,6 +1506,7 @@ $xajax->registerFunction("email_contenido");
 function mapa_ficha($id) {
 
 	$descripcion = remplacetas('form_id','id',$id,'descripcion','') ;
+	$descripcion_limpia = strip_tags($descripcion[0]);
 	$nombre = remplacetas('form_id','id',$id,'nombre','') ;
 	$id_empresa = remplacetas('form_id','id',$id,'id_empresa','') ;
 	$id_empresa = $id_empresa[0];
@@ -1501,7 +1539,7 @@ function mapa_ficha($id) {
 				</div>
 				<div class='col-xs-8 col-md-12'>
 					<h4 class='text-center'> $nombre[0]<small>
-					$descripcion[0]</h4> 
+					$descripcion_limpia[0]</h4> 
 					
 				</div>
 				<div class='col-xs-8 col-md-12'>
@@ -1733,6 +1771,7 @@ $resultado = "
 		 			 	
 		 	</li>
 		 $listado 
+		 <li class='list-group-item'><span style='cursor:move;'  draggable='true' id='\$fecha ' ondragstart=\"evdragstart(event,this)\"  title=' Fecha'>Fecha</span></li>
 		 </ul>
 </div>
 ";
@@ -2266,12 +2305,12 @@ $link=Conectarse();
 return $resultado ;
 }
 
-function mostrar_identificador($control,$form,$plantilla,$tipo){
+function mostrar_identificador($control,$form,$plantilla,$tipo,$timestamp){
 	$resultado="";
 	$tipo="$tipo";
 	if($form != "") {$id_form = "$form";}else {$id_form ="";}
 
-		$impresion = formulario_imprimir("$id_form","$control","$plantilla"); 
+		$impresion = formulario_imprimir("$id_form","$control","$plantilla",$timestamp); 
 		if($impresion !="") {
 			$visitas= contar_visitas($control,'identificador') ;
 			$visitas= "<h4><small><i class='fa fa-eye'></i> $visitas</small></h4>";
@@ -2279,7 +2318,7 @@ function mostrar_identificador($control,$form,$plantilla,$tipo){
 		$nombre = remplacetas('form_id','id',$id_form,'nombre',"") ;
 		if($tipo=="") {
 		$resultado = "
-		<div class='container-fluid'>
+		<div id ='mostrar_identificador_$control' class='mostrar_identificador container-fluid' style='max-width:650px, background-color:white;'>
 			$visitas
 			<h2>$nombre[0]</h2>
 				<legend>$descripcion[0]</legend> 
@@ -4134,9 +4173,19 @@ function formulario_embebido($id){
 
 
 function formulario_embebido_ajax($id,$opciones,$tipo){
+	$respuesta = new xajaxResponse('utf-8');
+	$publico = remplacetas('form_id','id',"$id",'modificable',"") ;
+	if($publico[0] =="0") {
+		$resultado = "  <div class='alert alert-danger'><h1>NO tiene permiso para usar este formulario <i class='fa fa-key'></i></h1>";
+		$respuesta->addAssign("titulo_modal","innerHTML","$cabecera");
+			$respuesta->addAssign("muestra_form","innerHTML","$resultado");
+			$pie = empresa_datos("$id_empresa",'pie');
+			$respuesta->addscript("$('#muestraInfo').modal('toggle')");	
+			return $respuesta;
+	}
 			//$impresion = formulario_modal("$id",$form_respuesta,$control,"embebido");
 			//($perfil,$tipo,$form_respuesta,$control_respuesta)
-			$respuesta = new xajaxResponse('utf-8');
+			
 			$id_empresa = remplacetas('form_id','id',$id,'id_empresa',"") ;
 					if(isset($_SESSION['permiso_identificador'])) {
 			$permiso_identificador = $_SESSION['permiso_identificador'] ;
@@ -4185,6 +4234,7 @@ function formulario_embebido_ajax($id,$opciones,$tipo){
 
 	<div class='container-fluid' style='  background-color:white; max-width:800px;  overflow:no;' id='contenedor_datos' >			
 			<h4><small><i class='fa fa-eye'></i> $visitas</small></h4>
+			
 			<!-- formulario_areas -->
 				$impresion
 			<!-- formulario_areas -->
@@ -4422,13 +4472,15 @@ while( $row = mysql_fetch_array( $sql ) ) {
 		$propiedades[description] ="<div class='container-fluid' id='contenedor_datos' >$formulario</div>";
 		$propiedades[sounds] ="";
 		$propiedades[url] ='';
-		$propiedades[icon][iconSize] =[60,60];
+		$propiedades[icon][iconSize] =[60];
 		//$propiedades[icon][shadowSize] =[70,70];
 		//$propiedades[icon][shadowUrl] = "https://raw.githubusercontent.com/humano/milfs/master/milfs/images/iconos/negro.png";
 		
 		//$propiedades[title] ='Hola mundo';
 		if($propiedades[icon][iconUrl] =="") {
-		$propiedades[icon][iconUrl] = "$_SESSION[site]/milfs/images/iconos/negro.png";
+			$icono_imagen = buscar_imagen("$id_form",$row['control'],"","");
+		//$propiedades[icon][iconUrl] = "$_SESSION[site]/milfs/images/iconos/negro.png";
+		$propiedades[icon][iconUrl] = "$_SESSION[url]images/secure/?file=150/$icono_imagen";
 		}
 		$geometria .= "{\"type\":\"Feature\",\"geometry\":".json_encode($marcador,JSON_NUMERIC_CHECK|JSON_PRETTY_PRINT).",\"properties\":".json_encode($propiedades,JSON_NUMERIC_CHECK|JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT)."},";
 		$features[] = $marcador;
@@ -5058,6 +5110,8 @@ return $link;
 		$subir_imagen .= "<input name='imagen' id='imagen' type='hidden' >
 						<div onclick = \"xajax_cambiar_imagen((document.getElementById('imagen').value),'empresa','$_SESSION[id_empresa]') \"; 
 								class='btn btn-success'>Cambiar imagen</div>";	
+								//parametrizacion_linea($tabla,$campo,$opcion,$descripcion,$div)
+								$parametrizacion =parametrizacion_linea("","","","","");
 	$resultado .="
 				<div class='img-round ' id='banner' style=' 
 
@@ -5102,7 +5156,11 @@ return $link;
 						
 					</div>
 				</div>
-										<div style='';>
+				<div class='container alert alert-warning'>
+				
+				$parametrizacion
+				</div>
+						<div style='';>
 								$subir_imagen
 						</div>
 			
@@ -5245,6 +5303,7 @@ $xajax->registerFunction("insertar_campo_area");
 
 function editar_campo($tabla,$key,$campo,$valor,$accion,$div,$indice){
 	$indice=$indice;
+	$valor = str_replace('"',"'", $valor);
 	if ( !isset ( $_SESSION['id'] ) ) {	return;}
 	if($indice =="") {$id = "id";}
 	else {$id = "$indice";}
@@ -5254,7 +5313,7 @@ function editar_campo($tabla,$key,$campo,$valor,$accion,$div,$indice){
 if(@$div=='') {$div = "div_$tabla".$campo;}
 else {$div = $div;}
 		$respuesta = new xajaxResponse('utf-8');
-		$valor = limpiar_caracteres($valor);
+		//$valor = limpiar_caracteres($valor);
 		
 	$link=Conectarse(); 
 	mysql_query("SET NAMES 'utf8'");
@@ -5277,7 +5336,7 @@ if($size < 40) {
 		$resultado = "
 		<div class='input-group' >
 			<span class='input-group-addon'>
-			<a  onclick=\"xajax_editar_campo('$tabla','$key','$campo','$Valor','cerrar','$div','$indice'); \">
+			<a  onclick=\"xajax_editar_campo('$tabla','$key','$campo','','cerrar','$div','$indice'); \">
 				<i class=' fa fa-times-circle'></i>
 			</a>
 			<a onclick=\"xajax_editar_campo('$tabla','$key','$campo',(document.getElementById('".$campo."_".$id."".$rrn."').value),'grabar','$div','$indice'); \" > 
@@ -5307,7 +5366,7 @@ if($size < 40) {
 								}
 elseif($accion== "grabar"){
 
-	$edit = "UPDATE  $tabla SET  $campo =  '$valor' WHERE $id = '$key' limit 1; ";
+	$edit = "UPDATE  $tabla SET  $campo =  '".mysql_real_escape_string($valor)."' WHERE $id = '$key' limit 1; ";
 	$sql=mysql_query($edit,$link);
 		if(mysql_affected_rows($link) != 0){
 
@@ -5355,9 +5414,10 @@ return $respuesta;
 $xajax->registerFunction("editar_campo");
 
 
-function formulario_imprimir($id,$control,$tipo) {
+function formulario_imprimir($id,$control,$tipo,$timestamp) {
 $resultado ="";
 $limit ="";
+if ($timestamp != ""){$where_timestamp = "AND form_datos.timestamp = '$timestamp' ";}ELSE { $where_timestamp = ""; }
 if(is_numeric($tipo)) { $limit = "limit $tipo "; $class= "alert alert-info";}
 //if($control != "") { $w_control = "AND control = '$control' ";}
 	$id = mysql_seguridad($id);
@@ -5370,7 +5430,7 @@ if(is_numeric($tipo)) { $limit = "limit $tipo "; $class= "alert alert-info";}
 	}
 		
 		if($publico[0] != "1" and (!isset ( $_SESSION['id']) )) {
-		$resultado ="<div class='alert alert-danger'><h1>Acceso restringido <small>Esta aplicación contiene datos privados</small> <i class='fa fa-key'></i></h1>( $_SESSION[id] )</div>";
+		$resultado ="<div class='alert alert-danger'><h1>Acceso restringido <small>Esta aplicación contiene datos privados</small> ( ) <i class='fa fa-key'></i></h1></div>";
 		return $resultado;
 
 																					}
@@ -5382,10 +5442,11 @@ if(is_numeric($tipo)) { $limit = "limit $tipo "; $class= "alert alert-info";}
 						WHERE form_contenido_campos.id_campo = form_datos.id_campo
 						AND form_datos.control = '$control'
 						AND form_contenido_campos.id_form = '$id'
+						$where_timestamp 
 						ORDER BY form_contenido_campos.orden ASC $limit 
 						";
 	}else {
-	$consulta = "SELECT * FROM form_datos WHERE control = '$control' GROUP BY id_campo"	;
+	$consulta = "SELECT * FROM form_datos WHERE control = '$control' $where_timestamp GROUP BY id_campo"	;
 	}
 	$control = mysql_seguridad($control);
 	
@@ -5409,7 +5470,7 @@ if (mysql_num_rows($sql)!='0'){
 		@$multiple =$row['multiple'];
 		$campo_tipo =  remplacetas('form_campos','id',$row['id_campo'],'campo_tipo','');
 		$campo_tipo =$campo_tipo[0];
-		$contenido = formulario_valor_campo("$id","$row[id_campo]","","$control",'');
+		$contenido = formulario_valor_campo("$id","$row[id_campo]","","$control",'',"$timestamp");
 		$contenido_array = $contenido;
 		//		$contenido = formulario_valor_campo("$id","$row[id_campo]","","$control");
 		$md5_contenido = $contenido[4];
@@ -5487,6 +5548,7 @@ $campo_imagen = $campo_imagen[0];
 	$campo_80[$row['id_campo']] = substr($contenido,0, $length = 80);//$contenido;
 	$campo_55[$row['id_campo']] = substr($contenido,0, $length = 55);//$contenido;
 	$campo_limpio[$row['id_campo']] = $contenido = strip_tags($contenido);
+	$fecha  = date ( "Y-m-d h:i:s" , $row['timestamp'] ); 
 	
 	$campo["md5_".$row['id_campo']]=$md5_contenido;
 
@@ -5530,7 +5592,7 @@ if($contenido_original !="") {
 //}else {$resultado ="<div class='alert alert-warning'><h1>No se encontraron resultados</h1></div>"; return $resultado;}
 //if($id=="6" OR $id=="10") {
 	$plantilla="";
-	$class="alert alert-info";
+	$class="";
 	if($tipo !="" AND (!is_numeric($tipo)) AND $tipo !="metadatos" ) {
 ////Usa una plantilla apra cada id 
 
@@ -7809,9 +7871,9 @@ return $existe;
 
 
 
-function formulario_valor_campo($perfil,$id_campo,$valor,$id_control,$orden){
+function formulario_valor_campo($perfil,$id_campo,$valor,$id_control,$orden,$timestamp){
 $contenido="";
-
+if ($timestamp != ""){$where_timestamp = "AND form_datos.timestamp = '$timestamp' ";}ELSE { $where_timestamp = ""; }
 //if($id_control !=""){ $control ="AND `control` = '$id_control'";}else {$control ="";}
 $campo_multiple =  remplacetas("form_contenido_campos","id_campo",$id_campo,"multiple"," id_form ='$perfil'");
 $tipo_campo =  remplacetas("form_campos","id","$id_campo","campo_tipo","");
@@ -7838,6 +7900,7 @@ ORDER BY timestamp $limite ";
 											WHERE form_id = '$perfil' 
 											AND id_campo ='$id_campo' $valor
 											AND control ='$id_control'  $campo_orden
+											$where_timestamp
 											group by  orden  
 											ORDER BY  orden   $limite";
 

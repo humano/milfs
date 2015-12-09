@@ -12,15 +12,14 @@ if(isset($_REQUEST['debug'])) {ini_set('display_errors', 'On');}
 <!DOCTYPE html>
 <html lang="en">
    <head >
-   <title>Portal de datos</title>
+
    <meta http-equiv="Cache-control" content="public">
     <meta charset="utf-8">
     <meta name="viewport" content="user-scalable=no, width=device-width,  maximum-scale=1,  initial-scale=1">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-	<link rel="shortcut icon" href="milfs/favicon-152.png">
-	<link rel="apple-touch-icon-precomposed" href="milfs/favicon-152.png">
+
 
 <?php 
 $embebido =0;
@@ -96,21 +95,21 @@ if ($variable !=''){
 			/// i= IDENTIFICADOR
 	  		$identificador =$v[1]; 
 	  					$primer = 	formulario_uso("","$identificador",'primer') ;
-			$form[0]="$primer[3]";
+			$id_form="$primer[3]";
 			//$form = 	remplacetas('form_datos','control',$identificador,'form_id',"") ;	
-			$empresa = 	remplacetas('form_id','id',$form['0'],'id_empresa',"") ;
+			$empresa = 	remplacetas('form_id','id',$id_form,'id_empresa',"") ;
 			$id_empresa = $empresa[0];
 			$id = $empresa[0];
 			//$impresion = mostrar_identificador("$identificador","$id_form[0]","landingpage",'simple');
-			$impresion = landingpage_contenido_identificador("$identificador","$id_form[0]","",'');
+			$impresion = landingpage_contenido_identificador("$identificador","$id_form","landingpage",'simple');
 
 			$impresion = strip_tags($impresion);
 			$descripcion_meta = $impresion; 
-			$titulo = 	remplacetas('form_id','id',$form['0'],'nombre',"") ;
-			$descripcion = 	remplacetas('form_id','id',$form['0'],'descripcion',"") ;
-			$background_imagen = buscar_imagen("$form[0]",$identificador,"","");
-			$uri_set = "<a class='' href='s$form[0]'>$titulo[0]</a>";
-			$publico = remplacetas('form_id','id',$form[0],'publico',"") ;
+			$titulo = 	remplacetas('form_id','id',$id_form,'nombre',"") ;
+			$descripcion = 	remplacetas('form_id','id',$id_form,'descripcion',"") ;
+			$background_imagen = buscar_imagen("$id_form",$identificador,"","");
+			$uri_set = "<a class='' href='s$id_form'>$titulo[0]</a>";
+			$publico = remplacetas('form_id','id',$id_form,'publico',"") ;
 			if($publico[0] =='1') {$acceso = 1;}
 		}
 		elseif($v[0] =='d') {
@@ -137,6 +136,31 @@ if ($variable !=''){
 	  		$form =$v[1];
 	  		$onload =" <script type=\"text/javascript\">xajax_formulario_embebido_ajax('$form','','nuevo')</script>";						
 		}
+		elseif($v[0] =='a') {
+			/// a=Aplicacion
+	  		$form =$v[1];
+	  		$embebido = "1";
+	  		$empresa = 	remplacetas('form_id','id',$form,'id_empresa',"") ;
+			$id_empresa = $empresa[0];
+	  		$registros = consultar_contenido_formulario("$form",'5','','embebido');
+	  		$formulario = formulario_embebido($form,$opciones);	
+	  		$aplicacion = "
+	  		<div class='center-block' style='word-wrap: break-word; max-width:650px;'>
+	  		
+	  		$formulario
+	  		</div>
+	  		<div class='text-center'>
+	  			<iframe src='http://datos.labmde.org/milfs/map.php?id=$form' width='90%' height='600px;'  ></iframe>
+	  		</div>
+	  		<br>
+	  			 $registros 
+	  		<span>Poweredy by <a href='https://github.com/humano/milfs' target='milfs'>MILFS</a></span>
+	  		<div class='container' style='background-color:white' >
+	  		<h2><img src= 'http://qwerty.co/qr/?d=datos.labmde.org/a74'>Comparte nuestra aplicación</h2>
+	  		</div>";
+	  		$onload = "$aplicacion";
+								
+		}
 		elseif($v[0] =='g') {
 			/// g=FORMULARIO EMBEBIDO
 	  		$form =$v[1];
@@ -155,6 +179,9 @@ if ($variable !=''){
 			$onload = include("milfs/addon/$addon/$addon".".php");
 		}
 		else{}
+$video = remplacetas('form_parametrizacion','campo',"presentacion",'descripcion'," tabla='empresa' and  opcion = 'video' and id_empresa = '$id_empresa'") ;
+if($video[0] !="") { $video ="<iframe type='text/html' width='640' height='385' src='http://www.youtube.com/embed/$video[0]' frameborder='0'></iframe>"; }
+else {$video ="";}
 $logo = remplacetas('empresa','id',"$id_empresa",'imagen','') ;
 $direccion = remplacetas('empresa','id',"$id_empresa",'direccion','') ;
 $telefono = remplacetas('empresa','id',"$id_empresa",'telefono','') ;
@@ -171,6 +198,9 @@ $link_empresa = "e$id_empresa";
   $descripcion[0] ="Los datos no hacen la felicidad, pero pueden medirla";
   $twitter[0] ="qwerty_co";
   $facebook[0] ="https://www.facebook.com/Qwerty-co-146226688795185";
+  $video ="<iframe src='https://player.vimeo.com/video/3514904?color=ffffff&title=0&byline=0&portrait=0' width='500' height='281' frameborder='0' webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe> 
+  ";
+
 }
 
 $uri = trim($_SESSION['site'], '/').$_SERVER['REQUEST_URI'];
@@ -194,7 +224,9 @@ $uri = trim($_SESSION['site'], '/').$_SERVER['REQUEST_URI'];
 <meta property="og:image" content="<?php echo "$_SESSION[url]images/secure/?file=600/$background_imagen"; ?>" />
 <meta property="og:site_name" content="<?php echo $razon_social[0]; ?>" />
 <meta property="og:description" content=" <?php echo $descripcion_meta; ?>" />
-            
+   <link rel="shortcut icon" href="<?php echo "$_SESSION[url]images/secure/?file=150/$logo[0]"; ?>">
+	<link rel="apple-touch-icon-precomposed" href="<?php echo "$_SESSION[url]images/secure/?file=150/$logo[0]"; ?>">
+	   <title><?php echo $titulo[0]; ?> Portal de datos</title>
  	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous">
 	<?php $xajax->printJavascript("milfs/xajax/");  ?>
 	<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha256-k2/8zcNbxVIh5mnQ52A0r3a6jAgMGxFJFE2707UxGCk= sha512-ZV9KawG2Legkwp3nAlxLIVFudTauWuBpC10uEafMHYL0Sarrz5A7G79kXh5+5+woxQ5HM559XX2UZjMJ36Wplg==" crossorigin="anonymous">
@@ -252,7 +284,7 @@ legend.legend-area {
     }
 
 .modal-dialog {
-  min-width: 600px;
+  /* min-width: 600px; */
   height: auto;
   padding: 0;
 }
@@ -506,7 +538,7 @@ p.copyright {
                 
                 
                     <div class="intro-message">
-                   
+                   			<?php echo $video; ?>
                         <h1><?php echo $titulo[0]; ?></h1>
                         
                         <h3><?php echo $descripcion[0]; ?></h3>
@@ -539,18 +571,20 @@ p.copyright {
 	if($acceso ==1) {
 		if($set != "") { 
 		///	echo landingpage_contenido_formulario($set,'10','',''); 
-		echo consultar_contenido_formulario("$set",'5','','contenido');
+		echo consultar_contenido_formulario("$set",'10','','contenido');
 		//echo "<div class='btn btn-default btn-default' onclick=\"xajax_consultar_contenido_formulario('$set','10','','landingpage'); \"><i class='fa fa-eye'></i> Consultar</div>";
 			
 		}
 		elseif($identificador !="") {
-			echo landingpage_contenido_identificador($identificador); 
+			//echo landingpage_contenido_identificador($identificador); 
+			echo landingpage_contenido_identificador("$identificador","$id_form","landingpage",'simple') ;
 		}
 		else{ 
 					 if($id_empresa =="") {
 					 	//echo multiempresa_listado('','')."Hola mundo";
 					 }
 					 else {
+						//echo landingpage_contenido($id_empresa);
 						echo landingpage_contenido($id_empresa);
 					}
 		}
