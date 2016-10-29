@@ -305,10 +305,44 @@ function grabar_imagen($imagen,$control) {
 }
 
 
-function generar_miniatura($file,$width) {//$archivo = $file;
-$archivo = "$_SESSION[path_images_secure]/full/".$file;// Ponemos el . antes del nombre del archivo porque estamos considerando que la ruta está a partir del archivo thumb.php$file_info = getimagesize($archivo);// Obtenemos la relación de aspecto$ratio = $file_info[0] / $file_info[1];// Calculamos las nuevas dimensiones$newwidth = $width;$newheight = round($newwidth / $ratio);// Sacamos la extensión del archivo$ext = explode(".", $file);$ext = strtolower($ext[count($ext) - 1]);if ($ext == "jpeg") $ext = "jpg";// Dependiendo de la extensión llamamos a distintas funcionesswitch ($ext) {        case "jpg":                $img = imagecreatefromjpeg($archivo);        break;        case "png":                $img = imagecreatefrompng($archivo);        break;        case "gif":                $img = imagecreatefromgif($archivo);        break;}// Creamos la miniatura$thumb = imagecreatetruecolor($newwidth, $newheight);
+function generar_miniatura($file,$width) {
+//$archivo = $file;
+$archivo = "$_SESSION[path_images_secure]/full/".$file;
+// Ponemos el . antes del nombre del archivo porque estamos considerando que la ruta está a partir del archivo thumb.php
+$file_info = getimagesize($archivo);
+// Obtenemos la relación de aspecto
+$ratio = $file_info[0] / $file_info[1];
+
+// Calculamos las nuevas dimensiones
+$newwidth = $width;
+$newheight = round($newwidth / $ratio);
+
+// Sacamos la extensión del archivo
+$ext = explode(".", $file);
+$ext = strtolower($ext[count($ext) - 1]);
+if ($ext == "jpeg") $ext = "jpg";
+
+// Dependiendo de la extensión llamamos a distintas funciones
+switch ($ext) {
+        case "jpg":
+                $img = imagecreatefromjpeg($archivo);
+        break;
+        case "png":
+                $img = imagecreatefrompng($archivo);
+        break;
+        case "gif":
+                $img = imagecreatefromgif($archivo);
+        break;
+}
+// Creamos la miniatura
+$thumb = imagecreatetruecolor($newwidth, $newheight);
 imagealphablending( $thumb, false );
-imagesavealpha( $thumb, true );// La redimensionamosimagecopyresampled($thumb, $img, 0, 0, 0, 0, $newwidth, $newheight, $file_info[0], $file_info[1]);// La mostramos como jpg//header("Content-type: image/jpeg");imagejpeg($thumb,"$_SESSION[path_images_secure]/".$width."/$file", 80);
+imagesavealpha( $thumb, true );
+// La redimensionamos
+imagecopyresampled($thumb, $img, 0, 0, 0, 0, $newwidth, $newheight, $file_info[0], $file_info[1]);
+// La mostramos como jpg
+//header("Content-type: image/jpeg");
+imagejpeg($thumb,"$_SESSION[path_images_secure]/".$width."/$file", 80);
 imagepng($thumb,"$_SESSION[path_images_secure]/".$width."/$file", 9);
 //imagegif($thumb,"$_SESSION[path_images_secure]/".$width."/$file");
 //imagejpeg($thumb,null, 80);
@@ -3483,7 +3517,9 @@ while ($archivo = readdir($directorio)) //obtenemos un archivo y luego otro suce
     }
     else
     {$autor="";
-    	            	$ext = explode(".", $archivo);					$ext = strtolower($ext[count($ext) - 1]);					if ($ext == "jpeg") {$ext = "jpg";  }
+    	            	$ext = explode(".", $archivo);
+					$ext = strtolower($ext[count($ext) - 1]);
+					if ($ext == "jpeg") {$ext = "jpg";  }
 					if ($ext == "jpg") {
 						$cantidad_imagenes++ ;
 					
@@ -3548,7 +3584,9 @@ function listar_archivos( $path ,$opcion, $div,$datos){
               //  $resultado .= "<p><strong>CARPETA: ". $elemento ."</strong></p>";
             // Si es un fichero
             } else {
-            	$ext = explode(".", $elemento);					$ext = strtolower($ext[count($ext) - 1]);					if ($ext == "jpeg") {$ext = "jpg";  }
+            	$ext = explode(".", $elemento);
+					$ext = strtolower($ext[count($ext) - 1]);
+					if ($ext == "jpeg") {$ext = "jpg";  }
 					if ($ext == "jpg") {$cantidad_imagenes++ ;
 					
 					$exif = leer_exif("$path/$elemento");
@@ -8218,7 +8256,7 @@ $impresion
 		}else{
 			$mensaje ="
 	
-			<div class='alert alert-success text-center'><h1><i class='fa fa-smile-o'></i><small> Todo bien pero al parecer no se moficaron registros </small></h1></div>";
+			<div class='alert alert-success text-center'><h1><i class='fa fa-smile-o'></i><small> Todo bien pero al parecer no se modificaron registros </small></h1></div>";
 		$respuesta->addAssign("div_$control","innerHTML","$mensaje");
 		}
 //$respuesta->addAssign("respuesta_$control","innerHTML","$resultado");
